@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:string_validator/string_validator.dart';
 
 
-class LoginViewModel extends ChangeNotifier {
+class RegisterViewModel extends ChangeNotifier {
   TextEditingController email = TextEditingController();
   String emailError = '';
   TextEditingController pass = TextEditingController();
