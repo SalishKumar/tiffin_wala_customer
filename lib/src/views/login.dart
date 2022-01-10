@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tiffin_wala_customer/src/view_model/login_view_model.dart';
 import 'package:tiffin_wala_customer/src/constants/color.dart' as color;
-import 'package:tiffin_wala_customer/src/constants/custom_widgets.dart';
+import 'package:tiffin_wala_customer/src/constants/my_custom_textfield.dart';
 import 'package:flutter_signin_button/flutter_signin_button.dart';
 import 'package:tiffin_wala_customer/src/views/register.dart';
 
@@ -16,7 +16,6 @@ class Login extends StatelessWidget {
     double width = MediaQuery.of(context).size.width;
     LoginViewModel loginViewModel =
         Provider.of<LoginViewModel>(context, listen: false);
-    CustomWidgets customWidgets = CustomWidgets();
     String input = '';
     return Scaffold(
       backgroundColor: color.background,
@@ -40,27 +39,34 @@ class Login extends StatelessWidget {
                   SizedBox(
                     height: 200,
                   ),
-                  customWidgets.textField(
-                      loginViewModel.inputEmail,
-                      TextInputType.emailAddress,
-                      false,
-                      1,
-                      'Email',
-                      loginViewModel.emailError,
-                      prefix: Icons.email),
+                  MyCustomTextfield(
+                    controller:   loginViewModel.emailCon,
+                    textInputType: TextInputType.emailAddress,
+                    onPressed: (){}, hintText: "Email",
+                    error: loginViewModel.emailError,
+                    prefix: Icons.email,
+                    onValidation: (){
+                      loginViewModel.inputEmail();
+                    },
+
+                    ),
+
                   SizedBox(
                     height: 20,
                   ),
-                  customWidgets.textField(
-                      loginViewModel.inputPass,
-                      TextInputType.visiblePassword,
-                      loginViewModel.obsecure,
-                      1,
-                      'Password',
-                      loginViewModel.passError,
-                      prefix: Icons.vpn_key,
-                      suffix: loginViewModel.suffix,
-                      onPressed: loginViewModel.toggleSuffix),
+                  MyCustomTextfield(
+                    onValidation: (){},
+                      controller:   loginViewModel.passCon,
+                      textInputType: TextInputType.visiblePassword,
+                      onPressed: (){
+                        loginViewModel.toggleSuffix();
+                      }, hintText: "Password",
+                      error: loginViewModel.passError,
+                      prefix: Icons.lock,
+                    obscureText: loginViewModel.obsecure,
+                    suffix: Icons.remove_red_eye,
+                  ),
+
                   SizedBox(
                     height: 40,
                   ),

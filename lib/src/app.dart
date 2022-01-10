@@ -9,8 +9,8 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AppProvider(
-        child: MaterialApp(
+    return const AppProvider(
+        child:  MaterialApp(
           onGenerateRoute: generateRoute,
           home: Login()
           ),
