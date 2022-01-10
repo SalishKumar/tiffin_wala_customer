@@ -1,54 +1,47 @@
-
 import 'package:flutter/material.dart';
 import 'color.dart' as color;
 
-
-
 class MyCustomTextfield extends StatelessWidget {
-   MyCustomTextfield({
+  MyCustomTextfield({
     Key? key,
     required this.textInputType,
-     required this.onPressed,
-      this.obscureText = false,
-     this.prefix,
-     this.suffix,
-     required this.hintText,
-     required this.error,
-     required this.controller,
-     required this.onValidation,
-
-   }) : super(key: key);
+    required this.onPressed,
+    this.obscureText = false,
+    this.prefix,
+    this.suffix,
+    required this.hintText,
+    required this.error,
+    required this.controller,
+    required this.onValidation,
+  }) : super(key: key);
 
   late TextInputType textInputType;
   late Function onPressed;
-    Function onValidation= (){};
+  Function onValidation = () {};
 
-   bool obscureText = false;
+  bool obscureText = false;
   IconData? prefix;
-   IconData? suffix;
-    String error,hintText;
-    TextEditingController controller;
-
+  IconData? suffix;
+  String error, hintText;
+  TextEditingController controller;
 
   @override
   Widget build(BuildContext context) {
     return TextField(
-
       keyboardType: textInputType,
       controller: controller,
       obscureText: obscureText,
       // maxLines: maxLines,
-      onChanged: (V){
+      onChanged: (V) {
         onValidation();
       },
       decoration: InputDecoration(
-
-        prefixIcon:  Icon(
+        prefixIcon: Icon(
           prefix,
           color: color.orange,
         ),
         suffixIcon: GestureDetector(
-          onTap: (){
+          onTap: () {
             onPressed();
           },
           child: Icon(
@@ -57,7 +50,6 @@ class MyCustomTextfield extends StatelessWidget {
           ),
         ),
         // contentPadding: EdgeInsets.symmetric(horizontal: 15),
-
 
         // filled: true,
         // fillColor: color.textFieldFillColor,

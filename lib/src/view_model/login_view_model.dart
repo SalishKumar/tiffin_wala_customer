@@ -7,7 +7,7 @@ class LoginViewModel extends ChangeNotifier {
   String emailError = '';
   TextEditingController passCon = TextEditingController();
   String passError = '';
-  IconData suffix = Icons.visibility_off;
+  IconData suffix = Icons.remove_red_eye;
   bool obsecure = true;
 
   inputEmail(){
@@ -28,30 +28,39 @@ class LoginViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  // inputPass(String val){
-  //   print(val + '*');
-  //   bool isValid = isAlphanumeric(val);
-  //   if(isValid){
-  //     if(val.length>5){
-  //       pass.text = val;
-  //       passError = '';
-  //     } else {
-  //       passError = 'Password is too short.';
-  //     }
-  //
-  //   } else {
-  //     if(val.isNotEmpty){
-  //       email.text = '';
-  //       emailError = 'Password Format is not correct.';
-  //     } else{
-  //       emailError = 'Password email.';
-  //     }
-  //
-  //   }
-  // }
+  inputPass(){
+    //print(val + '*');
+    // bool isValidText = isAlpha(passCon.text.trim());
+    // print('alpha = '+ isValidText.toString());
+    // bool isValidNumeric = isNumeric(passCon.text.trim());
+    // print('numbers = '+ isValidNumeric.toString());
+    String  pattern = r'^(?=.*[a-z])(?=.*[0-9])[a-z0-9]+$';
+    RegExp regExp = new RegExp(pattern);
+    bool isValid = regExp.hasMatch(passCon.text.trim());
+    print(isValid);
+    if(isValid){
+      if(passCon.text.trim().length>5){
+        passError = '';
+      } else {
+        passError = 'Password is too short.';
+      }
+  
+    } else {
+      if(passCon.text.trim().isNotEmpty){
+        passError = 'Password Format is not correct.';
+      } else{
+        passError = 'Password is empty.';
+      }
+    }
+  }
 
   toggleSuffix(){
     obsecure = !obsecure;
+    if(obsecure){
+      suffix = Icons.visibility;
+    } else {
+      suffix = Icons.visibility_off;
+    }
     notifyListeners();
   }
 }

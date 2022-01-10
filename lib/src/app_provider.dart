@@ -1,7 +1,8 @@
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:tiffin_wala_customer/src/constants/my_custom_textfield.dart';
+import 'package:tiffin_wala_customer/src/view_model/filter_view_model.dart';
+import 'package:tiffin_wala_customer/src/view_model/home_view_model.dart';
 import 'package:tiffin_wala_customer/src/view_model/login_view_model.dart';
 import 'package:tiffin_wala_customer/src/view_model/login_view_model.dart';
 import 'package:tiffin_wala_customer/src/view_model/register_view_model.dart';
@@ -21,6 +22,8 @@ class AppProvider extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(create: (context) => LoginViewModel()),
         ChangeNotifierProvider(create: (context) => RegisterViewModel()),
+        ChangeNotifierProvider(create: (context) => HomeViewModel()),
+        ChangeNotifierProvider(create: (context) => FilterViewModel()),
       ],
       child: child,
     );

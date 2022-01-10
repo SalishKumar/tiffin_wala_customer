@@ -4,6 +4,7 @@ import 'package:tiffin_wala_customer/src/view_model/login_view_model.dart';
 import 'package:tiffin_wala_customer/src/constants/color.dart' as color;
 import 'package:tiffin_wala_customer/src/constants/my_custom_textfield.dart';
 import 'package:flutter_signin_button/flutter_signin_button.dart';
+import 'package:tiffin_wala_customer/src/views/home.dart';
 import 'package:tiffin_wala_customer/src/views/register.dart';
 
 class Login extends StatelessWidget {
@@ -40,49 +41,52 @@ class Login extends StatelessWidget {
                     height: 200,
                   ),
                   MyCustomTextfield(
-                    controller:   loginViewModel.emailCon,
+                    controller: loginViewModel.emailCon,
                     textInputType: TextInputType.emailAddress,
-                    onPressed: (){}, hintText: "Email",
+                    onPressed: () {},
+                    hintText: "Email",
                     error: loginViewModel.emailError,
                     prefix: Icons.email,
-                    onValidation: (){
+                    onValidation: () {
                       loginViewModel.inputEmail();
                     },
-
-                    ),
-
+                  ),
                   SizedBox(
                     height: 20,
                   ),
                   MyCustomTextfield(
-                    onValidation: (){},
-                      controller:   loginViewModel.passCon,
-                      textInputType: TextInputType.visiblePassword,
-                      onPressed: (){
-                        loginViewModel.toggleSuffix();
-                      }, hintText: "Password",
-                      error: loginViewModel.passError,
-                      prefix: Icons.lock,
+                    onValidation: () {
+                      loginViewModel.inputPass();
+                    },
+                    controller: loginViewModel.passCon,
+                    textInputType: TextInputType.visiblePassword,
+                    onPressed: () {
+                      loginViewModel.toggleSuffix();
+                    },
+                    hintText: "Password",
+                    error: loginViewModel.passError,
+                    prefix: Icons.lock,
                     obscureText: loginViewModel.obsecure,
-                    suffix: Icons.remove_red_eye,
+                    suffix: loginViewModel.suffix,
                   ),
-
                   SizedBox(
                     height: 40,
                   ),
                   InkWell(
-                    onTap: () {},
+                    onTap: () {
+                      Navigator.pushReplacementNamed(context, Home.routeName);
+                    },
                     child: Center(
                         child: Container(
-                      width: width * 0.33,
-                      padding: EdgeInsets.all(20),
+                      width: width * 0.85,
+                      padding: EdgeInsets.all(15),
                       alignment: Alignment.center,
                       child: Text(
                         "Login",
                         style: TextStyle(
                             fontWeight: FontWeight.bold,
                             color: Colors.white,
-                            fontSize: 24),
+                            fontSize: 20),
                       ),
                       decoration: BoxDecoration(
                           color: color.purple,
@@ -109,7 +113,9 @@ class Login extends StatelessWidget {
                     alignment: Alignment.center,
                     child: SignInButton(
                       Buttons.Google,
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10),),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
                       padding: EdgeInsets.all(10),
                       text: "Login with Google",
                       onPressed: () {},
@@ -131,12 +137,15 @@ class Login extends StatelessWidget {
               style: TextStyle(fontSize: 18),
             ),
             InkWell(
-              onTap: (){
+              onTap: () {
                 Navigator.of(context).pushReplacementNamed(Register.routeName);
               },
               child: Text(
                 "Register.",
-                style: TextStyle(fontSize: 18,fontWeight: FontWeight.bold, decoration: TextDecoration.underline),
+                style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    decoration: TextDecoration.underline),
               ),
             ),
           ],
