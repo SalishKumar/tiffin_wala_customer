@@ -14,7 +14,6 @@ class MyApp extends StatelessWidget {
     return const AppProvider(
         child:  MaterialApp(
           onGenerateRoute: generateRoute,
-          home: Home()
           ),
     );
   }

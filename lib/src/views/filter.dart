@@ -3,8 +3,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tiffin_wala_customer/src/constants/color.dart' as color;
-import 'package:tiffin_wala_customer/src/constants/my_custom_textfield.dart';
-import 'package:tiffin_wala_customer/src/view_model/Filter_view_model.dart';
+import 'package:tiffin_wala_customer/src/view_model/filter_view_model.dart';
 
 class Filter extends StatelessWidget {
   static const routeName = '/filter';
@@ -14,8 +13,7 @@ class Filter extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
-    FilterViewModel filterViewModel =
-        Provider.of<FilterViewModel>(context, listen: false);
+
     return Scaffold(
         backgroundColor: color.background,
         appBar: AppBar(
@@ -30,7 +28,7 @@ class Filter extends StatelessWidget {
         body: SingleChildScrollView(
           child: Container(
             margin: EdgeInsets.symmetric(horizontal: width * 0.05),
-            child: Consumer<FilterViewModel>(
+            child: Consumer<FilterViewModel1>(
                 builder: (context, filterViewModel, child) {
               return Container(
                 margin: EdgeInsets.only(top: 20),
@@ -49,19 +47,19 @@ class Filter extends StatelessWidget {
                       margin: EdgeInsets.only(left: 15),
                       child: Column(
                         children: [
-                          CheckboxListTile(value: filterViewModel.listOfCusines[0], onChanged: filterViewModel.cusineChanged(0),title: Text(
+                          CheckboxListTile(value: filterViewModel.listOfCusines[0], onChanged: (val)=>filterViewModel.cusineChanged(0),title: Text(
                       "Karhai",
                       style: TextStyle(
                         fontSize: 18,
                       ),
                     ),),
-                    CheckboxListTile(value: filterViewModel.listOfCusines[0], onChanged: filterViewModel.cusineChanged(0),title: Text(
+                    CheckboxListTile(value: filterViewModel.listOfCusines[0], onChanged: (val)=>filterViewModel.cusineChanged(0),title: Text(
                       "Karhai",
                       style: TextStyle(
                         fontSize: 18,
                       ),
                     ),),
-                    CheckboxListTile(value: filterViewModel.listOfCusines[0], onChanged: filterViewModel.cusineChanged(0),title: Text(
+                    CheckboxListTile(value: filterViewModel.listOfCusines[0], onChanged:(val)=> filterViewModel.cusineChanged(0),title: Text(
                       "Karhai",
                       style: TextStyle(
                         fontSize: 18,
@@ -70,7 +68,7 @@ class Filter extends StatelessWidget {
                         ],
                       ),
                     ):Container(),
-                    CheckboxListTile(value: filterViewModel.nearby, onChanged: filterViewModel.nearbySelection(),title: Text(
+                    CheckboxListTile(value: filterViewModel.nearby, onChanged: (val)=> filterViewModel.nearbySelection(),title: Text(
                       "Near By",
                       style: TextStyle(
                         fontSize: 20,

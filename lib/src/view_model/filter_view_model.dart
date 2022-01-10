@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class FilterViewModel extends ChangeNotifier {
+class FilterViewModel1 extends ChangeNotifier {
   bool cusines = false;
   List<bool> listOfCusines = [false, false, false];
   bool nearby = false;

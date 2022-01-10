@@ -6,9 +6,10 @@ import 'package:tiffin_wala_customer/src/constants/color.dart' as color;
 import 'package:tiffin_wala_customer/src/constants/my_custom_textfield.dart';
 import 'package:tiffin_wala_customer/src/view_model/home_view_model.dart';
 import 'package:tiffin_wala_customer/src/views/filter.dart';
+import 'package:tiffin_wala_customer/src/views/login.dart';
 
 class Home extends StatelessWidget {
-  static const routeName = '/home';
+  static const routeName = '/';
 
   const Home({Key? key}) : super(key: key);
 
@@ -87,6 +88,8 @@ class Home extends StatelessWidget {
                       textInputType: TextInputType.text,
                       onPressed: () {
                         Navigator.pushNamed(context, Filter.routeName);
+                        // Navigator.of(context).pushReplacementNamed(Filter.routeName);
+
                       },
                       hintText: "Search",
                       error: '',

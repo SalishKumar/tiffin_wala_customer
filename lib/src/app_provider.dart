@@ -4,7 +4,6 @@ import 'package:provider/provider.dart';
 import 'package:tiffin_wala_customer/src/view_model/filter_view_model.dart';
 import 'package:tiffin_wala_customer/src/view_model/home_view_model.dart';
 import 'package:tiffin_wala_customer/src/view_model/login_view_model.dart';
-import 'package:tiffin_wala_customer/src/view_model/login_view_model.dart';
 import 'package:tiffin_wala_customer/src/view_model/register_view_model.dart';
 
 ///[AppProvider] returns a [MultiProvider] widget that can be used to
@@ -20,10 +19,12 @@ class AppProvider extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
+
         ChangeNotifierProvider(create: (context) => LoginViewModel()),
         ChangeNotifierProvider(create: (context) => RegisterViewModel()),
         ChangeNotifierProvider(create: (context) => HomeViewModel()),
-        ChangeNotifierProvider(create: (context) => FilterViewModel()),
+        ChangeNotifierProvider(create: (context) => FilterViewModel1()),
+
       ],
       child: child,
     );

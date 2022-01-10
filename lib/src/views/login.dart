@@ -8,7 +8,7 @@ import 'package:tiffin_wala_customer/src/views/home.dart';
 import 'package:tiffin_wala_customer/src/views/register.dart';
 
 class Login extends StatelessWidget {
-  static const routeName = '/';
+  static const routeName = '/login';
 
   const Login({Key? key}) : super(key: key);
 
