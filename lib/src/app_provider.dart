@@ -1,7 +1,10 @@
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:tiffin_wala_customer/src/view_model/home_view_model.dart';
+import 'package:tiffin_wala_customer/src/constants/custom_widgets.dart';
+import 'package:tiffin_wala_customer/src/view_model/login_view_model.dart';
+import 'package:tiffin_wala_customer/src/view_model/login_view_model.dart';
+import 'package:tiffin_wala_customer/src/view_model/register_view_model.dart';
 
 ///[AppProvider] returns a [MultiProvider] widget that can be used to
 ///wrap a widget to provide the state through a dependency injection to
@@ -16,7 +19,8 @@ class AppProvider extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (context) => HomeViewModel()),
+        ChangeNotifierProvider(create: (context) => LoginViewModel()),
+        ChangeNotifierProvider(create: (context) => RegisterViewModel()),
       ],
       child: child,
     );
