@@ -89,7 +89,6 @@ class Home extends StatelessWidget {
                       onPressed: () {
                         Navigator.pushNamed(context, Filter.routeName);
                         // Navigator.of(context).pushReplacementNamed(Filter.routeName);
-
                       },
                       hintText: "Search",
                       error: '',
@@ -127,106 +126,183 @@ class Home extends StatelessWidget {
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
             elevation: 8,
             color: color.textFieldFillColor,
+            // child: Container(
+            //   decoration:
+            //       BoxDecoration(borderRadius: BorderRadius.circular(20)),
+            //   padding: EdgeInsets.all(20),
+            //   width: width,
+            //   // height: 250,
+            //   child: Column(
+            //     children: [
+            //       Text(
+            //         'title',
+            //         style: TextStyle(
+            //             fontSize: 20,
+            //             fontWeight: FontWeight.w600,
+            //             color: Color(0xFF24243e)),
+            //       ),
+            //       Padding(
+            //         padding: EdgeInsets.fromLTRB(20, 5, 20, 10),
+            //         child: Divider(
+            //           thickness: 3,
+            //           color: Colors.grey[300],
+            //         ),
+            //       ),
+            //       Row(
+            //         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            //         children: [
+            //           Card(
+            //             // child: CachedNetworkImage(
+            //             //   imageUrl: "https://darat.pythonanywhere.com/" +
+            //             //       searchlist[index].logo,
+            //             //   imageBuilder: (context, imageProvider) => Container(
+            //             //     height: 125,
+            //             //     width: 125,
+            //             //     decoration: BoxDecoration(
+            //             //       image: DecorationImage(
+            //             //         image: imageProvider,
+            //             //         fit: BoxFit.fill,
+            //             //       ),
+            //             //     ),
+            //             //   ),
+            //             // placeholder: (context, url) =>
+            //             //     Center(child: CircularProgressIndicator()),
+            //             // errorWidget: (context, url, error) =>
+            //             //     Icon(Icons.error),
+            //             child: Container(
+            //               height: 125,
+            //               width: 125,
+            //               decoration: BoxDecoration(
+            //                 image: DecorationImage(
+            //                   image: AssetImage('assets/images.jpg'),
+            //                   fit: BoxFit.fill,
+            //                 ),
+            //               ),
+            //             ),
+            //           ),
+            //           Container(
+            //             height: 100,
+            //             // padding: EdgeInsets.symmetric(vertical: 20),
+            //             child: VerticalDivider(
+            //               color: Colors.grey[400],
+            //               thickness: 2,
+            //             ),
+            //           ),
+            //           Column(
+            //             crossAxisAlignment: CrossAxisAlignment.start,
+            //             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            //             children: [
+            //               Container(
+            //                 width: width / 4,
+            //                 child: AutoSizeText(
+            //                   'Rating',
+            //                   overflow: TextOverflow.ellipsis,
+            //                   maxLines: 1,
+            //                   style: TextStyle(
+            //                       fontSize: 18,
+            //                       fontWeight: FontWeight.w600,
+            //                       color: Color(0xFF24243e)),
+            //                 ),
+            //               ),
+            //               SizedBox(
+            //                 height: 10,
+            //               ),
+            //               Row(
+            //                 children: [
+            //                   Icon(
+            //                     Icons.location_on_rounded,
+            //                     size: 17,
+            //                   ),
+            //                   Container(
+            //                     width: width / 5,
+            //                     margin: EdgeInsets.only(left: 0),
+            //                     child: Text(
+            //                       'Karachi',
+            //                       overflow: TextOverflow.ellipsis,
+            //                     ),
+            //                   )
+            //                 ],
+            //               )
+            //             ],
+            //           ),
+            //         ],
+            //       ),
+            //     ],
+            //   ),
+            // ),
             child: Container(
-              decoration:
-                  BoxDecoration(borderRadius: BorderRadius.circular(20)),
-              padding: EdgeInsets.all(20),
-              width: width,
-              // height: 250,
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    'title',
-                    style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w600,
-                        color: Color(0xFF24243e)),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.fromLTRB(20, 5, 20, 10),
-                    child: Divider(
-                      thickness: 3,
-                      color: Colors.grey[300],
-                    ),
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  Stack(
+                    alignment: Alignment.center,
                     children: [
-                      Card(
-                        // child: CachedNetworkImage(
-                        //   imageUrl: "https://darat.pythonanywhere.com/" +
-                        //       searchlist[index].logo,
-                        //   imageBuilder: (context, imageProvider) => Container(
-                        //     height: 125,
-                        //     width: 125,
-                        //     decoration: BoxDecoration(
-                        //       image: DecorationImage(
-                        //         image: imageProvider,
-                        //         fit: BoxFit.fill,
-                        //       ),
-                        //     ),
-                        //   ),
-                        // placeholder: (context, url) =>
-                        //     Center(child: CircularProgressIndicator()),
-                        // errorWidget: (context, url, error) =>
-                        //     Icon(Icons.error),
-                        child: Container(
-                          height: 125,
-                          width: 125,
-                          decoration: BoxDecoration(
+                      Container(
+                        height: width * 0.4,
+                        width: width * 0.85,
+                        decoration: BoxDecoration(
                             image: DecorationImage(
                               image: AssetImage('assets/images.jpg'),
                               fit: BoxFit.fill,
                             ),
+                            borderRadius: BorderRadius.circular(10)),
+                      ),
+                      Positioned(
+                        top: 10,
+                        right: 15,
+                        child: Container(
+                          padding: EdgeInsets.all(5),
+                          child: Icon(Icons.favorite_border_rounded,),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            shape: BoxShape.circle
                           ),
                         ),
                       ),
-                      Container(
-                        height: 100,
-                        // padding: EdgeInsets.symmetric(vertical: 20),
-                        child: VerticalDivider(
-                          color: Colors.grey[400],
-                          thickness: 2,
-                        ),
-                      ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          Container(
-                            width: width / 4,
-                            child: AutoSizeText(
-                              'Rating',
-                              overflow: TextOverflow.ellipsis,
-                              maxLines: 1,
-                              style: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w600,
-                                  color: Color(0xFF24243e)),
+                      Positioned(
+                        top: 10,
+                        left: 10,
+                        child: Container(
+                          padding: EdgeInsets.all(5),
+                          child: Text(
+                            "Featured",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 16,
                             ),
                           ),
-                          SizedBox(
-                            height: 10,
+                          decoration: BoxDecoration(
+                            color: color.purple,
+                            borderRadius: BorderRadius.circular(10)
                           ),
-                          Row(
-                            children: [
-                              Icon(
-                                Icons.location_on_rounded,
-                                size: 17,
-                              ),
-                              Container(
-                                width: width / 5,
-                                margin: EdgeInsets.only(left: 0),
-                                child: Text(
-                                  'Karachi',
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              )
-                            ],
-                          )
-                        ],
+                        ),
                       ),
                     ],
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Container(
+                    margin: EdgeInsets.fromLTRB(10, 10, 0, 10),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Title',
+                          style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black),
+                        ),
+                        SizedBox(height: 5,),
+                        Text(
+                          'Rating',
+                          style: TextStyle(
+                              fontSize: 18,
+                              color: Colors.grey[700]),
+                        ),
+                      ],
+                    ),
                   ),
                 ],
               ),

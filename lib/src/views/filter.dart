@@ -24,6 +24,12 @@ class Filter extends StatelessWidget {
           backgroundColor: Colors.white,
           centerTitle: true,
           elevation: 0,
+          leading: IconButton(
+            icon: Icon(Icons.arrow_back,color: Colors.black,),
+            onPressed: (){
+              Navigator.pop(context);
+            },
+            ),
         ),
         body: SingleChildScrollView(
           child: Container(
@@ -37,6 +43,7 @@ class Filter extends StatelessWidget {
                     CheckboxListTile(value: filterViewModel.cusines, onChanged: (v){
                       filterViewModel.cusineSelection();
                     },
+                    activeColor: color.purple,
                     title: Text(
                       "Cusines",
                       style: TextStyle(
@@ -48,23 +55,26 @@ class Filter extends StatelessWidget {
                       child: Column(
                         children: [
                           CheckboxListTile(value: filterViewModel.listOfCusines[0], onChanged: (val)=>filterViewModel.cusineChanged(0),title: Text(
-                      "Karhai",
+                      "Biryani",
                       style: TextStyle(
                         fontSize: 18,
                       ),
-                    ),),
+                    ),
+                    activeColor: color.purple,),
                     CheckboxListTile(value: filterViewModel.listOfCusines[0], onChanged: (val)=>filterViewModel.cusineChanged(0),title: Text(
                       "Karhai",
                       style: TextStyle(
                         fontSize: 18,
                       ),
-                    ),),
+                    ),
+                    activeColor: color.purple,),
                     CheckboxListTile(value: filterViewModel.listOfCusines[0], onChanged:(val)=> filterViewModel.cusineChanged(0),title: Text(
-                      "Karhai",
+                      "Daal",
                       style: TextStyle(
                         fontSize: 18,
                       ),
-                    ),),
+                    ),
+                    activeColor: color.purple,),
                         ],
                       ),
                     ):Container(),
@@ -73,7 +83,8 @@ class Filter extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 20,
                       ),
-                    ),)
+                    ),
+                    activeColor: color.purple,)
                   ],
                 ),
               );
