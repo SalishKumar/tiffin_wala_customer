@@ -2,6 +2,7 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:provider/provider.dart';
 import 'package:tiffin_wala_customer/src/constants/color.dart' as color;
 import 'package:tiffin_wala_customer/src/constants/my_custom_textfield.dart';
@@ -84,6 +85,7 @@ class Home extends StatelessWidget {
                     style: TextStyle(color: Colors.black, fontSize: 18),
                   ),
                   onTap: () async {
+                    
                     await storage.deleteAll();
                     Navigator.pop(context);
                     Navigator.pushReplacementNamed(context, Login.routeName);
@@ -155,6 +157,7 @@ class Home extends StatelessWidget {
                               // Navigator.of(context).pushReplacementNamed(Filter.routeName);
                             },
                             hintText: "Search",
+                            label: "Search",
                             error: '',
                             prefix: Icons.search,
                             onValidation: () {
@@ -201,6 +204,7 @@ class Home extends StatelessWidget {
                               // Navigator.of(context).pushReplacementNamed(Filter.routeName);
                             },
                             hintText: "Search",
+                            label: "Search",
                             error: '',
                             prefix: Icons.search,
                             onValidation: () {
@@ -242,6 +246,7 @@ class Home extends StatelessWidget {
                               // Navigator.of(context).pushReplacementNamed(Filter.routeName);
                             },
                             hintText: "Search",
+                            label: "Search",
                             error: '',
                             prefix: Icons.search,
                             onValidation: () {

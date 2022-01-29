@@ -44,7 +44,8 @@ class ForgetPassword extends StatelessWidget {
                     controller: forgetPasswordViewModel.emailOrPassCon,
                     textInputType: TextInputType.emailAddress,
                     onPressed: () {},
-                    hintText: "Email/Phone",
+                    hintText: "abc@gmail.com/03xxxxxxxxx",
+                    label: 'Email/Phone',
                     error: forgetPasswordViewModel.emailOrPassError,
                     prefix: Icons.email,
                     onValidation: () {

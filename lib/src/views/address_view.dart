@@ -52,6 +52,7 @@ class AddressView extends StatelessWidget {
                       },
                         textInputType: TextInputType.text,
                         hintText: 'Address',
+                        label: 'Address',
                         prefix: Icons.location_pin,
                         error: addressViewModel.addressError,
                         controller: addressViewModel.addressCon=TextEditingController(text: data.address),
@@ -61,6 +62,7 @@ class AddressView extends StatelessWidget {
                         SizedBox(height: 20,),
                         MyCustomTextfieldWithoutSuffix(
                           size: 500,
+                          width: width*0.9,
                           lines: 1,
                         textInputType: TextInputType.text,
                         hintText: 'Unit/Floor',
@@ -73,6 +75,7 @@ class AddressView extends StatelessWidget {
                         SizedBox(height: 20,),
                         MyCustomTextfieldWithoutSuffix(
                           size: 500,
+                          width: width*0.9,
                           lines: 3,
                         textInputType: TextInputType.text,
                         hintText: 'Note to Rider (optional)',

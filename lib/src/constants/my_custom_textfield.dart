@@ -14,6 +14,7 @@ class MyCustomTextfield extends StatelessWidget {
     required this.controller,
     required this.onValidation,
     required this.size,
+    required this.label,
   }) : super(key: key);
 
   late TextInputType textInputType;
@@ -24,7 +25,7 @@ class MyCustomTextfield extends StatelessWidget {
   int size;
   IconData? prefix;
   IconData? suffix;
-  String error, hintText;
+  String error, hintText, label;
   TextEditingController controller;
 
   @override
@@ -78,7 +79,8 @@ class MyCustomTextfield extends StatelessWidget {
         ),
         hintText: hintText,
         errorText: error,
-        labelText: hintText,
+        errorMaxLines: 3,
+        labelText: label,
         labelStyle: TextStyle(color: color.purple)
       ),
     );

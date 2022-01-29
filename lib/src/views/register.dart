@@ -45,6 +45,7 @@ class Register extends StatelessWidget {
                     textInputType: TextInputType.name,
                     onPressed: () {},
                     hintText: "Name",
+                    label: "Name",
                     error: registerViewModel.nameError,
                     prefix: Icons.person,
                     onValidation: () {
@@ -59,7 +60,8 @@ class Register extends StatelessWidget {
                     controller: registerViewModel.emailCon,
                     textInputType: TextInputType.emailAddress,
                     onPressed: () {},
-                    hintText: "Email",
+                    hintText: "abc@gmail.com",
+                    label: "Email",
                     error: registerViewModel.emailError,
                     prefix: Icons.email,
                     onValidation: () {
@@ -74,7 +76,8 @@ class Register extends StatelessWidget {
                     controller: registerViewModel.phoneCon,
                     textInputType: TextInputType.phone,
                     onPressed: () {},
-                    hintText: "Phone",
+                    hintText: "03xxxxxxxxx",
+                    label: "Phone",
                     error: registerViewModel.phoneError,
                     prefix: Icons.phone,
                     onValidation: () {
@@ -95,6 +98,7 @@ class Register extends StatelessWidget {
                       registerViewModel.toggleSuffix1();
                     },
                     hintText: "Password",
+                    label: "Password",
                     error: registerViewModel.passError,
                     prefix: Icons.lock,
                     obscureText: registerViewModel.obsecure1,
@@ -114,6 +118,7 @@ class Register extends StatelessWidget {
                       registerViewModel.toggleSuffix2();
                     },
                     hintText: "Confirm Password",
+                    label: "Confirm Password",
                     error: registerViewModel.confirmPassError,
                     prefix: Icons.lock,
                     obscureText: registerViewModel.obsecure2,

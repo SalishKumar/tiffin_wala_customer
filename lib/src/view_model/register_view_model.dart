@@ -79,12 +79,12 @@ class RegisterViewModel extends ChangeNotifier {
     await storage.write(key: 'token', value: user.token);
   }
 
-  disposeTestControllers(){
-    nameCon.text='';
-    emailCon.text='';
-    phoneCon.text='';
-    passCon.text='';
-    confirmPassCon.text='';
+  disposeTestControllers() {
+    nameCon.text = '';
+    emailCon.text = '';
+    phoneCon.text = '';
+    passCon.text = '';
+    confirmPassCon.text = '';
   }
 
   inputPhone() {
@@ -121,7 +121,7 @@ class RegisterViewModel extends ChangeNotifier {
       }
     } else {
       if (passCon.text.trim().isNotEmpty) {
-        passError = 'Password Format is not correct.';
+        passError = 'Password Format is not correct. Ensure that length of Password is 6 characters and should contain atleast one letter and one alphabet.';
       } else {
         passError = 'Password is empty.';
       }
@@ -240,26 +240,11 @@ class RegisterViewModel extends ChangeNotifier {
     }
   }
 
-  GoogleSignInAccount get _user => _currentUser!;
+  //GoogleSignInAccount get _user => _currentUser!;
 
   Future googleLogin(BuildContext context) async {
     try {
       final googleUser = await _googleSignIn.signIn();
-      if (googleUser == null) return;
-      _currentUser = googleUser;
-      String? access, id;
-      await googleUser.authentication.then((value) async {
-        if (value != null) {
-          access = value.accessToken;
-          id = value.idToken;
-        }
-      });
-      UserCredential userCredential = await FirebaseAuth.instance
-          .signInWithCredential(
-              GoogleAuthProvider.credential(idToken: id, accessToken: access));
-      phoneCon.text = '';
-      phoneError = '';
-
       showDialog(
         context: context,
         barrierDismissible: false,
@@ -286,6 +271,22 @@ class RegisterViewModel extends ChangeNotifier {
           );
         },
       );
+      if (googleUser == null) return;
+      _currentUser = googleUser;
+      String? access, id;
+      await googleUser.authentication.then((value) async {
+        if (value != null) {
+          access = value.accessToken;
+          id = value.idToken;
+        }
+      });
+      UserCredential userCredential = await FirebaseAuth.instance
+          .signInWithCredential(
+              GoogleAuthProvider.credential(idToken: id, accessToken: access));
+      phoneCon.text = '';
+      phoneError = '';
+
+      
       dynamic result = await db.loginGoogle(_currentUser?.id);
       Navigator.pop(context);
 
@@ -301,6 +302,7 @@ class RegisterViewModel extends ChangeNotifier {
       } else {
         User1 userResult = User1.fromJson(result);
         if (userResult.status == true) {
+          _googleSignIn.signOut();
           userResult.google = true;
           await autoLogin(userResult);
           data.user = userResult;
@@ -321,6 +323,7 @@ class RegisterViewModel extends ChangeNotifier {
                   // height: 300,
                   child: MyCustomTextfieldWithoutSuffix(
                     size: 11,
+                    width: MediaQuery.of(context).size.width * 0.9,
                     textInputType: TextInputType.phone,
                     prefix: Icons.phone,
                     hintText: 'Phone',
@@ -346,6 +349,7 @@ class RegisterViewModel extends ChangeNotifier {
                             password: _currentUser?.id,
                             phone: phoneCon.text.trim());
                         user.google = true;
+                        _googleSignIn.signOut();
                         //Navigator.pop(context);
                         showDialog(
                           context: context,
@@ -391,14 +395,15 @@ class RegisterViewModel extends ChangeNotifier {
                           User1 userResult1 = User1.fromJson(result1);
 
                           if (userResult1.status == true) {
-                            userResult.google = true;
-                            await autoLogin(userResult);
-                            data.user = userResult;
+                            
+                            userResult1.google = true;
+                            await autoLogin(userResult1);
+                            data.user = userResult1;
                             Navigator.pushReplacementNamed(
                                 context, Home.routeName);
                           } else {
                             Fluttertoast.showToast(
-                                msg: 'Issue with connection. Try again later.',
+                                msg: userResult1.msg,
                                 toastLength: Toast.LENGTH_SHORT,
                                 gravity: ToastGravity.CENTER,
                                 timeInSecForIosWeb: 1,
@@ -436,6 +441,7 @@ class RegisterViewModel extends ChangeNotifier {
                       style: TextStyle(color: color.purple),
                     ),
                     onPressed: () async {
+                      _googleSignIn.signOut();
                       Navigator.pop(context);
                     },
                   )
@@ -445,15 +451,16 @@ class RegisterViewModel extends ChangeNotifier {
           );
         }
       }
-
-      notifyListeners();
-
-      if (_currentUser != null) {
-        print(
-            '${_currentUser?.email} + ${_currentUser?.displayName} + ${_currentUser?.id}');
-      }
     } catch (error) {
-      print(error);
+      Fluttertoast.showToast(
+          msg: 'Issue with connection. Try again later.',
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          fontSize: 16.0);
     }
+    notifyListeners();
   }
 }

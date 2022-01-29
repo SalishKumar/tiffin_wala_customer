@@ -48,7 +48,8 @@ class Login extends StatelessWidget {
                     controller: loginViewModel.emailCon,
                     textInputType: TextInputType.emailAddress,
                     onPressed: () {},
-                    hintText: "Email/Phone",
+                    hintText: "abc@gmail.com/03xxxxxxxxx",
+                    label: 'Email/Phone',
                     error: loginViewModel.emailError,
                     prefix: Icons.email,
                     onValidation: () {
@@ -69,6 +70,7 @@ class Login extends StatelessWidget {
                       loginViewModel.toggleSuffix();
                     },
                     hintText: "Password",
+                    label: "Password",
                     error: loginViewModel.passError,
                     prefix: Icons.lock,
                     obscureText: loginViewModel.obsecure,
