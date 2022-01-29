@@ -173,7 +173,10 @@ class LoginViewModel extends ChangeNotifier {
           );
         },
       );
-      if (googleUser == null) return;
+      if (googleUser == null) {
+        Navigator.pop(context);
+        return;
+      }
       _currentUser = googleUser;
       String? access, id;
       await googleUser.authentication.then((value) async {
@@ -188,7 +191,6 @@ class LoginViewModel extends ChangeNotifier {
       phoneCon.text = '';
       phoneError = '';
 
-      
       dynamic result = await db.loginGoogle(_currentUser?.id);
       Navigator.pop(context);
 

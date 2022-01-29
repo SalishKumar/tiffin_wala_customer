@@ -271,7 +271,10 @@ class RegisterViewModel extends ChangeNotifier {
           );
         },
       );
-      if (googleUser == null) return;
+      if (googleUser == null) {
+        Navigator.pop(context);
+        return;
+      }
       _currentUser = googleUser;
       String? access, id;
       await googleUser.authentication.then((value) async {
