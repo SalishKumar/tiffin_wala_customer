@@ -1,3 +1,4 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:tiffin_wala_customer/src/app_provider.dart';
 import 'package:tiffin_wala_customer/src/routes.dart';
@@ -11,8 +12,10 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Firebase.initializeApp();
     return const AppProvider(
         child:  MaterialApp(
+          debugShowCheckedModeBanner: false,
           onGenerateRoute: generateRoute,
           ),
     );

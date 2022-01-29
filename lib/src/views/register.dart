@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
+import 'package:tiffin_wala_customer/src/constants/logo.dart';
 import 'package:tiffin_wala_customer/src/view_model/login_view_model.dart';
 import 'package:tiffin_wala_customer/src/constants/color.dart' as color;
 import 'package:tiffin_wala_customer/src/constants/my_custom_textfield.dart';
@@ -30,16 +32,15 @@ class Register extends StatelessWidget {
       ),
       body: SingleChildScrollView(
         child: Container(
-          margin: EdgeInsets.symmetric(horizontal: width * 0.05),
+          margin: EdgeInsets.symmetric(horizontal: width * 0.05, vertical: 10),
           child: Consumer<RegisterViewModel>(
               builder: (context, registerViewModel, child) {
             return Container(
-              child:  Column(
+              child: Column(
                 children: [
-                  SizedBox(
-                    height: 200,
-                  ),
+                  MyLogo(),
                   MyCustomTextfield(
+                    size: 20,
                     controller: registerViewModel.nameCon,
                     textInputType: TextInputType.name,
                     onPressed: () {},
@@ -54,6 +55,7 @@ class Register extends StatelessWidget {
                     height: 20,
                   ),
                   MyCustomTextfield(
+                    size: 50,
                     controller: registerViewModel.emailCon,
                     textInputType: TextInputType.emailAddress,
                     onPressed: () {},
@@ -68,6 +70,7 @@ class Register extends StatelessWidget {
                     height: 20,
                   ),
                   MyCustomTextfield(
+                    size: 11,
                     controller: registerViewModel.phoneCon,
                     textInputType: TextInputType.phone,
                     onPressed: () {},
@@ -82,6 +85,7 @@ class Register extends StatelessWidget {
                     height: 20,
                   ),
                   MyCustomTextfield(
+                    size: 20,
                     onValidation: () {
                       registerViewModel.inputPass();
                     },
@@ -100,6 +104,7 @@ class Register extends StatelessWidget {
                     height: 20,
                   ),
                   MyCustomTextfield(
+                    size: 20,
                     onValidation: () {
                       registerViewModel.comparePass();
                     },
@@ -118,10 +123,12 @@ class Register extends StatelessWidget {
                     height: 40,
                   ),
                   InkWell(
-                    onTap: () {},
+                    onTap: () async {
+                      await registerViewModel.register(context);
+                    },
                     child: Center(
                         child: Container(
-                      width: width * 0.85,
+                      width: width * 0.9,
                       padding: EdgeInsets.all(15),
                       alignment: Alignment.center,
                       child: Text(
@@ -152,22 +159,23 @@ class Register extends StatelessWidget {
                   SizedBox(
                     height: 20,
                   ),
-                  Container(
-                    alignment: Alignment.center,
-                    child: SignInButton(
-                      Buttons.Google,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
+                  ElevatedButton.icon(
+                      onPressed: () {
+                        registerViewModel.googleLogin(context);
+                      },
+                      style: ElevatedButton.styleFrom(
+                          primary: Colors.white,
+                          onPrimary: Colors.black,
+                          minimumSize: Size(width * 0.9, 60),
+                          elevation: 5,),
+                      icon: FaIcon(
+                        FontAwesomeIcons.google,
+                        color: Colors.red,
                       ),
-                      padding: EdgeInsets.all(10),
-                      text: "Register with Google",
-                      onPressed: () {},
-                    ),
-                  ),
+                      label: Text('Sign Up with Google'),
+                      ),
                 ],
               ),
-
-
             );
           }),
         ),
@@ -189,6 +197,7 @@ class Register extends StatelessWidget {
                 "Login.",
                 style: TextStyle(
                     fontSize: 18,
+                    color: color.purple,
                     fontWeight: FontWeight.bold,
                     decoration: TextDecoration.underline),
               ),

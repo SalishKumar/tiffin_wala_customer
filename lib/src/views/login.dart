@@ -1,9 +1,14 @@
+// ignore_for_file: prefer_const_constructors
+
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
+import 'package:tiffin_wala_customer/src/constants/logo.dart';
 import 'package:tiffin_wala_customer/src/view_model/login_view_model.dart';
 import 'package:tiffin_wala_customer/src/constants/color.dart' as color;
 import 'package:tiffin_wala_customer/src/constants/my_custom_textfield.dart';
 import 'package:flutter_signin_button/flutter_signin_button.dart';
+import 'package:tiffin_wala_customer/src/views/forget_password.dart';
 import 'package:tiffin_wala_customer/src/views/home.dart';
 import 'package:tiffin_wala_customer/src/views/register.dart';
 
@@ -31,20 +36,19 @@ class Login extends StatelessWidget {
       ),
       body: SingleChildScrollView(
         child: Container(
-          margin: EdgeInsets.symmetric(horizontal: width * 0.05),
+          margin: EdgeInsets.symmetric(horizontal: width * 0.05, vertical: 10),
           child: Consumer<LoginViewModel>(
               builder: (context, loginViewModel, child) {
             return Container(
               child: Column(
                 children: [
-                  SizedBox(
-                    height: 200,
-                  ),
+                  Center(child: MyLogo()),
                   MyCustomTextfield(
+                    size: 50  ,
                     controller: loginViewModel.emailCon,
                     textInputType: TextInputType.emailAddress,
                     onPressed: () {},
-                    hintText: "Email",
+                    hintText: "Email/Phone",
                     error: loginViewModel.emailError,
                     prefix: Icons.email,
                     onValidation: () {
@@ -55,6 +59,7 @@ class Login extends StatelessWidget {
                     height: 20,
                   ),
                   MyCustomTextfield(
+                    size: 20,
                     onValidation: () {
                       loginViewModel.inputPass();
                     },
@@ -69,16 +74,29 @@ class Login extends StatelessWidget {
                     obscureText: loginViewModel.obsecure,
                     suffix: loginViewModel.suffix,
                   ),
+                  InkWell(
+                    onTap: (){
+                      Navigator.pushNamed(context, ForgetPassword.routeName);
+                    },
+                    child: Container(
+                      alignment: Alignment.centerRight,
+                      child: Text(
+                        "Forget Password? ",
+                        style: TextStyle(fontSize: 18, color: color.purple),
+                      ),
+                    ),
+                  ),
                   SizedBox(
-                    height: 40,
+                    height: 30,
                   ),
                   InkWell(
-                    onTap: () {
-                      Navigator.pushReplacementNamed(context, Home.routeName);
+                    onTap: () async {
+                      await loginViewModel.login(context);
                     },
                     child: Center(
                         child: Container(
-                      width: width * 0.85,
+                      width: width * 0.9,
+                      height: 60,
                       padding: EdgeInsets.all(15),
                       alignment: Alignment.center,
                       child: Text(
@@ -109,18 +127,24 @@ class Login extends StatelessWidget {
                   SizedBox(
                     height: 20,
                   ),
-                  Container(
-                    alignment: Alignment.center,
-                    child: SignInButton(
-                      Buttons.Google,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
+                  ElevatedButton.icon(
+                      onPressed: () {
+                        loginViewModel.googleLogin(context);
+                      },
+                      style: ElevatedButton.styleFrom(
+                          primary: Colors.white,
+                          onPrimary: Colors.black,
+                          minimumSize: Size(width * 0.9, 60),
+                          elevation: 5,),
+                      icon: FaIcon(
+                        FontAwesomeIcons.google,
+                        color: Colors.red,
                       ),
-                      padding: EdgeInsets.all(10),
-                      text: "Login with Google",
-                      onPressed: () {},
-                    ),
-                  ),
+                      label: Text('Login with Google'),
+                      ),
+                  SizedBox(
+                    height: 10,
+                  )
                 ],
               ),
             );
@@ -144,6 +168,7 @@ class Login extends StatelessWidget {
                 "Register.",
                 style: TextStyle(
                     fontSize: 18,
+                    color: color.purple,
                     fontWeight: FontWeight.bold,
                     decoration: TextDecoration.underline),
               ),

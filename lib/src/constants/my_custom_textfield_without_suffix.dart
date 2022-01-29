@@ -1,29 +1,25 @@
 import 'package:flutter/material.dart';
 import 'color.dart' as color;
 
-class MyCustomTextfield extends StatelessWidget {
-  MyCustomTextfield({
+class MyCustomTextfieldWithoutSuffix extends StatelessWidget {
+  MyCustomTextfieldWithoutSuffix({
     Key? key,
     required this.textInputType,
-    required this.onPressed,
-    this.obscureText = false,
     this.prefix,
-    this.suffix,
     required this.hintText,
     required this.error,
     required this.controller,
     required this.onValidation,
+    required this.lines,
     required this.size,
   }) : super(key: key);
 
   late TextInputType textInputType;
   late Function onPressed;
-  Function onValidation = () {};
-
-  bool obscureText = false;
   int size;
+  Function onValidation = () {};
+  int lines;
   IconData? prefix;
-  IconData? suffix;
   String error, hintText;
   TextEditingController controller;
 
@@ -32,26 +28,17 @@ class MyCustomTextfield extends StatelessWidget {
     return TextField(
       keyboardType: textInputType,
       controller: controller,
-      obscureText: obscureText,
-      maxLength: size,
-      // maxLines: maxLines,
       onChanged: (V) {
         onValidation();
       },
+      maxLength: size,
+      maxLines: lines,
       decoration: InputDecoration(
         prefixIcon: Icon(
           prefix,
           color: color.orange,
         ),
-        suffixIcon: GestureDetector(
-          onTap: () {
-            onPressed();
-          },
-          child: Icon(
-            suffix,
-            color: color.orange,
-          ),
-        ),
+        
         // contentPadding: EdgeInsets.symmetric(horizontal: 15),
 
         // filled: true,

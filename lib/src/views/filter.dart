@@ -61,14 +61,14 @@ class Filter extends StatelessWidget {
                       ),
                     ),
                     activeColor: color.purple,),
-                    CheckboxListTile(value: filterViewModel.listOfCusines[0], onChanged: (val)=>filterViewModel.cusineChanged(0),title: Text(
+                    CheckboxListTile(value: filterViewModel.listOfCusines[1], onChanged: (val)=>filterViewModel.cusineChanged(1),title: Text(
                       "Karhai",
                       style: TextStyle(
                         fontSize: 18,
                       ),
                     ),
                     activeColor: color.purple,),
-                    CheckboxListTile(value: filterViewModel.listOfCusines[0], onChanged:(val)=> filterViewModel.cusineChanged(0),title: Text(
+                    CheckboxListTile(value: filterViewModel.listOfCusines[2], onChanged:(val)=> filterViewModel.cusineChanged(2),title: Text(
                       "Daal",
                       style: TextStyle(
                         fontSize: 18,

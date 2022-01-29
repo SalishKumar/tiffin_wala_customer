@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "478700872426",
+    "project_id": "tiffin-wala-1d45a",
+    "storage_bucket": "tiffin-wala-1d45a.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:478700872426:android:8b2dd37581686a36fc2d93",
+        "android_client_info": {
+          "package_name": "com.example.tiffin_wala_customer"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "478700872426-tsca7mvn1mteveu6gt7ok2ofm2c1gm06.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.tiffin_wala_customer",
+            "certificate_hash": "35e86770eb9483013a18d3eef939b269bc51d1b5"
+          }
+        },
+        {
+          "client_id": "478700872426-2usp1oa34o8dfvhcud14jbbi3mou6o0c.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD81nf2KbyjqL1TCoIbvPI6GgtHsO2TMe8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "478700872426-2usp1oa34o8dfvhcud14jbbi3mou6o0c.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
