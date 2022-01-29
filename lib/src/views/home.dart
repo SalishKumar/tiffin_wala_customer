@@ -108,6 +108,7 @@ class Home extends StatelessWidget {
                 Tab(
                   child: AutoSizeText(
                     "One-Time Orders",
+                    maxLines: 1,
                     style: TextStyle(
                       color: Colors.white,
                     ),
@@ -116,6 +117,7 @@ class Home extends StatelessWidget {
                 Tab(
                   child: AutoSizeText(
                     "Subscription",
+                    maxLines: 1,
                     style: TextStyle(
                       color: Colors.white,
                     ),
@@ -124,6 +126,7 @@ class Home extends StatelessWidget {
                 Tab(
                   child: AutoSizeText(
                     "Custom Orders",
+                    maxLines: 1,
                     style: TextStyle(
                       color: Colors.white,
                     ),
