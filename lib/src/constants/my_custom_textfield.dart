@@ -53,7 +53,7 @@ class MyCustomTextfield extends StatelessWidget {
             color: color.orange,
           ),
         ),
-        // contentPadding: EdgeInsets.symmetric(horizontal: 15),
+        contentPadding: EdgeInsets.fromLTRB(40, 15, 12, 15),
 
         // filled: true,
         // fillColor: color.textFieldFillColor,

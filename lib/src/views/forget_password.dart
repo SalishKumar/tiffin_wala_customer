@@ -40,7 +40,7 @@ class ForgetPassword extends StatelessWidget {
                 children: [
                   Center(child: MyLogo()),
                   MyCustomTextfield(
-                    size: 20,
+                    size: 50,
                     controller: forgetPasswordViewModel.emailOrPassCon,
                     textInputType: TextInputType.emailAddress,
                     onPressed: () {},

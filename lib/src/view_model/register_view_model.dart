@@ -109,7 +109,7 @@ class RegisterViewModel extends ChangeNotifier {
     // print('alpha = '+ isValidText.toString());
     // bool isValidNumeric = isNumeric(passCon.text.trim());
     // print('numbers = '+ isValidNumeric.toString());
-    String pattern = r'^(?=.*[a-z])(?=.*[0-9])[a-z0-9]+$';
+    String pattern = r'^(?=.*[a-zA-Z])(?=.*[0-9])[a-z0-9A-Z]+$';
     RegExp regExp = new RegExp(pattern);
     bool isValid = regExp.hasMatch(passCon.text.trim());
     print(isValid);
