@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -99,21 +101,34 @@ class LoginViewModel extends ChangeNotifier {
             textColor: Colors.white,
             fontSize: 16.0);
       } else {
-        User1 userResult = User1.fromJson(result);
-        if (userResult.status == true) {
-          userResult.google = false;
-          await autoLogin(userResult);
-          data.user = userResult;
-          Navigator.pushReplacementNamed(context, Home.routeName);
-        } else if (userResult.status == false) {
-          Fluttertoast.showToast(
-              msg: userResult.msg,
-              toastLength: Toast.LENGTH_SHORT,
-              gravity: ToastGravity.CENTER,
-              timeInSecForIosWeb: 1,
-              backgroundColor: Colors.red,
-              textColor: Colors.white,
-              fontSize: 16.0);
+        if (result != null) {
+          if (result['Timeout'] == 'true') {
+            Fluttertoast.showToast(
+                msg: 'Your request has been timmed-out. Try again.',
+                toastLength: Toast.LENGTH_SHORT,
+                gravity: ToastGravity.CENTER,
+                timeInSecForIosWeb: 1,
+                backgroundColor: Colors.red,
+                textColor: Colors.white,
+                fontSize: 16.0);
+          } else {
+            User1 userResult = User1.fromJson(result);
+            if (userResult.status == true) {
+              userResult.google = false;
+              await autoLogin(userResult);
+              data.user = userResult;
+              Navigator.pushReplacementNamed(context, Home.routeName);
+            } else if (userResult.status == false) {
+              Fluttertoast.showToast(
+                  msg: userResult.msg,
+                  toastLength: Toast.LENGTH_SHORT,
+                  gravity: ToastGravity.CENTER,
+                  timeInSecForIosWeb: 1,
+                  backgroundColor: Colors.red,
+                  textColor: Colors.white,
+                  fontSize: 16.0);
+            }
+          }
         }
       }
     } else {
@@ -126,6 +141,7 @@ class LoginViewModel extends ChangeNotifier {
           textColor: Colors.white,
           fontSize: 16.0);
     }
+    return;
   }
 
   inputPhone() {
@@ -204,6 +220,17 @@ class LoginViewModel extends ChangeNotifier {
             textColor: Colors.white,
             fontSize: 16.0);
       } else {
+        if (result['Timeout'] == 'true') {
+          Fluttertoast.showToast(
+              msg: 'Your request has been timmed-out. Try again.',
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.CENTER,
+              timeInSecForIosWeb: 1,
+              backgroundColor: Colors.red,
+              textColor: Colors.white,
+              fontSize: 16.0);
+          return;
+        }
         User1 userResult = User1.fromJson(result);
         if (userResult.status == true) {
           _googleSignIn.signOut();
@@ -296,6 +323,18 @@ class LoginViewModel extends ChangeNotifier {
                               textColor: Colors.white,
                               fontSize: 16.0);
                         } else {
+                          if (result['Timeout'] == 'true') {
+                            Fluttertoast.showToast(
+                                msg:
+                                    'Your request has been timmed-out. Try again.',
+                                toastLength: Toast.LENGTH_SHORT,
+                                gravity: ToastGravity.CENTER,
+                                timeInSecForIosWeb: 1,
+                                backgroundColor: Colors.red,
+                                textColor: Colors.white,
+                                fontSize: 16.0);
+                            return;
+                          }
                           User1 userResult1 = User1.fromJson(result1);
 
                           if (userResult1.status == true) {

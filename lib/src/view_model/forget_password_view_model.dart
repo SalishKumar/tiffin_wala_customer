@@ -47,6 +47,17 @@ class ForgetPasswordViewModel extends ChangeNotifier {
           textColor: Colors.white,
           fontSize: 16.0);
     } else {
+      if (result['Timeout'] == 'true') {
+            Fluttertoast.showToast(
+                msg: 'Your request has been timmed-out. Try again.',
+                toastLength: Toast.LENGTH_SHORT,
+                gravity: ToastGravity.CENTER,
+                timeInSecForIosWeb: 1,
+                backgroundColor: Colors.red,
+                textColor: Colors.white,
+                fontSize: 16.0);
+                return;
+          }
       if (result['status'] == true) {
         emailOrPassCon.text = '';
         showDialog(

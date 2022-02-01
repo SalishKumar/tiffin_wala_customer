@@ -37,6 +37,7 @@ class MyCustomTextfieldWithoutSuffix extends StatelessWidget {
             onChanged: (V) {
               onValidation();
             },
+            autofocus: false,
             maxLength: size,
             maxLines: lines,
             decoration: InputDecoration(

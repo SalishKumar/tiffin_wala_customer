@@ -121,7 +121,8 @@ class RegisterViewModel extends ChangeNotifier {
       }
     } else {
       if (passCon.text.trim().isNotEmpty) {
-        passError = 'Password Format is not correct. Ensure that length of Password is 6 characters and should contain atleast one letter and one alphabet.';
+        passError =
+            'Password Format is not correct. Ensure that length of Password is 6 characters and should contain atleast one letter and one alphabet.';
       } else {
         passError = 'Password is empty.';
       }
@@ -200,9 +201,23 @@ class RegisterViewModel extends ChangeNotifier {
         },
       );
       dynamic result = await db.register(user.toJSON());
+
       Navigator.pop(context);
       if (result != null) {
+        if (result['Timeout'] == 'true') {
+          Fluttertoast.showToast(
+              msg: 'Your request has been timmed-out. Try again.',
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.CENTER,
+              timeInSecForIosWeb: 1,
+              backgroundColor: Colors.red,
+              textColor: Colors.white,
+              fontSize: 16.0);
+          return;
+        }
+
         User1 userResult = User1.fromJson(result);
+        print(userResult.status);
         if (userResult.status == true) {
           userResult.google = false;
           await autoLogin(userResult);
@@ -217,6 +232,7 @@ class RegisterViewModel extends ChangeNotifier {
               backgroundColor: Colors.red,
               textColor: Colors.white,
               fontSize: 16.0);
+          return;
         }
       } else {
         Fluttertoast.showToast(
@@ -227,6 +243,7 @@ class RegisterViewModel extends ChangeNotifier {
             backgroundColor: Colors.red,
             textColor: Colors.white,
             fontSize: 16.0);
+        return;
       }
     } else {
       Fluttertoast.showToast(
@@ -237,6 +254,7 @@ class RegisterViewModel extends ChangeNotifier {
           backgroundColor: Colors.red,
           textColor: Colors.white,
           fontSize: 16.0);
+      return;
     }
   }
 
@@ -289,7 +307,6 @@ class RegisterViewModel extends ChangeNotifier {
       phoneCon.text = '';
       phoneError = '';
 
-      
       dynamic result = await db.loginGoogle(_currentUser?.id);
       Navigator.pop(context);
 
@@ -303,6 +320,17 @@ class RegisterViewModel extends ChangeNotifier {
             textColor: Colors.white,
             fontSize: 16.0);
       } else {
+        if (result['Timeout'] == 'true') {
+          Fluttertoast.showToast(
+              msg: 'Your request has been timmed-out. Try again.',
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.CENTER,
+              timeInSecForIosWeb: 1,
+              backgroundColor: Colors.red,
+              textColor: Colors.white,
+              fontSize: 16.0);
+          return;
+        }
         User1 userResult = User1.fromJson(result);
         if (userResult.status == true) {
           _googleSignIn.signOut();
@@ -395,10 +423,21 @@ class RegisterViewModel extends ChangeNotifier {
                               textColor: Colors.white,
                               fontSize: 16.0);
                         } else {
+                          if (result['Timeout'] == 'true') {
+                            Fluttertoast.showToast(
+                                msg:
+                                    'Your request has been timmed-out. Try again.',
+                                toastLength: Toast.LENGTH_SHORT,
+                                gravity: ToastGravity.CENTER,
+                                timeInSecForIosWeb: 1,
+                                backgroundColor: Colors.red,
+                                textColor: Colors.white,
+                                fontSize: 16.0);
+                            return;
+                          }
                           User1 userResult1 = User1.fromJson(result1);
 
                           if (userResult1.status == true) {
-                            
                             userResult1.google = true;
                             await autoLogin(userResult1);
                             data.user = userResult1;

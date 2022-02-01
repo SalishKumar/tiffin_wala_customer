@@ -35,6 +35,7 @@ class MyCustomTextfield extends StatelessWidget {
       controller: controller,
       obscureText: obscureText,
       maxLength: size,
+      autofocus: false,
       // maxLines: maxLines,
       onChanged: (V) {
         onValidation();
