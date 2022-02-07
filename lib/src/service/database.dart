@@ -125,4 +125,26 @@ class Database {
       return null;
     }
   }
+
+  Future verify(Map<String, dynamic> map) async {
+    try {
+      print(endpoint.base + endpoint.signup + endpoint.verify);
+      dynamic response = await dio.get(
+          endpoint.base + endpoint.signup + endpoint.verify, queryParameters: map);
+      print(response.data);
+      if (response.statusCode != 200) {
+        return null;
+      }
+      return response.data;
+    } on DioError catch (e) {
+      if (e.type == DioErrorType.connectTimeout ||
+          e.type == DioErrorType.receiveTimeout) {
+        print(e.type);
+        Map<String, dynamic> map = {'Timeout': 'true'};
+        return map;
+      }
+      print(e.toString());
+      return null;
+    }
+  }
 }

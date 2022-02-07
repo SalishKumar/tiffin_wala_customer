@@ -19,6 +19,8 @@ class RegisterViewModel extends ChangeNotifier {
   TextEditingController phoneCon = TextEditingController();
   TextEditingController passCon = TextEditingController();
   TextEditingController confirmPassCon = TextEditingController();
+  TextEditingController codePhone = TextEditingController();
+  TextEditingController codeemail = TextEditingController();
   String nameError = '';
   String emailError = '';
   String phoneError = '';
@@ -200,7 +202,12 @@ class RegisterViewModel extends ChangeNotifier {
           );
         },
       );
-      dynamic result = await db.register(user.toJSON());
+
+      dynamic result = await db.verify({
+        'customer_email': user.email!.trim(),
+        'customer_phone': user.phone,
+        'signup_method': 'normal'
+      });
 
       Navigator.pop(context);
       if (result != null) {
@@ -216,16 +223,234 @@ class RegisterViewModel extends ChangeNotifier {
           return;
         }
 
-        User1 userResult = User1.fromJson(result);
-        print(userResult.status);
-        if (userResult.status == true) {
-          userResult.google = false;
-          await autoLogin(userResult);
-          data.user = userResult;
-          Navigator.pushReplacementNamed(context, Home.routeName);
-        } else if (userResult.status == false) {
+        //User1 userResult = User1.fromJson(result);
+        bool status = result['status'];
+        String msg = result['message'];
+
+        print(status);
+        if (status == true) {
+          // userResult.google = false;
+          // await autoLogin(userResult);
+          // data.user = userResult;
+          // Navigator.pushReplacementNamed(context, Home.routeName);
+          String phone = result['code_for_phone'].toString();
+          String email = result['code_for_email'].toString();
           Fluttertoast.showToast(
-              msg: userResult.msg,
+              msg: msg,
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.CENTER,
+              timeInSecForIosWeb: 1,
+              backgroundColor: Colors.green,
+              textColor: Colors.white,
+              fontSize: 16.0);
+          showDialog(
+            context: context,
+            barrierDismissible: false,
+            builder: (BuildContext context) {
+              return SizedBox(
+                height: MediaQuery.of(context).size.height * 0.5,
+                child: AlertDialog(
+                  elevation: 0,
+                  title: Text(
+                    'Verification',
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  ),
+                  content: Container(
+                    // width: MediaQuery.of(context).size.width * 0.6,
+                    height: MediaQuery.of(context).size.height * 0.3,
+                    child: Column(
+                      children: [
+                        Text(
+                          msg,
+                          style: TextStyle(fontSize: 16),
+                        ),
+                        SizedBox(
+                          height: 20,
+                        ),
+                        MyCustomTextfieldWithoutSuffix(
+                          size: 6,
+                          width: MediaQuery.of(context).size.width * 0.9,
+                          textInputType: TextInputType.number,
+                          prefix: Icons.phone,
+                          hintText: 'Code For Phone',
+                          error: '',
+                          controller: codePhone,
+                          lines: 1,
+                          onValidation: () {},
+                        ),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        MyCustomTextfieldWithoutSuffix(
+                          size: 6,
+                          width: MediaQuery.of(context).size.width * 0.9,
+                          textInputType: TextInputType.number,
+                          prefix: Icons.email,
+                          hintText: 'Code For Email',
+                          error: '',
+                          controller: codeemail,
+                          lines: 1,
+                          onValidation: () {},
+                        ),
+                      ],
+                    ),
+                  ),
+                  actions: [
+                    TextButton(
+                      child: Text(
+                        "OK",
+                        style: TextStyle(color: color.purple),
+                      ),
+                      onPressed: () async {
+                        if (codePhone.text.trim().isNotEmpty &&
+                            codeemail.text.trim().isNotEmpty) {
+                          if (codePhone.text.trim() == phone) {
+                            if (codeemail.text.trim() == email) {
+                              User1 user = User1(
+                                  name: nameCon.text,
+                                  email: emailCon.text,
+                                  phone: phoneCon.text,
+                                  password: passCon.text);
+                              user.google = false;
+                              showDialog(
+                                context: context,
+                                barrierDismissible: false,
+                                builder: (BuildContext context) {
+                                  return Dialog(
+                                    backgroundColor: Colors.transparent,
+                                    elevation: 0,
+                                    child: Container(
+                                      width: MediaQuery.of(context).size.width *
+                                          0.6,
+                                      height: 300,
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          CircularProgressIndicator(
+                                            color: color.purple,
+                                          ),
+                                          SizedBox(
+                                            height: 10,
+                                          ),
+                                          Text("Loading"),
+                                        ],
+                                      ),
+                                    ),
+                                  );
+                                },
+                              );
+                              dynamic res = await db.register(user.toJSON());
+                              Navigator.pop(context);
+                              //Navigator.pop(context);
+                              if (result != null) {
+                                if (result['Timeout'] == 'true') {
+                                  Fluttertoast.showToast(
+                                      msg:
+                                          'Your request has been timmed-out. Try again.',
+                                      toastLength: Toast.LENGTH_SHORT,
+                                      gravity: ToastGravity.CENTER,
+                                      timeInSecForIosWeb: 1,
+                                      backgroundColor: Colors.red,
+                                      textColor: Colors.white,
+                                      fontSize: 16.0);
+                                  return;
+                                }
+
+                                User1 userResult = User1.fromJson(res);
+                                if (userResult.status) {
+                                  userResult.google = false;
+                                  await autoLogin(userResult);
+                                  data.user = userResult;
+                                  Navigator.pop(context);
+                                  codePhone.text = '';
+                                  codeemail.text = '';
+                                  Navigator.pushReplacementNamed(
+                                      context, Home.routeName);
+                                } else {
+                                  Fluttertoast.showToast(
+                                      msg: userResult.msg,
+                                      toastLength: Toast.LENGTH_SHORT,
+                                      gravity: ToastGravity.CENTER,
+                                      timeInSecForIosWeb: 1,
+                                      backgroundColor: Colors.red,
+                                      textColor: Colors.white,
+                                      fontSize: 16.0);
+                                  return;
+                                }
+                              } else {
+                                Fluttertoast.showToast(
+                                    msg:
+                                        'Issue with connection. Try again later.',
+                                    toastLength: Toast.LENGTH_SHORT,
+                                    gravity: ToastGravity.CENTER,
+                                    timeInSecForIosWeb: 1,
+                                    backgroundColor: Colors.red,
+                                    textColor: Colors.white,
+                                    fontSize: 16.0);
+                                return;
+                              }
+                            } else {
+                              Fluttertoast.showToast(
+                                  msg: 'Code for email does not match.',
+                                  toastLength: Toast.LENGTH_SHORT,
+                                  gravity: ToastGravity.CENTER,
+                                  timeInSecForIosWeb: 1,
+                                  backgroundColor: Colors.red,
+                                  textColor: Colors.white,
+                                  fontSize: 16.0);
+                            }
+                          } else {
+                            Fluttertoast.showToast(
+                                msg: 'Code for phone does not match.',
+                                toastLength: Toast.LENGTH_SHORT,
+                                gravity: ToastGravity.CENTER,
+                                timeInSecForIosWeb: 1,
+                                backgroundColor: Colors.red,
+                                textColor: Colors.white,
+                                fontSize: 16.0);
+                          }
+                        } else {
+                          if (codePhone.text.trim().isEmpty) {
+                            Fluttertoast.showToast(
+                                msg: 'Code for phone is empty.',
+                                toastLength: Toast.LENGTH_SHORT,
+                                gravity: ToastGravity.CENTER,
+                                timeInSecForIosWeb: 1,
+                                backgroundColor: Colors.red,
+                                textColor: Colors.white,
+                                fontSize: 16.0);
+                          } else if (codeemail.text.trim().isEmpty) {
+                            Fluttertoast.showToast(
+                                msg: 'Code for email is empty.',
+                                toastLength: Toast.LENGTH_SHORT,
+                                gravity: ToastGravity.CENTER,
+                                timeInSecForIosWeb: 1,
+                                backgroundColor: Colors.red,
+                                textColor: Colors.white,
+                                fontSize: 16.0);
+                          }
+                        }
+                      },
+                    ),
+                    TextButton(
+                      child: Text(
+                        "Cancel",
+                        style: TextStyle(color: color.purple),
+                      ),
+                      onPressed: () async {
+                        Navigator.pop(context);
+                        return;
+                      },
+                    )
+                  ],
+                ),
+              );
+            },
+          );
+        } else if (status == false) {
+          Fluttertoast.showToast(
+              msg: msg,
               toastLength: Toast.LENGTH_SHORT,
               gravity: ToastGravity.CENTER,
               timeInSecForIosWeb: 1,
@@ -409,10 +634,15 @@ class RegisterViewModel extends ChangeNotifier {
                           },
                         );
 
-                        dynamic result1 =
-                            await db.registerGoogle(user.toJSON());
+                        // dynamic result1 =
+                        //     await db.registerGoogle(user.toJSON());
+                        print('*');
+                        dynamic result1 = await db.verify({
+                          'customer_phone': user.phone,
+                          'signup_method': 'google'
+                        });
                         Navigator.pop(context);
-                        Navigator.pop(context);
+                        //Navigator.pop(context);
                         if (result1 == null) {
                           Fluttertoast.showToast(
                               msg: 'Issue with connection. Try again later.',
@@ -423,7 +653,7 @@ class RegisterViewModel extends ChangeNotifier {
                               textColor: Colors.white,
                               fontSize: 16.0);
                         } else {
-                          if (result['Timeout'] == 'true') {
+                          if (result1['Timeout'] == 'true') {
                             Fluttertoast.showToast(
                                 msg:
                                     'Your request has been timmed-out. Try again.',
@@ -435,17 +665,228 @@ class RegisterViewModel extends ChangeNotifier {
                                 fontSize: 16.0);
                             return;
                           }
-                          User1 userResult1 = User1.fromJson(result1);
+                          //User1 userResult1 = User1.fromJson(result1);
+                          bool status = result1['status'];
+                          String msg = result1['message'];
 
-                          if (userResult1.status == true) {
-                            userResult1.google = true;
-                            await autoLogin(userResult1);
-                            data.user = userResult1;
-                            Navigator.pushReplacementNamed(
-                                context, Home.routeName);
+                          if (status == true) {
+                            // userResult1.google = true;
+                            // await autoLogin(userResult1);
+                            // data.user = userResult1;
+                            // Navigator.pushReplacementNamed(
+                            //     context, Home.routeName);
+                            String phone = result1['code_for_phone'].toString();
+                            Fluttertoast.showToast(
+                                msg: msg,
+                                toastLength: Toast.LENGTH_SHORT,
+                                gravity: ToastGravity.CENTER,
+                                timeInSecForIosWeb: 1,
+                                backgroundColor: Colors.green,
+                                textColor: Colors.white,
+                                fontSize: 16.0);
+                            showDialog(
+                              context: context,
+                              barrierDismissible: false,
+                              builder: (BuildContext context) {
+                                return SizedBox(
+                                  height:
+                                      MediaQuery.of(context).size.height * 0.5,
+                                  child: AlertDialog(
+                                    elevation: 0,
+                                    title: Text(
+                                      'Verification',
+                                      style: TextStyle(
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                    content: Container(
+                                      // width: MediaQuery.of(context).size.width * 0.6,
+                                      height:
+                                          MediaQuery.of(context).size.height *
+                                              0.2,
+                                      child: Column(
+                                        children: [
+                                          Text(
+                                            msg,
+                                            style: TextStyle(fontSize: 16),
+                                          ),
+                                          SizedBox(
+                                            height: 20,
+                                          ),
+                                          MyCustomTextfieldWithoutSuffix(
+                                            size: 6,
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.9,
+                                            textInputType: TextInputType.number,
+                                            prefix: Icons.phone,
+                                            hintText: 'Code For Phone',
+                                            error: '',
+                                            controller: codePhone,
+                                            lines: 1,
+                                            onValidation: () {},
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    actions: [
+                                      TextButton(
+                                        child: Text(
+                                          "OK",
+                                          style: TextStyle(color: color.purple),
+                                        ),
+                                        onPressed: () async {
+                                          if (codePhone.text
+                                              .trim()
+                                              .isNotEmpty) {
+                                            if (codePhone.text.trim() ==
+                                                phone) {
+                                              user.google = true;
+                                              showDialog(
+                                                context: context,
+                                                barrierDismissible: false,
+                                                builder:
+                                                    (BuildContext context) {
+                                                  return Dialog(
+                                                    backgroundColor:
+                                                        Colors.transparent,
+                                                    elevation: 0,
+                                                    child: Container(
+                                                      width:
+                                                          MediaQuery.of(context)
+                                                                  .size
+                                                                  .width *
+                                                              0.6,
+                                                      height: 300,
+                                                      child: Column(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .center,
+                                                        children: [
+                                                          CircularProgressIndicator(
+                                                            color: color.purple,
+                                                          ),
+                                                          SizedBox(
+                                                            height: 10,
+                                                          ),
+                                                          Text("Loading"),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  );
+                                                },
+                                              );
+                                              dynamic res = await db
+                                                  .register(user.toJSON());
+                                              Navigator.pop(context);
+                                              //Navigator.pop(context);
+                                              if (result != null) {
+                                                if (result['Timeout'] ==
+                                                    'true') {
+                                                  Fluttertoast.showToast(
+                                                      msg:
+                                                          'Your request has been timmed-out. Try again.',
+                                                      toastLength:
+                                                          Toast.LENGTH_SHORT,
+                                                      gravity:
+                                                          ToastGravity.CENTER,
+                                                      timeInSecForIosWeb: 1,
+                                                      backgroundColor:
+                                                          Colors.red,
+                                                      textColor: Colors.white,
+                                                      fontSize: 16.0);
+                                                  return;
+                                                }
+
+                                                User1 userResult =
+                                                    User1.fromJson(res);
+                                                if (userResult.status) {
+                                                  userResult.google = true;
+                                                  await autoLogin(userResult);
+                                                  data.user = userResult;
+                                                  Navigator.pop(context);
+                                                  codePhone.text = '';
+
+                                                  Navigator.pop(context);
+                                                  Navigator
+                                                      .pushReplacementNamed(
+                                                          context,
+                                                          Home.routeName);
+                                                } else {
+                                                  Fluttertoast.showToast(
+                                                      msg: userResult.msg,
+                                                      toastLength:
+                                                          Toast.LENGTH_SHORT,
+                                                      gravity:
+                                                          ToastGravity.CENTER,
+                                                      timeInSecForIosWeb: 1,
+                                                      backgroundColor:
+                                                          Colors.red,
+                                                      textColor: Colors.white,
+                                                      fontSize: 16.0);
+                                                  return;
+                                                }
+                                              } else {
+                                                Fluttertoast.showToast(
+                                                    msg:
+                                                        'Issue with connection. Try again later.',
+                                                    toastLength:
+                                                        Toast.LENGTH_SHORT,
+                                                    gravity:
+                                                        ToastGravity.CENTER,
+                                                    timeInSecForIosWeb: 1,
+                                                    backgroundColor: Colors.red,
+                                                    textColor: Colors.white,
+                                                    fontSize: 16.0);
+                                                return;
+                                              }
+                                            } else {
+                                              Fluttertoast.showToast(
+                                                  msg:
+                                                      'Code for phone does not match.',
+                                                  toastLength:
+                                                      Toast.LENGTH_SHORT,
+                                                  gravity: ToastGravity.CENTER,
+                                                  timeInSecForIosWeb: 1,
+                                                  backgroundColor: Colors.red,
+                                                  textColor: Colors.white,
+                                                  fontSize: 16.0);
+                                            }
+                                          } else {
+                                            if (codePhone.text.trim().isEmpty) {
+                                              Fluttertoast.showToast(
+                                                  msg:
+                                                      'Code for phone is empty.',
+                                                  toastLength:
+                                                      Toast.LENGTH_SHORT,
+                                                  gravity: ToastGravity.CENTER,
+                                                  timeInSecForIosWeb: 1,
+                                                  backgroundColor: Colors.red,
+                                                  textColor: Colors.white,
+                                                  fontSize: 16.0);
+                                            }
+                                          }
+                                        },
+                                      ),
+                                      TextButton(
+                                        child: Text(
+                                          "Cancel",
+                                          style: TextStyle(color: color.purple),
+                                        ),
+                                        onPressed: () async {
+                                          Navigator.pop(context);
+                                          return;
+                                        },
+                                      )
+                                    ],
+                                  ),
+                                );
+                              },
+                            );
                           } else {
                             Fluttertoast.showToast(
-                                msg: userResult1.msg,
+                                msg: msg,
                                 toastLength: Toast.LENGTH_SHORT,
                                 gravity: ToastGravity.CENTER,
                                 timeInSecForIosWeb: 1,
