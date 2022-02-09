@@ -16,8 +16,21 @@ class Database {
 
     dio = Dio(options);
   }
+
+  timeoutSettings(int x){
+    BaseOptions options = BaseOptions(
+        baseUrl: endpoint.base,
+        receiveDataWhenStatusError: true,
+        connectTimeout: x * 1000, // 60 seconds
+        receiveTimeout: x * 1000 // 60 seconds
+        );
+
+    dio = Dio(options);
+  }
+
   Future register(Map<String, dynamic> map) async {
     try {
+      timeoutSettings(5);
       dynamic response =
           await dio.post(endpoint.base + endpoint.signup, data: map);
       print(response.data);
@@ -39,6 +52,7 @@ class Database {
 
   Future login(String email, String pass) async {
     try {
+      timeoutSettings(5);
       print(endpoint.base + endpoint.signup + email + '/' + pass);
       dynamic response = await dio.get(endpoint.base +
           endpoint.signup +
@@ -65,6 +79,7 @@ class Database {
 
   Future registerGoogle(Map<String, dynamic> map) async {
     try {
+      timeoutSettings(5);
       dynamic response =
           await dio.post(endpoint.base + endpoint.signup, data: map);
       print(response.data);
@@ -86,6 +101,7 @@ class Database {
 
   Future loginGoogle(String? token) async {
     try {
+      timeoutSettings(5);
       dynamic response = await dio.get(
           endpoint.base + endpoint.signup + '?google_auth_token=' + token!);
       print(response.data);
@@ -107,6 +123,7 @@ class Database {
 
   Future forget(String emailOrPhone) async {
     try {
+      timeoutSettings(5);
       dynamic response = await dio.get(
           endpoint.base + endpoint.signup + endpoint.forget + emailOrPhone);
       print(response.data);
@@ -128,6 +145,7 @@ class Database {
 
   Future verify(Map<String, dynamic> map) async {
     try {
+      timeoutSettings(15);
       print(endpoint.base + endpoint.signup + endpoint.verify);
       dynamic response = await dio.get(
           endpoint.base + endpoint.signup + endpoint.verify, queryParameters: map);

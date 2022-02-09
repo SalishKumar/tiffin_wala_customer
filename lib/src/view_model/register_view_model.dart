@@ -124,7 +124,7 @@ class RegisterViewModel extends ChangeNotifier {
     } else {
       if (passCon.text.trim().isNotEmpty) {
         passError =
-            'Password Format is not correct. Ensure that length of Password is 6 characters and should contain atleast one letter and one alphabet.';
+            'Password Format is not correct. Ensure that length of Password is 6 characters and should contain atleast one alphabet and one number.';
       } else {
         passError = 'Password is empty.';
       }
@@ -392,7 +392,7 @@ class RegisterViewModel extends ChangeNotifier {
                               }
                             } else {
                               Fluttertoast.showToast(
-                                  msg: 'Code for email does not match.',
+                                  msg: 'Code(s) does not match.',
                                   toastLength: Toast.LENGTH_SHORT,
                                   gravity: ToastGravity.CENTER,
                                   timeInSecForIosWeb: 1,
@@ -402,7 +402,7 @@ class RegisterViewModel extends ChangeNotifier {
                             }
                           } else {
                             Fluttertoast.showToast(
-                                msg: 'Code for phone does not match.',
+                                msg: 'Code(s) does not match.',
                                 toastLength: Toast.LENGTH_SHORT,
                                 gravity: ToastGravity.CENTER,
                                 timeInSecForIosWeb: 1,
@@ -413,7 +413,7 @@ class RegisterViewModel extends ChangeNotifier {
                         } else {
                           if (codePhone.text.trim().isEmpty) {
                             Fluttertoast.showToast(
-                                msg: 'Code for phone is empty.',
+                                msg: 'Code(s) are empty.',
                                 toastLength: Toast.LENGTH_SHORT,
                                 gravity: ToastGravity.CENTER,
                                 timeInSecForIosWeb: 1,
@@ -422,7 +422,7 @@ class RegisterViewModel extends ChangeNotifier {
                                 fontSize: 16.0);
                           } else if (codeemail.text.trim().isEmpty) {
                             Fluttertoast.showToast(
-                                msg: 'Code for email is empty.',
+                                msg: 'Code(s) are empty.',
                                 toastLength: Toast.LENGTH_SHORT,
                                 gravity: ToastGravity.CENTER,
                                 timeInSecForIosWeb: 1,
@@ -844,7 +844,7 @@ class RegisterViewModel extends ChangeNotifier {
                                             } else {
                                               Fluttertoast.showToast(
                                                   msg:
-                                                      'Code for phone does not match.',
+                                                      'Code does not match.',
                                                   toastLength:
                                                       Toast.LENGTH_SHORT,
                                                   gravity: ToastGravity.CENTER,
@@ -857,7 +857,7 @@ class RegisterViewModel extends ChangeNotifier {
                                             if (codePhone.text.trim().isEmpty) {
                                               Fluttertoast.showToast(
                                                   msg:
-                                                      'Code for phone is empty.',
+                                                      'Code is empty.',
                                                   toastLength:
                                                       Toast.LENGTH_SHORT,
                                                   gravity: ToastGravity.CENTER,

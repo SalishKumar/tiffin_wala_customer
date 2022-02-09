@@ -9,7 +9,7 @@ import 'package:tiffin_wala_customer/src/views/login.dart';
 
 class SplashScreen extends StatefulWidget {
   static const routeName = '/';
-  const SplashScreen({ Key? key }) : super(key: key);
+  const SplashScreen({Key? key}) : super(key: key);
 
   @override
   _SplashScreenState createState() => _SplashScreenState();
@@ -21,58 +21,56 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   void initState() {
-    Timer(Duration(seconds: 5), () async {
-      Map<String, String> allValues = await storage.readAll();
-      print(allValues);
-      if(allValues==null){
-        route=false;
-        setState(() {
-          
-        });
-      }else{
-        User1 user = User1(name: allValues['name'],
-        email: allValues['email'],
-        phone: allValues['phone'],
-        password: allValues['password']);
-        if(allValues['google'] == 'true'){
-          user.google=true;
-        }else{
-          user.google=false;
+    try {
+      Timer(Duration(seconds: 5), () async {
+        Map<String, String> allValues = await storage.readAll();
+        print(allValues);
+        if (allValues == null) {
+          route = false;
+          setState(() {});
+        } else {
+          User1 user = User1(
+              name: allValues['name'],
+              email: allValues['email'],
+              phone: allValues['phone'],
+              password: allValues['password']);
+          if (allValues['google'] == 'true') {
+            user.google = true;
+          } else {
+            user.google = false;
+          }
+          user.token = allValues['token']!;
+          route = true;
+          setState(() {});
         }
-        user.token = allValues['token']!;
-        route = true;
-        setState(() {
-          
-        });
-      }
-      
-    });
-    setState(() {
-      
-    }); 
+      });
+      setState(() {});
+    } catch (e) {}
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     print(route);
-    return SplashScreenView(
-      navigateRoute: route?const Home():const Login(),
-      duration: 6000,
-      imageSize: 350,
-      imageSrc: "assets/logo.png",
-      text: "Tiffin Wala",
-      textType: TextType.ColorizeAnimationText,
-      textStyle: TextStyle(
-        fontSize: 40.0,
+    return Center(
+      child: SplashScreenView(
+        navigateRoute: route ? const Home() : const Login(),
+        duration: 6000,
+        imageSize: 350,
+        imageSrc: "assets/logo.png",
+        text: "Tiffin Wala",
+        textType: TextType.ColorizeAnimationText,
+        textStyle: TextStyle(
+          fontSize: 40.0,
+        ),
+        colors: [
+          color.purple,
+          Colors.orange,
+          color.purple,
+          Colors.orange,
+        ],
+        backgroundColor: Colors.white,
       ),
-      colors: [
-        color.purple,
-        Colors.orange,
-        color.purple,
-        Colors.orange,
-      ],
-      backgroundColor: Colors.white,
     );
   }
 }

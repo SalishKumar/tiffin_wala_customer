@@ -520,7 +520,7 @@ class LoginViewModel extends ChangeNotifier {
                                             } else {
                                               Fluttertoast.showToast(
                                                   msg:
-                                                      'Code for phone does not match.',
+                                                      'Code does not match.',
                                                   toastLength:
                                                       Toast.LENGTH_SHORT,
                                                   gravity: ToastGravity.CENTER,
@@ -533,7 +533,7 @@ class LoginViewModel extends ChangeNotifier {
                                             if (codePhone.text.trim().isEmpty) {
                                               Fluttertoast.showToast(
                                                   msg:
-                                                      'Code for phone is empty.',
+                                                      'Code is empty.',
                                                   toastLength:
                                                       Toast.LENGTH_SHORT,
                                                   gravity: ToastGravity.CENTER,
