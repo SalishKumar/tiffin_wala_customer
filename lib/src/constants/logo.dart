@@ -9,8 +9,8 @@ class MyLogo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 350,
-      height: 350,
+      width: 300,
+      height: 300,
       child: Image.asset("assets/logo.png"),
       
     );

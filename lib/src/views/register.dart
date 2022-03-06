@@ -38,7 +38,10 @@ class Register extends StatelessWidget {
             return Container(
               child: Column(
                 children: [
-                  Center(child: MyLogo()),
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(0, 40, 0, 50),
+                    child: Center(child: MyLogo()),
+                  ),
                   MyCustomTextfield(
                     size: 20,
                     controller: registerViewModel.nameCon,
