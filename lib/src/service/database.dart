@@ -17,7 +17,7 @@ class Database {
     dio = Dio(options);
   }
 
-  timeoutSettings(int x){
+  timeoutSettings(int x) {
     BaseOptions options = BaseOptions(
         baseUrl: endpoint.base,
         receiveDataWhenStatusError: true,
@@ -101,6 +101,7 @@ class Database {
 
   Future loginGoogle(String? token) async {
     try {
+      print("***");
       timeoutSettings(5);
       dynamic response = await dio.get(
           endpoint.base + endpoint.signup + '?google_auth_token=' + token!);
@@ -148,7 +149,8 @@ class Database {
       timeoutSettings(15);
       print(endpoint.base + endpoint.signup + endpoint.verify);
       dynamic response = await dio.get(
-          endpoint.base + endpoint.signup + endpoint.verify, queryParameters: map);
+          endpoint.base + endpoint.signup + endpoint.verify,
+          queryParameters: map);
       print(response.data);
       if (response.statusCode != 200) {
         return null;
