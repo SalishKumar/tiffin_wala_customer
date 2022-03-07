@@ -121,19 +121,27 @@ class RegisterViewModel extends ChangeNotifier {
       } else {
         passError = 'Password is too short.';
       }
+      if (confirmPassCon.text.trim().isNotEmpty) {
+        if (confirmPassCon.text.trim() != passCon.text.trim()) {
+          confirmPassError = 'Passwords does not match.';
+        } else {
+          confirmPassError = '';
+        }
+      }
     } else {
       if (passCon.text.trim().isNotEmpty) {
         passError =
-            'Password Format is not correct. Ensure that length of Password is 6 characters and should contain atleast one alphabet and one number.';
-      }
-       else {
+            'Ensure that length of Password is 6 characters and should contain atleast one alphabet and one number.';
+      } else {
         passError = 'Password is empty.';
       }
     }
+    notifyListeners();
   }
 
   comparePass() {
     //print(val + '*');
+
     if (passCon.text.trim() == confirmPassCon.text.trim()) {
       confirmPassError = '';
     } else {
@@ -143,6 +151,7 @@ class RegisterViewModel extends ChangeNotifier {
         confirmPassError = 'Password is empty.';
       }
     }
+    notifyListeners();
   }
 
   toggleSuffix1() {
@@ -170,7 +179,8 @@ class RegisterViewModel extends ChangeNotifier {
         (emailCon.text.trim().isNotEmpty && emailError == "") &&
         (phoneCon.text.trim().isNotEmpty && phoneError == "") &&
         (passCon.text.trim().isNotEmpty && passError == "") &&
-        (confirmPassCon.text.trim().isNotEmpty && confirmPassError == "") && (passCon.text.trim()==confirmPassCon.text.trim())) {
+        (confirmPassCon.text.trim().isNotEmpty && confirmPassError == "") &&
+        (passCon.text.trim() == confirmPassCon.text.trim())) {
       User1 user = User1(
           name: nameCon.text,
           email: emailCon.text,
@@ -844,8 +854,7 @@ class RegisterViewModel extends ChangeNotifier {
                                               }
                                             } else {
                                               Fluttertoast.showToast(
-                                                  msg:
-                                                      'Code does not match.',
+                                                  msg: 'Code does not match.',
                                                   toastLength:
                                                       Toast.LENGTH_SHORT,
                                                   gravity: ToastGravity.CENTER,
@@ -857,8 +866,7 @@ class RegisterViewModel extends ChangeNotifier {
                                           } else {
                                             if (codePhone.text.trim().isEmpty) {
                                               Fluttertoast.showToast(
-                                                  msg:
-                                                      'Code is empty.',
+                                                  msg: 'Code is empty.',
                                                   toastLength:
                                                       Toast.LENGTH_SHORT,
                                                   gravity: ToastGravity.CENTER,

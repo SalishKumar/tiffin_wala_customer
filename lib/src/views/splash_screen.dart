@@ -21,37 +21,37 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   void initState() {
-    // try {
-    // Timer(Duration(seconds: 1), () async {
-    Future.delayed(Duration(seconds: 0), () async {
-      try {
-        Map<String, String> allValues = await storage.readAll();
-        print(allValues);
-        if (allValues == null) {
-          route = false;
-          setState(() {});
-        } else {
-          User1 user = User1(
-              name: allValues['name'],
-              email: allValues['email'],
-              phone: allValues['phone'],
-              password: allValues['password']);
-          if (allValues['google'] == 'true') {
-            user.google = true;
+    try {
+      Timer(Duration(seconds: 5), () async {
+        // Future.delayed(Duration(seconds: 0), () async {
+        try {
+          Map<String, String> allValues = await storage.readAll();
+          print(allValues);
+          if (allValues == null) {
+            route = false;
+            setState(() {});
           } else {
-            user.google = false;
+            User1 user = User1(
+                name: allValues['name'],
+                email: allValues['email'],
+                phone: allValues['phone'],
+                password: allValues['password']);
+            if (allValues['google'] == 'true') {
+              user.google = true;
+            } else {
+              user.google = false;
+            }
+            user.token = allValues['token']!;
+            route = true;
+            setState(() {});
           }
-          user.token = allValues['token']!;
-          route = true;
-          setState(() {});
-        }
-      } catch (e) {}
-    });
+        } catch (e) {}
+      });
 
-    //     });
-    //     setState(() {});
-    //   } catch (e) {}
-    //   super.initState();
+      // });
+      setState(() {});
+    } catch (e) {}
+    super.initState();
   }
 
   @override
