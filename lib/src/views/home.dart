@@ -8,10 +8,12 @@ import 'package:tiffin_wala_customer/src/constants/color.dart' as color;
 import 'package:tiffin_wala_customer/src/constants/my_custom_textfield.dart';
 import 'package:tiffin_wala_customer/src/view_model/home_view_model.dart';
 import 'package:tiffin_wala_customer/src/views/addresses.dart';
+import 'package:tiffin_wala_customer/src/views/complain_list.dart';
 import 'package:tiffin_wala_customer/src/views/filter.dart';
 import 'package:tiffin_wala_customer/src/views/login.dart';
 import 'package:tiffin_wala_customer/src/constants/data.dart' as data;
 import 'package:tiffin_wala_customer/src/views/menu.dart';
+import 'package:tiffin_wala_customer/src/views/order_list.dart';
 
 class Home extends StatelessWidget {
   static const routeName = '/home';
@@ -48,7 +50,9 @@ class Home extends StatelessWidget {
                     style: TextStyle(color: Colors.black, fontSize: 18),
                   ),
                   onTap: () {
+                    print(data.user.name);
                     Navigator.pop(context);
+                    Navigator.pushNamed(context, OrderList.routeName);
                   },
                 ),
                 ListTile(
@@ -77,6 +81,16 @@ class Home extends StatelessWidget {
                   onTap: () {
                     Navigator.pop(context);
                     Navigator.pushNamed(context, Addresses.routeName);
+                  },
+                ),
+                ListTile(
+                  title: const Text(
+                    'My Complaints',
+                    style: TextStyle(color: Colors.black, fontSize: 18),
+                  ),
+                  onTap: () {
+                    Navigator.pop(context);
+                    Navigator.pushNamed(context, ComplainList.routeName);
                   },
                 ),
                 ListTile(

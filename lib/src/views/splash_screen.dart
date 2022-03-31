@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:splash_screen_view/SplashScreenView.dart';
 import 'package:tiffin_wala_customer/src/models/user.dart';
 import 'package:tiffin_wala_customer/src/views/home.dart';
+import 'package:tiffin_wala_customer/src/constants/data.dart' as data;
 import 'package:tiffin_wala_customer/src/views/login.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -42,6 +43,7 @@ class _SplashScreenState extends State<SplashScreen> {
               user.google = false;
             }
             user.token = allValues['token']!;
+            data.user=user;
             route = true;
             setState(() {});
           }

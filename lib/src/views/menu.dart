@@ -70,11 +70,16 @@ class Menu extends StatelessWidget {
                       height: 50,
                     ),
                     Container(
-                      margin: EdgeInsets.symmetric(horizontal: width * 0.05, vertical: 10),
+                      margin: EdgeInsets.symmetric(
+                          horizontal: width * 0.05, vertical: 10),
                       child: Column(
                         children: [
-                          VendorInfo(width: width,),
-                          SizedBox(height: 20,),
+                          VendorInfo(
+                            width: width,
+                          ),
+                          SizedBox(
+                            height: 20,
+                          ),
                           ListView.builder(
                               shrinkWrap: true,
                               physics: NeverScrollableScrollPhysics(),
@@ -82,9 +87,14 @@ class Menu extends StatelessWidget {
                               itemBuilder: (context, index) {
                                 return Column(
                                   children: [
-                                    InkWell(onTap: (){
-                                      Navigator.pushNamed(context, Item.routeName);
-                                    }, child: MenuItem(width: width,)),
+                                    InkWell(
+                                        onTap: () {
+                                          Navigator.pushNamed(
+                                              context, Item.routeName);
+                                        },
+                                        child: MenuItem(
+                                          width: width,
+                                        )),
                                     //Divider(color: Colors.black,)
                                   ],
                                 );
@@ -101,12 +111,16 @@ class Menu extends StatelessWidget {
         ),
       ),
       bottomNavigationBar: Padding(
-        padding: EdgeInsets.symmetric(horizontal: width*0.05),
-        child: InkWell(onTap: (){
-          Navigator.pushNamed(context, Cart.routeName);
-        }, child: CustomButton(width: width, title: "Go To Cart",)),
+        padding: EdgeInsets.symmetric(horizontal: width * 0.05),
+        child: InkWell(
+            onTap: () {
+              Navigator.pushNamed(context, Cart.routeName);
+            },
+            child: CustomButton(
+              width: width,
+              title: "Go To Cart",
+            )),
       ),
-      
     );
   }
 }
@@ -148,7 +162,7 @@ class VendorInfo extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Container(
-                  width: width*0.4,
+                  width: width * 0.4,
                   child: AutoSizeText(
                     "ABC Kitchen",
                     maxLines: 1,
@@ -162,7 +176,7 @@ class VendorInfo extends StatelessWidget {
                   height: 5,
                 ),
                 Container(
-                  width: width*0.4,
+                  width: width * 0.4,
                   child: AutoSizeText(
                     "Featured",
                     maxLines: 1,
@@ -173,7 +187,7 @@ class VendorInfo extends StatelessWidget {
             ),
             Container(
               alignment: Alignment.centerRight,
-              width: width*0.4,
+              width: width * 0.4,
               child: RatingStars(
                 value: 3.5,
                 onValueChanged: (v) {},
@@ -219,55 +233,54 @@ class MenuItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       elevation: 2,
-        child: Padding(
-          padding: const EdgeInsets.all(15.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Row(
-                children: [
-                  Center(
-                    child: Image.asset(
-                      "assets/images.jpg",
-                      width: width*0.18,
-                      height: width*0.18,
-                    ),
-                  ),
-                SizedBox(width: 10,),
-                
-            
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container(
-                width: width*0.35,
-                child: AutoSizeText(
-                  "Lunch Deal 1111111",
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                    fontSize: 22,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-          SizedBox(height: 10,),  
-          Container(
-            width: width*0.35,
-            child: AutoSizeText(
-              "Single Serving",
-              maxLines: 1,
-              style: TextStyle(
-                fontSize: 22,
-                
+      child: Padding(
+        padding: const EdgeInsets.all(15.0),
+        child:
+            Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+          Row(children: [
+            Center(
+              child: Image.asset(
+                "assets/images.jpg",
+                width: width * 0.18,
+                height: width * 0.18,
               ),
             ),
-          ),
-          ],
-          ),
+            SizedBox(
+              width: 10,
+            ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  width: width * 0.35,
+                  child: AutoSizeText(
+                    "Lunch Deal 1111111",
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+                Container(
+                  width: width * 0.35,
+                  child: AutoSizeText(
+                    "Single Serving",
+                    maxLines: 1,
+                    style: TextStyle(
+                      fontSize: 22,
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ]),
           Container(
-            width: width*0.18,
+            width: width * 0.18,
             child: AutoSizeText(
               "PKR 250/=",
               maxLines: 1,
@@ -277,10 +290,8 @@ class MenuItem extends StatelessWidget {
               ),
             ),
           ),
-            ]
+        ]),
       ),
-        ),
     );
   }
 }
-
