@@ -8,6 +8,12 @@ class AddressViewModel extends ChangeNotifier {
   String addressError = '';
   String floorUnitError = '';
   String notesError = '';
+  String dropdown = "Home";
+
+  AddressViewModel(){
+    addressCon.text=data.address;
+    notifyListeners();
+  }
 
   inputAddress(){
     if(addressCon.text.trim().isEmpty){
@@ -15,6 +21,11 @@ class AddressViewModel extends ChangeNotifier {
     }else{
       addressError = '';
     }
+    notifyListeners();
+  }
+
+  dropdownFunction(dropdownValue){
+    dropdown = dropdownValue;
     notifyListeners();
   }
 

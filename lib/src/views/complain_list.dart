@@ -9,6 +9,7 @@ import 'package:tiffin_wala_customer/src/constants/my_custom_textfield.dart';
 import 'package:flutter_signin_button/flutter_signin_button.dart';
 import 'package:tiffin_wala_customer/src/views/address_view.dart';
 import 'package:tiffin_wala_customer/src/views/cart.dart';
+import 'package:tiffin_wala_customer/src/views/complain_timeline.dart';
 import 'package:tiffin_wala_customer/src/views/home.dart';
 import 'package:tiffin_wala_customer/src/views/item.dart';
 import 'package:tiffin_wala_customer/src/views/maps.dart';
@@ -88,40 +89,46 @@ class ComplainBox extends StatelessWidget {
   }) : super(key: key);
   @override
   Widget build(BuildContext context) {
-    return Card(
-      elevation: 2,
-      child: Padding(
-        padding: const EdgeInsets.all(15.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              width: width * 0.35,
-              child: Text(
-                "Complaint # $x",
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
+    return InkWell(
+      onTap: () {
+        Navigator.push(context, MaterialPageRoute(builder: (context) => ComplainTimeline()));
+        
+      },
+      child: Card(
+        elevation: 2,
+        child: Padding(
+          padding: const EdgeInsets.all(15.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                width: width * 0.35,
+                child: Text(
+                  "Complaint # $x",
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
-            ),
-            SizedBox(
-              height: 10,
-            ),
-            Container(
-              width: width * 0.35,
-              child: Text(
-                "Discription",
-                overflow: TextOverflow.ellipsis,
-                maxLines: 1,
-                style: TextStyle(
-                  fontSize: 18,
+              SizedBox(
+                height: 10,
+              ),
+              Container(
+                width: width * 0.35,
+                child: Text(
+                  "Discription",
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 1,
+                  style: TextStyle(
+                    fontSize: 18,
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

@@ -1,7 +1,11 @@
+import 'package:tiffin_wala_customer/src/models/address.dart';
+
 class User1 {
   String? name, email, phone, password;
   late String msg, token;
   late bool status, google;
+  late List<Address> address;
+
   User1({
     required this.name,
     required this.email,
@@ -22,6 +26,9 @@ class User1 {
       user.status = json["status"] ?? "";
       user.msg = json["message"] ?? "";
       user.token = customer["authentication_token"];
+      for(var address in json['addresses']){
+        user.address.add(Address.fromJson(address));
+      }
     } else {
       user.status = json["status"] ?? "";
       user.msg = json["message"] ?? "";

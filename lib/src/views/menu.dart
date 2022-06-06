@@ -1,5 +1,6 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
+import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:provider/provider.dart';
 import 'package:tiffin_wala_customer/src/constants/custom_button.dart';
 import 'package:tiffin_wala_customer/src/constants/logo.dart';
@@ -89,8 +90,128 @@ class Menu extends StatelessWidget {
                                   children: [
                                     InkWell(
                                         onTap: () {
-                                          Navigator.pushNamed(
-                                              context, Item.routeName);
+                                          // Navigator.pushNamed(
+                                          //     context, Item.routeName);
+                                          showMaterialModalBottomSheet(
+                                            context: context,
+                                            builder: (context) =>
+                                                SingleChildScrollView(
+                                              controller:
+                                                  ModalScrollController.of(
+                                                      context),
+                                              child: Container(
+                                                child: Column(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.start,
+                                                  children: [
+                                                    Container(
+                                                      padding:
+                                                          EdgeInsets.symmetric(
+                                                              vertical: 10),
+                                                      child: Image(
+                                                        image: AssetImage(
+                                                            'assets/images.jpg'),
+                                                      ),
+                                                    ),
+                                                    SizedBox(
+                                                      height: 20,
+                                                    ),
+                                                    Container(
+                                                      width: width * 0.45,
+                                                      child: AutoSizeText(
+                                                        "Lunch Deal 1111111",
+                                                        maxLines: 1,
+                                                        style: TextStyle(
+                                                          fontSize: 24,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    SizedBox(
+                                                      height: 20,
+                                                    ),
+                                                    Row(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .spaceBetween,
+                                                      children: [
+                                                        Container(
+                                                          padding: EdgeInsets
+                                                              .symmetric(
+                                                                  horizontal:
+                                                                      10,
+                                                                  vertical: 10),
+                                                          width: width * 0.45,
+                                                          child: Column(
+                                                            crossAxisAlignment:
+                                                                CrossAxisAlignment
+                                                                    .start,
+                                                            children: [
+                                                              AutoSizeText(
+                                                                "1  X Daal Chanwal Plate",
+                                                                maxLines: 1,
+                                                                style: TextStyle(
+                                                                    fontSize:
+                                                                        20,
+                                                                    color: Colors
+                                                                            .grey[
+                                                                        600]),
+                                                              ),
+                                                              SizedBox(
+                                                                height: 5,
+                                                              ),
+                                                              AutoSizeText(
+                                                                "1  X Shami Kabab",
+                                                                maxLines: 1,
+                                                                style: TextStyle(
+                                                                    fontSize:
+                                                                        20,
+                                                                    color: Colors
+                                                                            .grey[
+                                                                        600]),
+                                                              ),
+                                                              SizedBox(
+                                                                height: 5,
+                                                              ),
+                                                              AutoSizeText(
+                                                                "1  X Salad",
+                                                                maxLines: 1,
+                                                                style: TextStyle(
+                                                                    fontSize:
+                                                                        20,
+                                                                    color: Colors
+                                                                            .grey[
+                                                                        600]),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                        Container(
+                                                          width: width * 0.45,
+                                                          alignment: Alignment
+                                                              .centerRight,
+                                                          child: AutoSizeText(
+                                                            "PKR 250/=",
+                                                            maxLines: 1,
+                                                            style: TextStyle(
+                                                                fontSize: 18,
+                                                                color: Color(
+                                                                    0xFF3a3a3b),
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w400),
+                                                            textAlign:
+                                                                TextAlign.left,
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                          );
                                         },
                                         child: MenuItem(
                                           width: width,

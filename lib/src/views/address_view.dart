@@ -44,6 +44,28 @@ class AddressView extends StatelessWidget {
                 child: Column(
                   children: [
                     SizedBox(height: 50,),
+                    DropdownButton<String>(
+                      isExpanded: true,
+      value: addressViewModel.dropdown,
+      icon: const Icon(Icons.arrow_downward),
+      elevation: 16,
+      style: TextStyle(color: Colors.black, fontSize: 16),
+      underline: Container(
+        height: 2,
+        color: color.purple,
+      ),
+      onChanged: (String? newValue) {
+        addressViewModel.dropdownFunction(newValue);
+      },
+      items: <String>['Home', 'Work']
+          .map<DropdownMenuItem<String>>((String value) {
+        return DropdownMenuItem<String>(
+          value: value,
+          child: Text(value),
+        );
+      }).toList(),
+    ),
+                    SizedBox(height: 20,),
                     MyCustomTextfield(
                       size: 500,
                       suffix: Icons.map,
@@ -55,7 +77,7 @@ class AddressView extends StatelessWidget {
                         label: 'Address',
                         prefix: Icons.location_pin,
                         error: addressViewModel.addressError,
-                        controller: addressViewModel.addressCon=TextEditingController(text: data.address),
+                        controller: addressViewModel.addressCon,
                         onValidation: (){
                           addressViewModel.inputAddress();
                         }),

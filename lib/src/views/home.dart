@@ -13,7 +13,9 @@ import 'package:tiffin_wala_customer/src/views/filter.dart';
 import 'package:tiffin_wala_customer/src/views/login.dart';
 import 'package:tiffin_wala_customer/src/constants/data.dart' as data;
 import 'package:tiffin_wala_customer/src/views/menu.dart';
+import 'package:tiffin_wala_customer/src/views/my_profile.dart';
 import 'package:tiffin_wala_customer/src/views/order_list.dart';
+import 'package:tiffin_wala_customer/src/views/subscription_menu.dart';
 
 class Home extends StatelessWidget {
   static const routeName = '/home';
@@ -71,6 +73,7 @@ class Home extends StatelessWidget {
                   ),
                   onTap: () {
                     Navigator.pop(context);
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => MyProfile()));
                   },
                 ),
                 ListTile(
@@ -234,7 +237,12 @@ class Home extends StatelessWidget {
                               physics: NeverScrollableScrollPhysics(),
                               itemCount: 3,
                               itemBuilder: (context, index) {
-                                return vendorDisplay(width);
+                                return InkWell(
+                                    onTap: () {
+                                      Navigator.pushNamed(
+                                          context, SubscriptionMenu.routeName);
+                                    },
+                                    child: vendorDisplay(width));
                               }),
                         ],
                       ),

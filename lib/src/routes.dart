@@ -17,6 +17,7 @@ import 'package:tiffin_wala_customer/src/views/payment_and_address.dart';
 import 'package:tiffin_wala_customer/src/views/register.dart';
 import 'package:tiffin_wala_customer/src/views/review_view.dart';
 import 'package:tiffin_wala_customer/src/views/splash_screen.dart';
+import 'package:tiffin_wala_customer/src/views/subscription_menu.dart';
 
 Route<dynamic> generateRoute(RouteSettings settings) {
   switch (settings.name) {
@@ -56,6 +57,8 @@ Route<dynamic> generateRoute(RouteSettings settings) {
       return MaterialPageRoute(builder: (_) => const Review());
     case Complaint.routeName:
       return MaterialPageRoute(builder: (_) => const Complaint());
+    case SubscriptionMenu.routeName:
+      return MaterialPageRoute(builder: (_) => const SubscriptionMenu());
 
     default:
       return MaterialPageRoute(
