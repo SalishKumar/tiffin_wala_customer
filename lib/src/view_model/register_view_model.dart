@@ -73,6 +73,12 @@ class RegisterViewModel extends ChangeNotifier {
   autoLogin(User1 user) async {
     disposeTestControllers();
     LoginViewModel().disposeControllers();
+    if (user.google) {
+      user.password = "none";
+    } else {
+      user.password = "input";
+    }
+    await storage.write(key: 'id', value: user.id.toString());
     await storage.write(key: 'name', value: user.name);
     await storage.write(key: 'email', value: user.email);
     await storage.write(key: 'phone', value: user.phone);

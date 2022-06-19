@@ -46,6 +46,7 @@ dependencies:
   splash_screen_view: ^3.0.0
   flutter_secure_storage: ^5.0.2
   modal_bottom_sheet: ^2.0.1
+  shimmer: ^2.0.0
   another_carousel_pro:
      git:
        url: https://github.com/iamnabink/another_carousel_pro.git

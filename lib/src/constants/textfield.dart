@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'color.dart' as color;
 
-class MyCustomTextfield extends StatelessWidget {
-  MyCustomTextfield({
+class tfield extends StatelessWidget {
+  tfield({
     Key? key,
     required this.textInputType,
     required this.onPressed,
@@ -11,7 +11,6 @@ class MyCustomTextfield extends StatelessWidget {
     this.suffix,
     required this.hintText,
     required this.error,
-    required this.controller,
     required this.onValidation,
     required this.size,
     required this.label,
@@ -29,14 +28,12 @@ class MyCustomTextfield extends StatelessWidget {
   IconData? prefix;
   IconData? suffix;
   String error, hintText, label;
-  TextEditingController controller;
-
+  
   @override
   Widget build(BuildContext context) {
     return TextFormField(
       keyboardType: textInputType,
       initialValue: value,
-      controller: controller,
       obscureText: obscureText,
       maxLength: size,
       autofocus: false,

@@ -1,5 +1,4 @@
-import 'dart:convert';
-
+import 'package:tiffin_wala_customer/src/constants/data.dart' as data;
 import 'package:dio/dio.dart';
 import 'package:tiffin_wala_customer/src/constants/api_url.dart' as endpoint;
 
@@ -30,10 +29,10 @@ class Database {
 
   Future register(Map<String, dynamic> map) async {
     try {
-      timeoutSettings(5);
+      timeoutSettings(15);
       dynamic response =
           await dio.post(endpoint.base + endpoint.signup, data: map);
-      print(response.data);
+      print("${response.data} **");
       if (response.statusCode != 200) {
         return null;
       }
@@ -52,7 +51,7 @@ class Database {
 
   Future login(String email, String pass) async {
     try {
-      timeoutSettings(5);
+      timeoutSettings(15);
       print(endpoint.base + endpoint.signup + email + '/' + pass);
       dynamic response = await dio.get(endpoint.base +
           endpoint.signup +
@@ -79,7 +78,7 @@ class Database {
 
   Future registerGoogle(Map<String, dynamic> map) async {
     try {
-      timeoutSettings(5);
+      timeoutSettings(15);
       dynamic response =
           await dio.post(endpoint.base + endpoint.signup, data: map);
       print(response.data);
@@ -102,7 +101,7 @@ class Database {
   Future loginGoogle(String? token) async {
     try {
       print("***");
-      timeoutSettings(5);
+      timeoutSettings(15);
       dynamic response = await dio.get(
           endpoint.base + endpoint.signup + '?google_auth_token=' + token!);
       print(response.data);
@@ -122,9 +121,31 @@ class Database {
     }
   }
 
+  Future loginToken(String? token) async {
+    try {
+      timeoutSettings(15);
+      dynamic response = await dio.get(
+          endpoint.base + endpoint.signup + '?auth_token=' + token!);
+      print(response.data);
+      if (response.statusCode != 200) {
+        return null;
+      }
+      return response.data;
+    } on DioError catch (e) {
+      if (e.type == DioErrorType.connectTimeout ||
+          e.type == DioErrorType.receiveTimeout) {
+        print(e.type);
+        Map<String, dynamic> map = {'Timeout': 'true'};
+        return map;
+      }
+      print(e.toString());
+      return null;
+    }
+  }
+
   Future forget(String emailOrPhone) async {
     try {
-      timeoutSettings(5);
+      timeoutSettings(15);
       dynamic response = await dio.get(
           endpoint.base + endpoint.signup + endpoint.forget + emailOrPhone);
       print(response.data);
@@ -151,6 +172,222 @@ class Database {
       dynamic response = await dio.get(
           endpoint.base + endpoint.signup + endpoint.verify,
           queryParameters: map);
+      print(response.data);
+      if (response.statusCode != 200) {
+        return null;
+      }
+      return response.data;
+    } on DioError catch (e) {
+      if (e.type == DioErrorType.connectTimeout ||
+          e.type == DioErrorType.receiveTimeout) {
+        print(e.type);
+        Map<String, dynamic> map = {'Timeout': 'true'};
+        return map;
+      }
+      print(e.toString());
+      return null;
+    }
+  }
+
+  Future address(Map<String, dynamic> map) async {
+    try {
+      timeoutSettings(15);
+      map['customer_id'] = data.user.id;
+      print('token ${data.user.token} $map');
+      timeoutSettings(50);
+      dynamic response =
+          await dio.post(endpoint.base + endpoint.signup + endpoint.address,
+              data: map,
+              options: Options(
+                headers: {
+                  'Authorization': "token ${data.user.token}",
+                },
+                validateStatus: (_) => true,
+                contentType: Headers.jsonContentType,
+                responseType: ResponseType.json,
+              ));
+      print("Tis is reponse ${response.data}");
+      if (response.statusCode != 200) {
+        return null;
+      }
+      return response.data;
+    } on DioError catch (e) {
+      if (e.type == DioErrorType.connectTimeout ||
+          e.type == DioErrorType.receiveTimeout) {
+        print(e.type);
+        Map<String, dynamic> map = {'Timeout': 'true'};
+        return map;
+      }
+      print(e.toString());
+      return null;
+    }
+  }
+
+  Future editAddress(Map<String, dynamic> map) async {
+    try {
+      timeoutSettings(15);
+      map['customer_id'] = data.user.id;
+      print('token ${data.user.token} $map');
+      timeoutSettings(50);
+      dynamic response =
+          await dio.put(endpoint.base + endpoint.signup + endpoint.address,
+              data: map,
+              options: Options(
+                headers: {
+                  'Authorization': "token ${data.user.token}",
+                },
+                validateStatus: (_) => true,
+                contentType: Headers.jsonContentType,
+                responseType: ResponseType.json,
+              ));
+      print("Tis is reponse ${response.data}");
+      if (response.statusCode != 200) {
+        return null;
+      }
+      return response.data;
+    } on DioError catch (e) {
+      if (e.type == DioErrorType.connectTimeout ||
+          e.type == DioErrorType.receiveTimeout) {
+        print(e.type);
+        Map<String, dynamic> map = {'Timeout': 'true'};
+        return map;
+      }
+      print(e.toString());
+      return null;
+    }
+  }
+
+  Future updteUser(map) async {
+    try {
+      timeoutSettings(15);
+      dynamic response = await dio.put(endpoint.base + endpoint.signup,
+          data: map,
+          options: Options(
+            headers: {
+              'Authorization': "token ${data.user.token}",
+            },
+            validateStatus: (_) => true,
+            contentType: Headers.jsonContentType,
+            responseType: ResponseType.json,
+          ));
+      if (response.statusCode != 200) {
+        return null;
+      }
+      print(1);
+      response.data['Timeout'] = 'false';
+      print(2);
+      return response.data;
+    } on DioError catch (e) {
+      if (e.type == DioErrorType.connectTimeout ||
+          e.type == DioErrorType.receiveTimeout) {
+        print(e.type);
+        Map<String, dynamic> map = {'Timeout': 'true'};
+        return map;
+      }
+      print(e.toString());
+      return null;
+    }
+  }
+
+  Future verifyForUpdate(Map<String, dynamic> map) async {
+    try {
+      timeoutSettings(15);
+      print(endpoint.base + endpoint.signup + endpoint.verify);
+      dynamic response = await dio.get(
+          endpoint.base + endpoint.signup + endpoint.verify,
+          queryParameters: map);
+      print(response.data);
+      if (response.statusCode != 200) {
+        return null;
+      }
+      return response.data;
+    } on DioError catch (e) {
+      if (e.type == DioErrorType.connectTimeout ||
+          e.type == DioErrorType.receiveTimeout) {
+        print(e.type);
+        Map<String, dynamic> map = {'Timeout': 'true'};
+        return map;
+      }
+      print(e.toString());
+      return null;
+    }
+  }
+
+  Future home() async {
+    try {
+      timeoutSettings(15);
+      dynamic response = await dio.get(
+          endpoint.base + endpoint.signup + endpoint.vendor,
+          options: Options(
+            headers: {
+              'Authorization': "token ${data.user.token}",
+            },
+            validateStatus: (_) => true,
+            contentType: Headers.jsonContentType,
+            responseType: ResponseType.json,
+          ));
+      print("This is home ${response.data}");
+      if (response.statusCode != 200) {
+        return null;
+      }
+      return response.data;
+    } on DioError catch (e) {
+      if (e.type == DioErrorType.connectTimeout ||
+          e.type == DioErrorType.receiveTimeout) {
+        print(e.type);
+        Map<String, dynamic> map = {'Timeout': 'true'};
+        return map;
+      }
+      print(e.toString());
+      return null;
+    }
+  }
+
+  Future getVouchers(Map<String, dynamic> map) async {
+    try {
+      timeoutSettings(15);
+      dynamic response = await dio.get(
+          endpoint.base + endpoint.signup + endpoint.voucher,
+          queryParameters: map,
+          options: Options(
+            headers: {
+              'Authorization': "token ${data.user.token}",
+            },
+            validateStatus: (_) => true,
+            contentType: Headers.jsonContentType,
+            responseType: ResponseType.json,
+          ));
+      print(response.data);
+      if (response.statusCode != 200) {
+        return null;
+      }
+      return response.data;
+    } on DioError catch (e) {
+      if (e.type == DioErrorType.connectTimeout ||
+          e.type == DioErrorType.receiveTimeout) {
+        print(e.type);
+        Map<String, dynamic> map = {'Timeout': 'true'};
+        return map;
+      }
+      print(e.toString());
+      return null;
+    }
+  }
+
+  Future validateVouchers(Map<String, dynamic> map) async {
+    try {
+      timeoutSettings(15);
+      dynamic response = await dio.get(
+          endpoint.base + endpoint.signup + endpoint.voucher + endpoint.validate,
+          queryParameters: map,
+          options: Options(
+            headers: {
+              'Authorization': "token ${data.user.token}",
+            },
+            validateStatus: (_) => true,
+            contentType: Headers.jsonContentType,
+            responseType: ResponseType.json,
+          ));
       print(response.data);
       if (response.statusCode != 200) {
         return null;

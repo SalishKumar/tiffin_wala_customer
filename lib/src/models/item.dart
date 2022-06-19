@@ -1,30 +1,27 @@
-import 'package:tiffin_wala_customer/src/models/dish.dart';
-
 class Item1 {
-  String name, logo;
+  String name, desc, type, day;
   int id;
+  int quantity = 0;
   double price;
-  List<Dish> dishes;
+  bool value = false;
   Item1({
     required this.name,
-    required this.logo,
     required this.id,
     required this.price,
-    required this.dishes
+    required this.day,
+    required this.desc,
+    required this.type
   });
 
   factory Item1.fromJson(Map<String, dynamic> json) {
-    List<Dish> d = [];
-    for (var dish in json['dishes']){
-      Dish x = Dish.fromJson(dish);
-      d.add(x);
-    }
+    
     return Item1(
-        id: json["id"] ?? "",
-        name: json["name"] ?? "",
-        logo: json["logo"] ?? "",
+        id: json["dish_id"] ?? "",
+        name: json["dish_name"] ?? "",
         price: json["price"] ?? 1.0,
-        dishes: d,
+        day: json["day"] ?? "",
+        desc: json["dish_description"] ?? "",
+        type: json["meal_type"] ?? ""
       );
   }
 }

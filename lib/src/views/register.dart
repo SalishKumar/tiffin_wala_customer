@@ -43,6 +43,7 @@ class Register extends StatelessWidget {
                     child: Center(child: MyLogo()),
                   ),
                   MyCustomTextfield(
+                    disable: true,
                     size: 20,
                     controller: registerViewModel.nameCon,
                     textInputType: TextInputType.name,
@@ -60,6 +61,7 @@ class Register extends StatelessWidget {
                   ),
                   MyCustomTextfield(
                     size: 50,
+                    disable: true,
                     controller: registerViewModel.emailCon,
                     textInputType: TextInputType.emailAddress,
                     onPressed: () {},
@@ -76,6 +78,7 @@ class Register extends StatelessWidget {
                   ),
                   MyCustomTextfield(
                     size: 11,
+                    disable: true,
                     controller: registerViewModel.phoneCon,
                     textInputType: TextInputType.phone,
                     onPressed: () {},
@@ -92,6 +95,7 @@ class Register extends StatelessWidget {
                   ),
                   MyCustomTextfield(
                     size: 20,
+                    disable: true,
                     onValidation: () {
                       registerViewModel.inputPass();
                     },
@@ -112,6 +116,7 @@ class Register extends StatelessWidget {
                   ),
                   MyCustomTextfield(
                     size: 20,
+                    disable: true,
                     onValidation: () {
                       registerViewModel.comparePass();
                     },

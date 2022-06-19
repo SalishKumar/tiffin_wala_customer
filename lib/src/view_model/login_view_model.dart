@@ -47,6 +47,12 @@ class LoginViewModel extends ChangeNotifier {
   autoLogin(User1 user) async {
     disposeControllers();
     RegisterViewModel().disposeTestControllers();
+    if (user.google) {
+      user.password = "none";
+    } else {
+      user.password = "input";
+    }
+    await storage.write(key: 'id', value: user.id.toString());
     await storage.write(key: 'name', value: user.name);
     await storage.write(key: 'email', value: user.email);
     await storage.write(key: 'phone', value: user.phone);
@@ -210,8 +216,9 @@ class LoginViewModel extends ChangeNotifier {
 
       dynamic result = await db.loginGoogle(_currentUser?.id);
       Navigator.pop(context);
-
+      
       if (result == null) {
+        
         Fluttertoast.showToast(
             msg: 'Issue with connection. Try again later.',
             toastLength: Toast.LENGTH_SHORT,
@@ -221,6 +228,7 @@ class LoginViewModel extends ChangeNotifier {
             textColor: Colors.white,
             fontSize: 16.0);
       } else {
+        print('a');
         if (result['Timeout'] == 'true') {
           Fluttertoast.showToast(
               msg: 'Your request has been timmed-out. Try again.',
@@ -233,6 +241,7 @@ class LoginViewModel extends ChangeNotifier {
           return;
         }
         User1 userResult = User1.fromJson(result);
+        print(userResult.status);
         if (userResult.status == true) {
           _googleSignIn.signOut();
           userResult.google = true;

@@ -17,49 +17,46 @@ class Maps extends StatefulWidget {
 
 class _MapsState extends State<Maps> {
   Completer<GoogleMapController> _controller = Completer();
-  late LatLng _center = LatLng(24.860966, 66.990501);
+  late LatLng _center = LatLng(data.lat, data.long);
   MapType _type = MapType.normal;
   List<LatLng> markerList = [];
   Set<Marker> _markers = {};
   Set<Marker> markers = {};
-  LatLng marker = LatLng(24.860966, 66.990501);
+  LatLng marker = LatLng(data.lat, data.long);
 
-  dragMarker(CameraPosition position){
+  dragMarker(CameraPosition position) {
     markers = {};
     marker = LatLng(position.target.latitude, position.target.longitude);
-    markers.add(
-      Marker(markerId: MarkerId(marker.toString()),
+    markers.add(Marker(
+      markerId: MarkerId(marker.toString()),
       position: marker,
       icon: BitmapDescriptor.defaultMarker,
-    )
-    );
-    setState(() {
-      
-    });
+    ));
+    setState(() {});
   }
+
   _markersOnMap(LatLng latlong) {
     markerList = [];
     _markers = {};
     markerList.add(LatLng(latlong.latitude, latlong.longitude));
 
-      if (markerList != null) {
-        for (int i = 0; i < markerList.length; i++) {
-          _markers.add(Marker(
-            markerId: MarkerId(markerList[i].toString()),
-            position: markerList[i],
-            icon: BitmapDescriptor.defaultMarker,
-          ));
-        }
+    if (markerList != null) {
+      for (int i = 0; i < markerList.length; i++) {
+        _markers.add(Marker(
+          markerId: MarkerId(markerList[i].toString()),
+          position: markerList[i],
+          icon: BitmapDescriptor.defaultMarker,
+        ));
       }
-      setState(() {
-        
-      });
+    }
+    setState(() {});
   }
 
   @override
   void initState() {
-    markers.add(
-      Marker(markerId: MarkerId(marker.toString()),
+    print('${data.lat} ${data.long}');
+    markers.add(Marker(
+      markerId: MarkerId(marker.toString()),
       position: marker,
       icon: BitmapDescriptor.defaultMarker,
     ));
@@ -70,7 +67,6 @@ class _MapsState extends State<Maps> {
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
     return Scaffold(
-      
       body: SafeArea(
         child: Stack(
           children: [
@@ -78,24 +74,34 @@ class _MapsState extends State<Maps> {
               initialCameraPosition: CameraPosition(target: _center, zoom: 20),
               mapType: _type,
               markers: markers,
-              onTap: (latlng){
+              onTap: (latlng) {
                 _markersOnMap(latlng);
               },
-              onCameraMove: (position){
+              onCameraMove: (position) {
                 dragMarker(position);
-                print(position.target.longitude.toString() + " " + position.target.latitude.toString());
+                print(position.target.longitude.toString() +
+                    " " +
+                    position.target.latitude.toString());
               },
             ),
-            
-            
           ],
         ),
       ),
-      floatingActionButton: InkWell(onTap: ()async{
-        List<Placemark> placemarks = await placemarkFromCoordinates(marker.latitude, marker.longitude);
-      data.address = '${placemarks[0].street}, ${placemarks[0].subLocality}, ${placemarks[0].locality}';
-      Navigator.pushReplacementNamed(context, AddressView.routeName);
-      }, child: CustomButton(width: width, title: "Select Address",)),
+      floatingActionButton: InkWell(
+          onTap: () async {
+            List<Placemark> placemarks = await placemarkFromCoordinates(
+                marker.latitude, marker.longitude);
+            data.address =
+                '${placemarks[0].street}, ${placemarks[0].subLocality}, ${placemarks[0].locality}';
+            data.lat = marker.latitude;
+            data.long = marker.longitude;
+            print(data.address);
+            Navigator.pushReplacementNamed(context, AddressView.routeName);
+          },
+          child: CustomButton(
+            width: width,
+            title: "Select Address",
+          )),
     );
   }
 }

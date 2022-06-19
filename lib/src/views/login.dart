@@ -48,6 +48,7 @@ class Login extends StatelessWidget {
                   ),
                   MyCustomTextfield(
                     size: 50  ,
+                    disable: true,
                     controller: loginViewModel.emailCon,
                     textInputType: TextInputType.emailAddress,
                     onPressed: () {},
@@ -64,6 +65,7 @@ class Login extends StatelessWidget {
                   ),
                   MyCustomTextfield(
                     size: 20,
+                    disable: true,
                     onValidation: () {
                       loginViewModel.inputPass();
                     },

@@ -30,11 +30,11 @@ Route<dynamic> generateRoute(RouteSettings settings) {
     case Home.routeName:
       return MaterialPageRoute(builder: (_) => const Home());
     case Filter.routeName:
-      return MaterialPageRoute(builder: (_) => const Filter());
+      return MaterialPageRoute(builder: (_) => Filter());
     case Cart.routeName:
-      return MaterialPageRoute(builder: (_) => const Cart());
+      return MaterialPageRoute(builder: (_) => Cart());
     case Menu.routeName:
-      return MaterialPageRoute(builder: (_) => const Menu());
+      return MaterialPageRoute(builder: (_) => Menu());
     case Item.routeName:
       return MaterialPageRoute(builder: (_) => const Item());
     case PaymentAndAddress.routeName:

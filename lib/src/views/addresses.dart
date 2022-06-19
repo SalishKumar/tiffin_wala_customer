@@ -1,24 +1,35 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:tiffin_wala_customer/src/constants/custom_button.dart';
-import 'package:tiffin_wala_customer/src/constants/logo.dart';
-import 'package:tiffin_wala_customer/src/view_model/login_view_model.dart';
+import 'package:tiffin_wala_customer/src/models/address.dart';
+import 'package:tiffin_wala_customer/src/models/user.dart';
 import 'package:tiffin_wala_customer/src/constants/color.dart' as color;
-import 'package:tiffin_wala_customer/src/constants/my_custom_textfield.dart';
-import 'package:flutter_signin_button/flutter_signin_button.dart';
 import 'package:tiffin_wala_customer/src/views/address_view.dart';
-import 'package:tiffin_wala_customer/src/views/cart.dart';
-import 'package:tiffin_wala_customer/src/views/home.dart';
-import 'package:tiffin_wala_customer/src/views/item.dart';
 import 'package:tiffin_wala_customer/src/views/maps.dart';
-import 'package:tiffin_wala_customer/src/views/register.dart';
-import 'package:flutter_rating_stars/flutter_rating_stars.dart';
+import 'package:tiffin_wala_customer/src/constants/data.dart' as data;
 
-class Addresses extends StatelessWidget {
+class Addresses extends StatefulWidget {
   static const routeName = '/addresses';
 
   const Addresses({Key? key}) : super(key: key);
+  @override
+  State<Addresses> createState() => _AddressesState();
+}
+
+class _AddressesState extends State<Addresses> {
+  late User1 user;
+  bool isData = true;
+
+  @override
+  void initState() {
+    if(data.user.address.isEmpty){
+      isData = false;
+    }else{
+      isData=true;
+      user = data.user;
+    }
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -39,98 +50,52 @@ class Addresses extends StatelessWidget {
           child: Container(
             margin:
                 EdgeInsets.symmetric(horizontal: width * 0.05, vertical: 10),
-            child: Consumer<LoginViewModel>(
-                builder: (context, loginViewModel, child) {
-              return Container(
-                child: ListView.builder(
-                    shrinkWrap: true,
-                    physics: NeverScrollableScrollPhysics(),
-                    itemCount: 6,
-                    itemBuilder: (context, index) {
-                      return InkWell(
-                          onTap: () {},
-                          child: AddressBox(
-                            width: width,
-                            context: context,
-                          ));
-                      //return MenuItem(width: width,);
-                    }),
-                // child: Column(
-                //   children: [
-                //     Center(
-                //         child: Stack(
-                //       alignment: Alignment.center,
-                //       children: [
-                //         MyAppbar(),
-                //         Positioned(
-                //           top: 10,
-                //           left: 15,
-                //           child: Container(
-                //             child: IconButton(
-                //               icon: Icon(Icons.arrow_back),
-                //               onPressed: () {
-                //                 Navigator.pop(context);
-                //               },
-                //             ),
-                //             decoration: BoxDecoration(
-                //                 color: Colors.white, shape: BoxShape.circle),
-                //           ),
-                //         ),
-                //         Positioned(
-                //           top: 10,
-                //           right: 15,
-                //           child: Container(
-                //             child: IconButton(
-                //               icon: Icon(Icons.business_center),
-                //               onPressed: () {
-                //                 Navigator.pushNamed(context, Cart.routeName);
-                //               },
-                //             ),
-                //             decoration: BoxDecoration(
-                //                 color: Colors.white, shape: BoxShape.circle),
-                //           ),
-                //         ),
-                //       ],
-                //     )),
-                //     SizedBox(
-                //       height: 50,
-                //     ),
-                //     Container(
-                //       margin: EdgeInsets.symmetric(horizontal: width * 0.05),
-                //       child: Column(
-                //         children: [
-                //           VendorInfo(width: width,),
-                //           SizedBox(height: 20,),
-                //           ListView.builder(
-                //               shrinkWrap: true,
-                //               physics: NeverScrollableScrollPhysics(),
-                //               itemCount: 3,
-                //               itemBuilder: (context, index) {
-                //                 return Column(
-                //                   children: [
-                //                     InkWell(onTap: (){
-                //                       Navigator.pushNamed(context, Item.routeName);
-                //                     }, child: MenuItem(width: width,)),
-                //                     Divider(color: Colors.black,)
-                //                   ],
-                //                 );
-                //                 //return MenuItem(width: width,);
-                //               }),
-                //         ],
-                //       ),
-                //     ),
-                //   ],
-                // ),
-              );
-            }),
+            child: isData ? Container(
+              child: ListView.builder(
+                  shrinkWrap: true,
+                  physics: NeverScrollableScrollPhysics(),
+                  itemCount: user.address.length,
+                  itemBuilder: (context, index) {
+                    return InkWell(
+                        onTap: () {},
+                        child: addressBox(
+                          user.address[index],
+                          width,
+                          context,
+                        ));
+                  }),
+            ):Container(
+              height: MediaQuery.of(context).size.height,
+              child: Center(
+                child: Text("No Addresses Available",
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),)
+              ),
+            ),
           ),
         ),
       ),
       bottomNavigationBar: Padding(
-        padding: EdgeInsets.symmetric(horizontal: width*0.05),
+        padding: EdgeInsets.symmetric(horizontal: width * 0.05),
         child: InkWell(
             onTap: () {
-              Navigator.pushNamed(context, Maps.routeName);
+              data.lat = 24.860966;
+              data.long = 66.990501;
+              data.label = '';
+              data.address = '';
+              data.notes = '';
+              Navigator.push(context, MaterialPageRoute(builder: (context) => Maps())).then((value) {
+                print("address naya ${data.user.address.length}");
+                if(data.user.address.isNotEmpty){
+                  isData = true;
+                }else{
+                  isData=false;
+                }
+                user.address = data.user.address;
+                setState(() {});
+              });
             },
             child: CustomButton(
               width: width,
@@ -139,18 +104,8 @@ class Addresses extends StatelessWidget {
       ),
     );
   }
-}
 
-class AddressBox extends StatelessWidget {
-  double width;
-  BuildContext context;
-  AddressBox({
-    Key? key,
-    required this.width,
-    required this.context
-  }) : super(key: key);
-  @override
-  Widget build(BuildContext context) {
+  Widget addressBox(Address address, double width, BuildContext context) {
     return Card(
       elevation: 2,
       child: Padding(
@@ -174,7 +129,7 @@ class AddressBox extends StatelessWidget {
                     Container(
                       width: width * 0.45,
                       child: AutoSizeText(
-                        "Home",
+                        address.label!,
                         maxLines: 1,
                         style: TextStyle(
                           fontSize: 20,
@@ -189,8 +144,23 @@ class AddressBox extends StatelessWidget {
                     Icons.edit,
                     color: color.purple,
                   ),
-                  onPressed: (){
-                    Navigator.pushNamed(context, AddressView.routeName);
+                  onPressed: () {
+                    data.address = address.address!;
+                    data.notes = address.notes!;
+                    data.lat = address.lat;
+                    data.long = address.long;
+                    data.label = address.label!;
+                    data.adressID = address.id;
+                    data.addressEdit = true;
+                    Navigator.pushNamed(context, AddressView.routeName)
+                        .then((value) {
+                      if(data.user.address.isNotEmpty){
+                  isData = true;
+                }else{
+                  isData=false;
+                }
+                      setState(() {});
+                    });
                   },
                 ),
               ],
@@ -201,7 +171,7 @@ class AddressBox extends StatelessWidget {
             Container(
               width: width * 0.45,
               child: AutoSizeText(
-                "A12, ABC street, some area",
+                address.address!,
                 maxLines: 3,
                 style: TextStyle(
                   fontSize: 20,
