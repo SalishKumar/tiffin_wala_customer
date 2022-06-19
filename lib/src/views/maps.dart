@@ -95,7 +95,7 @@ class _MapsState extends State<Maps> {
                 '${placemarks[0].street}, ${placemarks[0].subLocality}, ${placemarks[0].locality}';
             data.lat = marker.latitude;
             data.long = marker.longitude;
-            print(data.address);
+            //print(data.address);
             Navigator.pushReplacementNamed(context, AddressView.routeName);
           },
           child: CustomButton(

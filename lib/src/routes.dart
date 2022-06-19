@@ -38,9 +38,9 @@ Route<dynamic> generateRoute(RouteSettings settings) {
     case Item.routeName:
       return MaterialPageRoute(builder: (_) => const Item());
     case PaymentAndAddress.routeName:
-      return MaterialPageRoute(builder: (_) => const PaymentAndAddress());
+      return MaterialPageRoute(builder: (_) => PaymentAndAddress());
     case Addresses.routeName:
-      return MaterialPageRoute(builder: (_) => const Addresses());
+      return MaterialPageRoute(builder: (_) => Addresses());
     case Maps.routeName:
       return MaterialPageRoute(builder: (_) => Maps());
     case AddressView.routeName:

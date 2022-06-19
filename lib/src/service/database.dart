@@ -404,4 +404,37 @@ class Database {
       return null;
     }
   }
+
+  Future postOrder(Map<String, dynamic> map) async {
+    try {
+      timeoutSettings(15);
+      print('token ${data.user.token} $map');
+      timeoutSettings(50);
+      dynamic response =
+          await dio.post(endpoint.base + endpoint.signup + endpoint.order,
+              data: map,
+              options: Options(
+                headers: {
+                  'Authorization': "token ${data.user.token}",
+                },
+                validateStatus: (_) => true,
+                contentType: Headers.jsonContentType,
+                responseType: ResponseType.json,
+              ));
+      print("Tis is reponse ${response.data}");
+      if (response.statusCode != 200) {
+        return null;
+      }
+      return response.data;
+    } on DioError catch (e) {
+      if (e.type == DioErrorType.connectTimeout ||
+          e.type == DioErrorType.receiveTimeout) {
+        print(e.type);
+        Map<String, dynamic> map = {'Timeout': 'true'};
+        return map;
+      }
+      print(e.toString());
+      return null;
+    }
+  }
 }

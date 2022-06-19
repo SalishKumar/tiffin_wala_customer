@@ -12,18 +12,7 @@ class Day {
     List<Item1> b = [];
     List<Item1> l = [];
     List<Item1> d = [];
-    for (var item in json['breakfast']) {
-      Item1 x = Item1.fromJson(item);
-      b.add(x);
-    }
-    for (var item in json['lunch']) {
-      Item1 x = Item1.fromJson(item);
-      l.add(x);
-    }
-    for (var item in json['dinner']) {
-      Item1 x = Item1.fromJson(item);
-      d.add(x);
-    }
+    //for (var d in json){}
     return Day(
       breakfast: b,
       lunch: l,

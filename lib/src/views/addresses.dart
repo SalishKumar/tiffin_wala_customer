@@ -10,8 +10,9 @@ import 'package:tiffin_wala_customer/src/constants/data.dart' as data;
 
 class Addresses extends StatefulWidget {
   static const routeName = '/addresses';
+  int? chosenAddress;
 
-  const Addresses({Key? key}) : super(key: key);
+  Addresses({Key? key, this.chosenAddress}) : super(key: key);
   @override
   State<Addresses> createState() => _AddressesState();
 }
@@ -28,6 +29,7 @@ class _AddressesState extends State<Addresses> {
       isData=true;
       user = data.user;
     }
+    
     super.initState();
   }
 
@@ -57,7 +59,11 @@ class _AddressesState extends State<Addresses> {
                   itemCount: user.address.length,
                   itemBuilder: (context, index) {
                     return InkWell(
-                        onTap: () {},
+                        onTap: () {
+                          data.chosenAddress = index;
+                          print("${data.chosenAddress} $index");
+                          Navigator.pop(context);
+                        },
                         child: addressBox(
                           user.address[index],
                           width,
@@ -87,12 +93,15 @@ class _AddressesState extends State<Addresses> {
               data.address = '';
               data.notes = '';
               Navigator.push(context, MaterialPageRoute(builder: (context) => Maps())).then((value) {
-                print("address naya ${data.user.address.length}");
                 if(data.user.address.isNotEmpty){
                   isData = true;
                 }else{
                   isData=false;
                 }
+                //data.chosenAddress = user.address.length-1;
+                if (data.addressDirect == false){
+      
+    }
                 user.address = data.user.address;
                 setState(() {});
               });

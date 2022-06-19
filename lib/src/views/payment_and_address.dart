@@ -1,8 +1,15 @@
+import 'dart:convert';
+
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import 'package:tiffin_wala_customer/src/constants/custom_button.dart';
 import 'package:tiffin_wala_customer/src/constants/logo.dart';
+import 'package:tiffin_wala_customer/src/models/address.dart';
+import 'package:tiffin_wala_customer/src/models/item.dart';
+import 'package:tiffin_wala_customer/src/models/user.dart';
+import 'package:tiffin_wala_customer/src/service/database.dart';
 import 'package:tiffin_wala_customer/src/view_model/login_view_model.dart';
 import 'package:tiffin_wala_customer/src/constants/color.dart' as color;
 import 'package:tiffin_wala_customer/src/constants/my_custom_textfield.dart';
@@ -14,11 +21,35 @@ import 'package:tiffin_wala_customer/src/views/item.dart';
 import 'package:tiffin_wala_customer/src/views/menu.dart';
 import 'package:tiffin_wala_customer/src/views/register.dart';
 import 'package:flutter_rating_stars/flutter_rating_stars.dart';
+import 'package:tiffin_wala_customer/src/constants/data.dart' as data;
 
-class PaymentAndAddress extends StatelessWidget {
+class PaymentAndAddress extends StatefulWidget {
   static const routeName = '/paymentAndAddress';
+  User1? user;
+  int? vendorID;
+  double? total, total1;
+  String? code;
+  List<Item1>? cart;
+  bool? voucherApplied;
 
-  const PaymentAndAddress({Key? key}) : super(key: key);
+  PaymentAndAddress(
+      {Key? key,
+      this.cart,
+      this.code,
+      this.total,
+      this.total1,
+      this.user,
+      this.vendorID,
+      this.voucherApplied})
+      : super(key: key);
+
+  @override
+  State<PaymentAndAddress> createState() => _PaymentAndAddressState();
+}
+
+class _PaymentAndAddressState extends State<PaymentAndAddress> {
+  int chosenAddress = 0;
+  Database db = Database();
 
   @override
   Widget build(BuildContext context) {
@@ -37,62 +68,134 @@ class PaymentAndAddress extends StatelessWidget {
       body: SafeArea(
         child: SingleChildScrollView(
           child: Container(
-            margin: EdgeInsets.symmetric(horizontal: width * 0.05, vertical: 10),
-            child: Consumer<LoginViewModel>(
-                builder: (context, loginViewModel, child) {
-              return Container(
-                child: Column(
-                  children: [
-                    SizedBox(
-                      height: 20,
-                    ),
-                    AddressBox(
-                      width: width,
-                      context: context,
-                    ),
-                    SizedBox(
-                      height: 20,
-                    ),
-                    PaymentBox(
-                      width: width,
-                    ),
-                    SizedBox(
-                      height: 20,
-                    ),
-                    OrderSummary(width: width),
-                  ],
+            margin:
+                EdgeInsets.symmetric(horizontal: width * 0.05, vertical: 10),
+            child: Column(
+              children: [
+                SizedBox(
+                  height: 20,
                 ),
-              );
-            }),
+                addressBox(
+                    width,
+                    context,
+                    widget.user!.address.isEmpty
+                        ? null
+                        : widget.user!.address[chosenAddress]),
+                SizedBox(
+                  height: 20,
+                ),
+                PaymentBox(
+                  width: width,
+                ),
+                SizedBox(
+                  height: 20,
+                ),
+                orderSummary(width, widget.cart, widget.total, widget.total1),
+              ],
+            ),
           ),
         ),
       ),
       bottomNavigationBar: Padding(
-        padding: EdgeInsets.symmetric(horizontal: width*0.05),
+        padding: EdgeInsets.symmetric(horizontal: width * 0.05),
         child: InkWell(
-            onTap: () {
-              Navigator.pushNamedAndRemoveUntil(context, Home.routeName, (route) => false);
+            onTap: () async{
+              if(widget.cart != null && widget.user != null && widget.vendorID != null){
+                showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return Dialog(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          child: Container(
+            width: MediaQuery.of(context).size.width * 0.6,
+            height: 300,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                CircularProgressIndicator(
+                  color: color.purple,
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+                Text("Loading"),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+                List<Map<String, dynamic>> mappedCart = [];
+                for(var item in widget.cart!){
+                  mappedCart.add(
+                    {
+                      "dish_id": item.id,
+                      "quantity": item.quantity,
+                      "price_per_unit": item.price,
+                      "total_amount": item.price*item.quantity
+                    }
+                  );
+                }
+                Map<String,dynamic> map = {};
+                if(widget.voucherApplied!){
+                  map = {
+                  "customer_id": widget.user!.id,
+                  "seller_id": widget.vendorID,
+                  "address_id": widget.user!.address[chosenAddress].id,
+                  "cart_size": widget.cart!.length,
+                  "amount": widget.total,
+                  "type" : widget.cart![0].type,
+                  "coupon_code": widget.code,
+                  "discounted_amount": widget.total1
+                };
+                }else{
+                  map = {
+                  "customer_id": widget.user!.id,
+                  "seller_id": widget.vendorID,
+                  "address_id": widget.user!.address[chosenAddress].id,
+                  "cart_size": widget.cart!.length,
+                  "amount": widget.total,
+                  "type" : widget.cart![0].type
+                };
+                }
+                map["cart"]=mappedCart;
+                dynamic result = await db.postOrder(map);
+                Navigator.pop(context);
+                if(result!=null){
+                  if(result["status"]){
+                    Fluttertoast.showToast(
+            msg: result["message"],
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.CENTER,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.green,
+            textColor: Colors.white,
+            fontSize: 16.0);
+            Navigator.pushNamedAndRemoveUntil(context, Home.routeName, (route) => false);
+                  } else if(result["status"] == false){
+                    Fluttertoast.showToast(
+            msg: result["message"],
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.CENTER,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+            fontSize: 16.0);
+                  }
+                }
+              }
             },
             child: CustomButton(
               width: width,
               title: "Place Order",
             )),
       ),
-      
     );
   }
-}
 
-class AddressBox extends StatelessWidget {
-  double width;
-  BuildContext context;
-  AddressBox({
-    Key? key,
-    required this.width,
-    required this.context,
-  }) : super(key: key);
-  @override
-  Widget build(BuildContext context) {
+  Widget addressBox(width, context, Address? address) {
     return Card(
       elevation: 5,
       child: Padding(
@@ -119,7 +222,7 @@ class AddressBox extends StatelessWidget {
                         "Delivery Address",
                         maxLines: 1,
                         style: TextStyle(
-                          fontSize: 24,
+                          fontSize: 22,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -127,8 +230,19 @@ class AddressBox extends StatelessWidget {
                   ],
                 ),
                 InkWell(
-                  onTap: (){
-                    Navigator.pushNamed(context, Addresses.routeName);
+                  onTap: () {
+                    data.addressDirect = false;
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => Addresses(
+                                  chosenAddress: chosenAddress,
+                                ))).then((value) {
+                      chosenAddress = data.chosenAddress;
+                      data.addressDirect = true;
+                      print(chosenAddress);
+                      setState(() {});
+                    });
                   },
                   child: Icon(
                     Icons.edit,
@@ -143,10 +257,10 @@ class AddressBox extends StatelessWidget {
             Container(
               width: width * 0.45,
               child: AutoSizeText(
-                "A12, ABC street, some area",
+                address != null ? address.address! : "Provide Address",
                 maxLines: 3,
                 style: TextStyle(
-                  fontSize: 20,
+                  fontSize: 18,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -154,13 +268,171 @@ class AddressBox extends StatelessWidget {
             Container(
               width: width * 0.45,
               child: AutoSizeText(
-                "Karachi",
+                address != null ? "Karachi" : "",
                 maxLines: 1,
                 style: TextStyle(
                   fontSize: 20,
                   color: Colors.grey[600],
                 ),
               ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget orderSummary(width, List<Item1>? cart, total, total1) {
+    return Card(
+      elevation: 5,
+      child: Padding(
+        padding: const EdgeInsets.all(15.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Icon(
+                  Icons.summarize,
+                  color: color.purple,
+                ),
+                SizedBox(
+                  width: 10,
+                ),
+                Container(
+                  width: width * 0.45,
+                  child: AutoSizeText(
+                    "Order Summary",
+                    maxLines: 1,
+                    style: TextStyle(
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(
+              height: 20,
+            ),
+            ListView.builder(
+                shrinkWrap: true,
+                physics: NeverScrollableScrollPhysics(),
+                itemCount: cart!.length,
+                itemBuilder: (context, index) {
+                  return Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                        child: Text(
+                          "${cart[index].quantity} X ${cart[index].name}",
+                          style: TextStyle(
+                              fontSize: 18,
+                              color: Color(0xFF3a3a3b),
+                              fontWeight: FontWeight.w400),
+                          textAlign: TextAlign.left,
+                        ),
+                      ),
+                      Divider(
+                        color: Colors.black,
+                      ),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Container(
+                            width: width * 0.4,
+                            padding: EdgeInsets.only(left: 5),
+                            child: AutoSizeText(
+                              "${cart[index].desc}",
+                              maxLines: 1,
+                              style: TextStyle(
+                                  fontSize: 16,
+                                  color: Colors.grey[600],
+                                  fontWeight: FontWeight.w400),
+                              textAlign: TextAlign.left,
+                            ),
+                          ),
+                          Container(
+                            width: width * 0.4,
+                            alignment: Alignment.centerRight,
+                            child: AutoSizeText(
+                              "PKR $total/=",
+                              maxLines: 1,
+                              style: TextStyle(
+                                  fontSize: 18,
+                                  color: Color(0xFF3a3a3b),
+                                  fontWeight: FontWeight.w400),
+                              textAlign: TextAlign.left,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  );
+                }),
+            if (widget.voucherApplied!)
+              Container(
+                width: double.infinity,
+                alignment: Alignment.centerRight,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    AutoSizeText(
+                      "Voucher Applied: ",
+                      maxLines: 1,
+                      style: TextStyle(
+                        fontSize: 16,
+                        // color: color.purple,
+                        // decoration: TextDecoration.underline,
+                      ),
+                      textAlign: TextAlign.left,
+                    ),
+                    AutoSizeText(
+                      "${widget.code}",
+                      maxLines: 1,
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: color.purple,
+                        decoration: TextDecoration.underline,
+                      ),
+                      textAlign: TextAlign.left,
+                    ),
+                  ],
+                ),
+              ),
+            Divider(
+              color: Colors.black,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Container(
+                  child: Text(
+                    "Total",
+                    style: TextStyle(
+                        fontSize: 18,
+                        color: Color(0xFF3a3a3b),
+                        fontWeight: FontWeight.w400),
+                    textAlign: TextAlign.left,
+                  ),
+                ),
+                Container(
+                  width: width * 0.4,
+                  alignment: Alignment.centerRight,
+                  child: AutoSizeText(
+                    "PKR $total1/=",
+                    maxLines: 1,
+                    style: TextStyle(
+                        fontSize: 18,
+                        color: Color(0xFF3a3a3b),
+                        fontWeight: FontWeight.w400),
+                    textAlign: TextAlign.left,
+                  ),
+                ),
+              ],
             ),
           ],
         ),
@@ -203,7 +475,7 @@ class PaymentBox extends StatelessWidget {
                         "Payment Method",
                         maxLines: 1,
                         style: TextStyle(
-                          fontSize: 24,
+                          fontSize: 22,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -242,159 +514,12 @@ class PaymentBox extends StatelessWidget {
                       child: AutoSizeText(
                         "Cash",
                         style: TextStyle(
-                          fontSize: 20,
+                          fontSize: 18,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
                     ),
                   ],
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class OrderSummary extends StatelessWidget {
-  double width;
-  OrderSummary({
-    Key? key,
-    required this.width,
-  }) : super(key: key);
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      elevation: 5,
-      child: Padding(
-        padding: const EdgeInsets.all(15.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Icon(
-                  Icons.summarize,
-                  color: color.purple,
-                ),
-                SizedBox(
-                  width: 10,
-                ),
-                Container(
-                  width: width * 0.45,
-                  child: AutoSizeText(
-                    "Order Summary",
-                    maxLines: 1,
-                    style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            SizedBox(
-              height: 20,
-            ),
-            Container(
-              child: Text(
-                "2 X Lunch",
-                style: TextStyle(
-                    fontSize: 18,
-                    color: Color(0xFF3a3a3b),
-                    fontWeight: FontWeight.w400),
-                textAlign: TextAlign.left,
-              ),
-            ),
-            Divider(
-              color: Colors.black,
-            ),
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Container(
-                  width: width * 0.4,
-                  padding: EdgeInsets.only(left: 5),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      AutoSizeText(
-                        "1  X Daal Chanwal Plate",
-                        maxLines: 1,
-                        style: TextStyle(
-                            fontSize: 16,
-                            color: Colors.grey[600],
-                            fontWeight: FontWeight.w400),
-                        textAlign: TextAlign.left,
-                      ),
-                      AutoSizeText(
-                        "1  X Shami Kabab",
-                        maxLines: 1,
-                        style: TextStyle(
-                            fontSize: 16,
-                            color: Colors.grey[600],
-                            fontWeight: FontWeight.w400),
-                        textAlign: TextAlign.left,
-                      ),
-                      AutoSizeText(
-                        "1  X Salad",
-                        maxLines: 1,
-                        style: TextStyle(
-                            fontSize: 16,
-                            color: Colors.grey[600],
-                            fontWeight: FontWeight.w400),
-                        textAlign: TextAlign.left,
-                      ),
-                    ],
-                  ),
-                ),
-                Container(
-                  width: width * 0.4,
-                  alignment: Alignment.centerRight,
-                  child: AutoSizeText(
-                    "PKR 500/=",
-                    maxLines: 1,
-                    style: TextStyle(
-                        fontSize: 18,
-                        color: Color(0xFF3a3a3b),
-                        fontWeight: FontWeight.w400),
-                    textAlign: TextAlign.left,
-                  ),
-                ),
-              ],
-            ),
-            Divider(
-              color: Colors.black,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Container(
-                  child: Text(
-                    "Total",
-                    style: TextStyle(
-                        fontSize: 18,
-                        color: Color(0xFF3a3a3b),
-                        fontWeight: FontWeight.w400),
-                    textAlign: TextAlign.left,
-                  ),
-                ),
-                Container(
-                  width: width * 0.4,
-                  alignment: Alignment.centerRight,
-                  child: AutoSizeText(
-                    "PKR 500/=",
-                    maxLines: 1,
-                    style: TextStyle(
-                        fontSize: 18,
-                        color: Color(0xFF3a3a3b),
-                        fontWeight: FontWeight.w400),
-                    textAlign: TextAlign.left,
-                  ),
                 ),
               ],
             ),

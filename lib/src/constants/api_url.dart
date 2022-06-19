@@ -8,4 +8,5 @@ String address = 'address';
 String vendor = 'vendor';
 String voucher = 'coupon';
 String validate = "/validate";
+String order = "order";
 String picBase = 'https://salish.pythonanywhere.com';

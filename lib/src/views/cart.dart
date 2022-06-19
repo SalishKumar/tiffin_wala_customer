@@ -108,7 +108,7 @@ class _CartState extends State<Cart> {
         padding: EdgeInsets.symmetric(horizontal: width * 0.05),
         child: InkWell(
             onTap: () {
-              Navigator.push(context, MaterialPageRoute(builder: (context)=> PaymentAndAddress()));
+              Navigator.push(context, MaterialPageRoute(builder: (context)=> PaymentAndAddress(user: widget.user, cart: widget.cart, vendorID: widget.vendorID, code: code, total: total, total1: total1, voucherApplied: voucherApplied,)));
             },
             child: CustomButton(
               width: width,

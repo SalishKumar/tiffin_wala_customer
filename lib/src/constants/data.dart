@@ -12,3 +12,4 @@ bool addressDirect = true;
 bool addressEdit = false;
 bool filterApplied = false, cusineSelected1 = false, cusineSelected2 = false, subs = false;
 List<Item1> filteredList = [];
+int chosenAddress=0;
