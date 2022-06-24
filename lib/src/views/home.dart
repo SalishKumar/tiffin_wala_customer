@@ -1,8 +1,10 @@
+import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_stars/flutter_rating_stars.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
@@ -58,12 +60,30 @@ class _HomeState extends State<Home> {
     loading = true;
     var result = await db.home();
     if (result != null) {
-      if (result["status"]) {
+      if (result['Timeout'] == 'true') {
+        Fluttertoast.showToast(
+            msg: 'Your request has been timmed-out. Try again.',
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.CENTER,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+            fontSize: 16.0);
+      } else if (result["status"]) {
         vendors = [];
         for (var vendor in result["message"]) {
           vendors.add(Chef.fromJson(vendor));
         }
       }
+    } else {
+      Fluttertoast.showToast(
+          msg: 'Issue with connection. Try again later.',
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          fontSize: 16.0);
     }
     once = [];
     for (var v in vendors) {
@@ -74,88 +94,88 @@ class _HomeState extends State<Home> {
     daily = [];
     for (var v in vendors) {
       for (var b in v.menu.monday.breakfast) {
-            daily.add(b);
-            // break;
+        daily.add(b);
+        // break;
       }
       for (var l in v.menu.monday.lunch) {
-            daily.add(l);
-            // break;
+        daily.add(l);
+        // break;
       }
       for (var d in v.menu.monday.dinner) {
-            daily.add(d);
-            // break;
+        daily.add(d);
+        // break;
       }
       for (var b in v.menu.tuesday.breakfast) {
-            daily.add(b);
-            // break;
+        daily.add(b);
+        // break;
       }
       for (var l in v.menu.tuesday.lunch) {
-            daily.add(l);
-            // break;
+        daily.add(l);
+        // break;
       }
       for (var d in v.menu.tuesday.dinner) {
-            daily.add(d);
-            // break;
+        daily.add(d);
+        // break;
       }
       for (var b in v.menu.wednesday.breakfast) {
-            daily.add(b);
-            // break;
+        daily.add(b);
+        // break;
       }
       for (var l in v.menu.wednesday.lunch) {
-            daily.add(l);
-            // break;
+        daily.add(l);
+        // break;
       }
       for (var d in v.menu.wednesday.dinner) {
-            daily.add(d);
-            // break;
+        daily.add(d);
+        // break;
       }
       for (var b in v.menu.thursday.breakfast) {
-            daily.add(b);
-            // break;
+        daily.add(b);
+        // break;
       }
       for (var l in v.menu.thursday.lunch) {
-            daily.add(l);
-            // break;
+        daily.add(l);
+        // break;
       }
       for (var d in v.menu.thursday.dinner) {
-            daily.add(d);
-            // break;
+        daily.add(d);
+        // break;
       }
       for (var b in v.menu.friday.breakfast) {
-            daily.add(b);
-            // break;
+        daily.add(b);
+        // break;
       }
       for (var l in v.menu.friday.lunch) {
-            daily.add(l);
-            // break;
+        daily.add(l);
+        // break;
       }
       for (var d in v.menu.friday.dinner) {
-            daily.add(d);
-            // break;
+        daily.add(d);
+        // break;
       }
       for (var b in v.menu.saturday.breakfast) {
-            daily.add(b);
-            // break;
+        daily.add(b);
+        // break;
       }
       for (var l in v.menu.saturday.lunch) {
-            daily.add(l);
-            // break;
+        daily.add(l);
+        // break;
       }
       for (var d in v.menu.saturday.dinner) {
-            daily.add(d);
-            // break;
+        daily.add(d);
+        // break;
       }
       for (var b in v.menu.sunday.breakfast) {
-            daily.add(b);
-            // break;
+        daily.add(b);
+        // break;
       }
       for (var l in v.menu.sunday.lunch) {
-            daily.add(l);
-            // break;
+        daily.add(l);
+        // break;
       }
       for (var d in v.menu.sunday.dinner) {
-            daily.add(d);
-            // break;
+        daily.add(d);
+        // break;
       }
     }
     daily = daily.toSet().toList();
@@ -198,7 +218,7 @@ class _HomeState extends State<Home> {
                   ),
                   onTap: () {
                     Navigator.pop(context);
-                    Navigator.pushNamed(context, OrderList.routeName);
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => OrderList(user: data.user,)));
                   },
                 ),
                 ListTile(
@@ -245,7 +265,8 @@ class _HomeState extends State<Home> {
                   ),
                   onTap: () {
                     Navigator.pop(context);
-                    Navigator.pushNamed(context, ComplainList.routeName);
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => ComplainList(user: data.user,)
+                    ));
                   },
                 ),
                 ListTile(
@@ -447,12 +468,13 @@ class _HomeState extends State<Home> {
                                                         }
                                                       }
                                                     }
-                                                    filter1 = filter1.toSet().toList();
+                                                    filter1 = filter1
+                                                        .toSet()
+                                                        .toList();
                                                   } else {
                                                     for (var v in vendors) {
                                                       filter1.add(v);
                                                     }
-                                                    
                                                   }
                                                 }
                                                 setState(() {});
@@ -524,9 +546,15 @@ class _HomeState extends State<Home> {
                                                                   ? searchList1[
                                                                       index]
                                                                   : filter1[
-                                                                      index], user: data.user, vendorID: search1
+                                                                      index],
+                                                              user: data.user,
+                                                              vendorID: search1
                                                                   ? searchList1[
-                                                                      index].id :filter1[index].id,
+                                                                          index]
+                                                                      .id
+                                                                  : filter1[
+                                                                          index]
+                                                                      .id,
                                                             )));
                                               },
                                               child: vendorDisplay(
@@ -801,12 +829,12 @@ class _HomeState extends State<Home> {
                                                       }
                                                     }
                                                   }
-                                                  filter2 = filter2.toSet().toList();
+                                                  filter2 =
+                                                      filter2.toSet().toList();
                                                 } else {
                                                   for (var v in vendors) {
                                                     filter2.add(v);
                                                   }
-                                                  
                                                 }
                                               }
                                               setState(() {});
@@ -864,8 +892,24 @@ class _HomeState extends State<Home> {
                                       itemBuilder: (context, index) {
                                         return InkWell(
                                             onTap: () {
-                                              Navigator.pushNamed(context,
-                                                  SubscriptionMenu.routeName);
+                                              Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          SubscriptionMenu(
+                                                            chef: search1
+                                                                ? searchList1[
+                                                                    index]
+                                                                : filter1[
+                                                                    index],
+                                                            user: data.user,
+                                                            vendorID: search1
+                                                                ? searchList1[
+                                                                        index]
+                                                                    .id
+                                                                : filter1[index]
+                                                                    .id,
+                                                          )));
                                             },
                                             child: vendorDisplay(
                                                 width,
@@ -878,51 +922,14 @@ class _HomeState extends State<Home> {
                             ),
                           ),
                         ),
-                        SingleChildScrollView(
-                          child: Container(
-                            margin:
-                                EdgeInsets.symmetric(horizontal: width * 0.05),
-                            child: Consumer<HomeViewModel>(
-                                builder: (context, homeViewModel, child) {
-                              return Container(
-                                margin: EdgeInsets.only(top: 20),
-                                child: Column(
-                                  children: [
-                                    MyCustomTextfield(
-                                      size: 50,
-                                      disable: true,
-                                      controller:
-                                          homeViewModel.searchController,
-                                      textInputType: TextInputType.text,
-                                      onPressed: () {
-                                        Navigator.pushNamed(
-                                            context, Filter.routeName);
-                                        // Navigator.of(context).pushReplacementNamed(Filter.routeName);
-                                      },
-                                      hintText: "Search",
-                                      label: "Search",
-                                      error: '',
-                                      prefix: Icons.search,
-                                      onValidation: () {
-                                        homeViewModel.search();
-                                      },
-                                      suffix: Icons.list,
-                                    ),
-                                    SizedBox(
-                                      height: 20,
-                                    ),
-                                    ListView.builder(
-                                        shrinkWrap: true,
-                                        physics: NeverScrollableScrollPhysics(),
-                                        itemCount: 3,
-                                        itemBuilder: (context, index) {
-                                          return vendorDisplay(
-                                              width, vendors[index]);
-                                        }),
-                                  ],
-                                ),
-                              );
-                            }),
+                        Container(
+                          width: double.infinity,
+                          child: Center(
+                            child: Text("Coming Soon",
+                              style: TextStyle(
+                                  fontSize: 50.0,),
+                              
+                            )
                           ),
                         ),
                       ],

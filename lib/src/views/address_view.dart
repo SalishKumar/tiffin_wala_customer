@@ -135,7 +135,11 @@ class _AddressViewState extends State<AddressView> {
                               Navigator.pop(context);
                               Navigator.push(context, MaterialPageRoute(builder: (context) => Addresses()));
                             } else {
-                              data.chosenAddress = data.user.address.length-1;
+                              if(data.addressEdit){
+                                data.chosenAddress = data.user.address.length;
+                              }else{
+                                data.chosenAddress = data.user.address.length-1;
+                              }
       Navigator.pop(context);
                               Navigator.pop(context);
                             }

@@ -193,7 +193,6 @@ class Database {
     try {
       timeoutSettings(15);
       map['customer_id'] = data.user.id;
-      print('token ${data.user.token} $map');
       timeoutSettings(50);
       dynamic response =
           await dio.post(endpoint.base + endpoint.signup + endpoint.address,
@@ -227,8 +226,6 @@ class Database {
     try {
       timeoutSettings(15);
       map['customer_id'] = data.user.id;
-      print('token ${data.user.token} $map');
-      timeoutSettings(50);
       dynamic response =
           await dio.put(endpoint.base + endpoint.signup + endpoint.address,
               data: map,
@@ -408,8 +405,6 @@ class Database {
   Future postOrder(Map<String, dynamic> map) async {
     try {
       timeoutSettings(15);
-      print('token ${data.user.token} $map');
-      timeoutSettings(50);
       dynamic response =
           await dio.post(endpoint.base + endpoint.signup + endpoint.order,
               data: map,
@@ -422,6 +417,160 @@ class Database {
                 responseType: ResponseType.json,
               ));
       print("Tis is reponse ${response.data}");
+      if (response.statusCode != 200) {
+        return null;
+      }
+      return response.data;
+    } on DioError catch (e) {
+      if (e.type == DioErrorType.connectTimeout ||
+          e.type == DioErrorType.receiveTimeout) {
+        print(e.type);
+        Map<String, dynamic> map = {'Timeout': 'true'};
+        return map;
+      }
+      print(e.toString());
+      return null;
+    }
+  }
+
+  Future getOrders(Map<String, dynamic> map) async {
+    try {
+      timeoutSettings(15);
+      dynamic response = await dio.get(
+          endpoint.base + endpoint.signup + endpoint.order,
+          queryParameters: map,
+          options: Options(
+            headers: {
+              'Authorization': "token ${data.user.token}",
+            },
+            validateStatus: (_) => true,
+            contentType: Headers.jsonContentType,
+            responseType: ResponseType.json,
+          ));
+      print(response.data);
+      if (response.statusCode != 200) {
+        return null;
+      }
+      return response.data;
+    } on DioError catch (e) {
+      if (e.type == DioErrorType.connectTimeout ||
+          e.type == DioErrorType.receiveTimeout) {
+        print(e.type);
+        Map<String, dynamic> map = {'Timeout': 'true'};
+        return map;
+      }
+      print(e.toString());
+      return null;
+    }
+  }
+
+  Future cancelOrders(Map<String, dynamic> map) async {
+    try {
+      timeoutSettings(15);
+      dynamic response = await dio.put(endpoint.base + endpoint.signup + endpoint.order,
+          data: map,
+          options: Options(
+            headers: {
+              'Authorization': "token ${data.user.token}",
+            },
+            validateStatus: (_) => true,
+            contentType: Headers.jsonContentType,
+            responseType: ResponseType.json,
+          ));
+      if (response.statusCode != 200) {
+        return null;
+      }
+      response.data['Timeout'] = 'false';
+      return response.data;
+    } on DioError catch (e) {
+      if (e.type == DioErrorType.connectTimeout ||
+          e.type == DioErrorType.receiveTimeout) {
+        print(e.type);
+        Map<String, dynamic> map = {'Timeout': 'true'};
+        return map;
+      }
+      print(e.toString());
+      return null;
+    }
+  }
+
+  Future reviewOrder(Map<String, dynamic> map) async {
+    try {
+      timeoutSettings(15);
+      dynamic response =
+          await dio.post(endpoint.base + endpoint.signup + endpoint.order + endpoint.review,
+              data: map,
+              options: Options(
+                headers: {
+                  'Authorization': "token ${data.user.token}",
+                },
+                validateStatus: (_) => true,
+                contentType: Headers.jsonContentType,
+                responseType: ResponseType.json,
+              ));
+      print("Tis is reponse ${response.data}");
+      if (response.statusCode != 200) {
+        return null;
+      }
+      return response.data;
+    } on DioError catch (e) {
+      if (e.type == DioErrorType.connectTimeout ||
+          e.type == DioErrorType.receiveTimeout) {
+        print(e.type);
+        Map<String, dynamic> map = {'Timeout': 'true'};
+        return map;
+      }
+      print(e.toString());
+      return null;
+    }
+  }
+
+  Future complainOrder(FormData formData) async {
+    try {
+      timeoutSettings(15);
+      dynamic response =
+          await dio.post(endpoint.base + endpoint.signup + endpoint.order + endpoint.complain,
+              data: formData,
+              options: Options(
+                headers: {
+                  'Authorization': "token ${data.user.token}",
+                },
+                validateStatus: (_) => true,
+                contentType: Headers.jsonContentType,
+                responseType: ResponseType.json,
+              ));
+      print("Tis is reponse ${response.data}");
+      if (response.statusCode != 200) {
+        return null;
+      }
+      return response.data;
+    } on DioError catch (e) {
+      if (e.type == DioErrorType.connectTimeout ||
+          e.type == DioErrorType.receiveTimeout) {
+        print(e.type);
+        Map<String, dynamic> map = {'Timeout': 'true'};
+        return map;
+      }
+      print(e.toString());
+      return null;
+    }
+  }
+
+  Future getComplains(Map<String, dynamic> map) async {
+    try {
+      timeoutSettings(15);
+      dynamic response = await dio.get(
+          endpoint.base + endpoint.signup + endpoint.order + endpoint.complain,
+          queryParameters: map,
+          options: Options(
+            headers: {
+              'Authorization': "token ${data.user.token}",
+            },
+            validateStatus: (_) => true,
+            contentType: Headers.jsonContentType,
+            responseType: ResponseType.json,
+          ));
+      print(response.data);
       if (response.statusCode != 200) {
         return null;
       }

@@ -1,8 +1,12 @@
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import 'package:tiffin_wala_customer/src/constants/custom_button.dart';
 import 'package:tiffin_wala_customer/src/constants/logo.dart';
+import 'package:tiffin_wala_customer/src/models/order.dart';
+import 'package:tiffin_wala_customer/src/service/database.dart';
 import 'package:tiffin_wala_customer/src/view_model/login_view_model.dart';
 import 'package:tiffin_wala_customer/src/constants/color.dart' as color;
 import 'package:tiffin_wala_customer/src/constants/data.dart' as data;
@@ -16,12 +20,32 @@ import 'package:tiffin_wala_customer/src/views/item.dart';
 import 'package:tiffin_wala_customer/src/views/maps.dart';
 import 'package:tiffin_wala_customer/src/views/register.dart';
 import 'package:flutter_rating_stars/flutter_rating_stars.dart';
+import 'package:tiffin_wala_customer/src/constants/api_url.dart' as endpoint;
 import 'package:tiffin_wala_customer/src/views/review_view.dart';
 
-class OrderView extends StatelessWidget {
+class OrderView extends StatefulWidget {
   static const routeName = '/orderView';
+  Order? order;
+  OrderView({Key? key, this.order}) : super(key: key);
 
-  const OrderView({Key? key}) : super(key: key);
+  @override
+  State<OrderView> createState() => _OrderViewState();
+}
+
+class _OrderViewState extends State<OrderView> {
+  bool cancel = true;
+  Database db = Database();
+
+  @override
+  void initState() {
+    DateTime now = DateTime.now();
+    final difference = now.difference(widget.order!.orderTime!).inMinutes;
+    print(difference);
+    if (difference > 5) {
+      cancel = false;
+    }
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -35,43 +59,39 @@ class OrderView extends StatelessWidget {
               children: [
                 Stack(
                   children: [
-                    MyAppbar(),
+                    myAppbar(),
                     Positioned(
-                          top: 10,
-                          left: 15,
-                          child: Container(
-                            child: IconButton(
-                              icon: Icon(Icons.arrow_back),
-                              onPressed: () {
-                                Navigator.pop(context);
-                              },
-                            ),
-                            decoration: BoxDecoration(
-                                color: Colors.white, shape: BoxShape.circle),
-                          ),
+                      top: 10,
+                      left: 15,
+                      child: Container(
+                        child: IconButton(
+                          icon: Icon(Icons.arrow_back),
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
                         ),
+                        decoration: BoxDecoration(
+                            color: Colors.white, shape: BoxShape.circle),
+                      ),
+                    ),
                   ],
                 ),
                 SizedBox(
                   height: 50,
                 ),
-                Consumer<LoginViewModel>(
-                    builder: (context, loginViewModel, child) {
-                  return Container(
-                      margin: EdgeInsets.symmetric(
-                          horizontal: width * 0.05, vertical: 10),
-                      child: Column(
-                        children: [
-                          Details(width: width),
-                          SizedBox(
-                            height: 20,
-                          ),
-                          OrderSummary(
-                            width: width,
-                          ),
-                        ],
-                      ));
-                }),
+                Container(
+                  margin: EdgeInsets.symmetric(
+                      horizontal: width * 0.05, vertical: 10),
+                  child: Column(
+                    children: [
+                      details(width, widget.order!),
+                      SizedBox(
+                        height: 20,
+                      ),
+                      orderSummary(width, widget.order!),
+                    ],
+                  ),
+                ),
               ],
             ),
           ),
@@ -83,42 +103,41 @@ class OrderView extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              ReviewButton(context: context, width: width),
-              ComplaintButton(context: context, width: width)
+              reviewButton(width),
+              complainButton(width),
+              cancelButton(width),
             ],
           ),
         ),
       ),
     );
   }
-}
 
-class MyAppbar extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
+  Widget myAppbar() {
+    return CachedNetworkImage(
+      imageUrl: endpoint.picBase + widget.order!.logo!,
       width: double.infinity,
       height: 200,
-      decoration: BoxDecoration(
-        image: DecorationImage(
-          image: AssetImage('assets/images.jpg'),
-          fit: BoxFit.fill,
+      imageBuilder: (context, imageProvider) => Container(
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image: imageProvider,
+            fit: BoxFit.fill,
+          ),
+          borderRadius: BorderRadius.only(
+              bottomLeft: Radius.circular(50),
+              bottomRight: Radius.circular(50)),
         ),
-        borderRadius: BorderRadius.only(
-            bottomLeft: Radius.circular(50), bottomRight: Radius.circular(50)),
       ),
+      placeholder: (context, url) => Center(
+          child: CircularProgressIndicator(
+        color: color.purple,
+      )),
+      errorWidget: (context, url, error) => Icon(Icons.error),
     );
   }
-}
 
-class Details extends StatelessWidget {
-  double width;
-  Details({
-    Key? key,
-    required this.width,
-  }) : super(key: key);
-  @override
-  Widget build(BuildContext context) {
+  Widget details(width, Order order) {
     return Card(
       elevation: 5,
       child: Padding(
@@ -143,7 +162,7 @@ class Details extends StatelessWidget {
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
-                      fontSize: 24,
+                      fontSize: 20,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -161,7 +180,7 @@ class Details extends StatelessWidget {
                   child: const Text(
                     "Order Number: ",
                     style: TextStyle(
-                        fontSize: 18,
+                        fontSize: 16,
                         color: Colors.black,
                         fontWeight: FontWeight.w400),
                     textAlign: TextAlign.left,
@@ -170,10 +189,10 @@ class Details extends StatelessWidget {
                 Container(
                   width: width * 0.4,
                   child: Text(
-                    "123456",
+                    "${order.id}",
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
-                        fontSize: 18,
+                        fontSize: 16,
                         color: color.purple,
                         fontWeight: FontWeight.w400),
                     textAlign: TextAlign.right,
@@ -193,7 +212,7 @@ class Details extends StatelessWidget {
                     "Order from: ",
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
-                        fontSize: 18,
+                        fontSize: 16,
                         color: Colors.black,
                         fontWeight: FontWeight.w400),
                     textAlign: TextAlign.left,
@@ -202,10 +221,45 @@ class Details extends StatelessWidget {
                 Container(
                   width: width * 0.4,
                   child: Text(
-                    "Resturant Name",
+                    order.kitchenName!,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
-                        fontSize: 18,
+                        fontSize: 16,
+                        color: color.purple,
+                        fontWeight: FontWeight.w400),
+                    textAlign: TextAlign.right,
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(
+              height: 10,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  // alignment: Alignment.topLeft,
+                  width: width * 0.4,
+                  child: const Text(
+                    "Delivery Address",
+                    maxLines: 1,
+                    style: TextStyle(
+                        fontSize: 16,
+                        color: Colors.black,
+                        fontWeight: FontWeight.w400),
+                    textAlign: TextAlign.left,
+                  ),
+                ),
+                Container(
+                  width: width * 0.4,
+                  child: Text(
+                    order.address!.address!,
+                    maxLines: 3,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                        fontSize: 16,
                         color: color.purple,
                         fontWeight: FontWeight.w400),
                     textAlign: TextAlign.right,
@@ -220,31 +274,61 @@ class Details extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Container(
-                  // alignment: Alignment.topLeft,
                   width: width * 0.4,
                   child: const Text(
-                    "Delivery Address",
-                    maxLines: 1,
+                    "Ratings: ",
+                    overflow: TextOverflow.ellipsis,
                     style: TextStyle(
-                        fontSize: 18,
+                        fontSize: 16,
                         color: Colors.black,
                         fontWeight: FontWeight.w400),
                     textAlign: TextAlign.left,
                   ),
                 ),
-                Container(
-                  width: width * 0.4,
-                  child: Text(
-                    "Address of Delivery",
-                    maxLines: 3,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                        fontSize: 18,
-                        color: color.purple,
-                        fontWeight: FontWeight.w400),
-                    textAlign: TextAlign.right,
-                  ),
-                ),
+                widget.order!.isRated! == false
+                          ? Container(
+                              padding: EdgeInsets.fromLTRB(0, 10, 10, 0),
+                              alignment: Alignment.centerRight,
+                              child: Text(
+                                "Not Rated",
+                                style: TextStyle(
+                                  color: color.purple,
+                                  fontSize: 16,
+                                ),
+                              ),
+                            )
+                          : Expanded(
+                            child: Container(
+                                alignment: Alignment.centerRight,
+                                child: RatingStars(
+                                  value: widget.order!.rating!,
+                                  starBuilder: (index, color) => Icon(
+                                    Icons.star,
+                                    color: color,
+                                  ),
+                                  starCount: 5,
+                                  starSize: 16,
+                                  valueLabelColor: const Color(0xff9b9b9b),
+                                  valueLabelTextStyle: const TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w400,
+                                      fontStyle: FontStyle.normal,
+                                      fontSize: 12.0),
+                                  valueLabelRadius: 10,
+                                  maxValue: 5,
+                                  starSpacing: 1.5,
+                                  maxValueVisibility: true,
+                                  valueLabelVisibility: true,
+                                  animationDuration: Duration(milliseconds: 1000),
+                                  valueLabelPadding: const EdgeInsets.symmetric(
+                                      vertical: 1, horizontal: 8),
+                                  valueLabelMargin:
+                                      const EdgeInsets.only(right: 8),
+                                  starOffColor: const Color(0xffe7e8ea),
+                                  starColor: Colors.yellow,
+                                ),
+                              ),
+                          ),
               ],
             ),
           ],
@@ -252,16 +336,8 @@ class Details extends StatelessWidget {
       ),
     );
   }
-}
 
-class OrderSummary extends StatelessWidget {
-  double width;
-  OrderSummary({
-    Key? key,
-    required this.width,
-  }) : super(key: key);
-  @override
-  Widget build(BuildContext context) {
+  Widget orderSummary(width, Order order) {
     return Card(
       elevation: 5,
       child: Padding(
@@ -285,7 +361,7 @@ class OrderSummary extends StatelessWidget {
                     "Order Summary",
                     maxLines: 1,
                     style: TextStyle(
-                      fontSize: 24,
+                      fontSize: 20,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -295,74 +371,93 @@ class OrderSummary extends StatelessWidget {
             SizedBox(
               height: 20,
             ),
-            Container(
-              child: Text(
-                "2 X Lunch",
-                style: TextStyle(
-                    fontSize: 18,
-                    color: Color(0xFF3a3a3b),
-                    fontWeight: FontWeight.w400),
-                textAlign: TextAlign.left,
-              ),
-            ),
-            Divider(
-              color: Colors.black,
-            ),
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Container(
-                  width: width * 0.4,
-                  padding: EdgeInsets.only(left: 5),
-                  child: Column(
+            ListView.builder(
+                shrinkWrap: true,
+                physics: NeverScrollableScrollPhysics(),
+                itemCount: order.orders!.length,
+                itemBuilder: (context, index) {
+                  return Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      AutoSizeText(
-                        "1  X Daal Chanwal Plate",
-                        maxLines: 1,
-                        style: TextStyle(
-                            fontSize: 16,
-                            color: Colors.grey[600],
-                            fontWeight: FontWeight.w400),
-                        textAlign: TextAlign.left,
+                      Container(
+                        child: Text(
+                          "${order.orders![index].quantity} X ${order.orders![index].name}",
+                          style: TextStyle(
+                              fontSize: 16,
+                              color: Color(0xFF3a3a3b),
+                              fontWeight: FontWeight.w400),
+                          textAlign: TextAlign.left,
+                        ),
                       ),
-                      AutoSizeText(
-                        "1  X Shami Kabab",
-                        maxLines: 1,
-                        style: TextStyle(
-                            fontSize: 16,
-                            color: Colors.grey[600],
-                            fontWeight: FontWeight.w400),
-                        textAlign: TextAlign.left,
+                      Divider(
+                        color: Colors.black,
                       ),
-                      AutoSizeText(
-                        "1  X Salad",
-                        maxLines: 1,
-                        style: TextStyle(
-                            fontSize: 16,
-                            color: Colors.grey[600],
-                            fontWeight: FontWeight.w400),
-                        textAlign: TextAlign.left,
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Container(
+                            width: width * 0.4,
+                            padding: EdgeInsets.only(left: 5),
+                            child: AutoSizeText(
+                              "${order.orders![index].desc}",
+                              maxLines: 1,
+                              style: TextStyle(
+                                  fontSize: 14,
+                                  color: Colors.grey[600],
+                                  fontWeight: FontWeight.w400),
+                              textAlign: TextAlign.left,
+                            ),
+                          ),
+                          Container(
+                            width: width * 0.4,
+                            alignment: Alignment.centerRight,
+                            child: AutoSizeText(
+                              "PKR ${order.orders![index].quantity * order.orders![index].price}/=",
+                              maxLines: 1,
+                              style: TextStyle(
+                                  fontSize: 16,
+                                  color: Color(0xFF3a3a3b),
+                                  fontWeight: FontWeight.w400),
+                              textAlign: TextAlign.left,
+                            ),
+                          ),
+                        ],
                       ),
                     ],
-                  ),
+                  );
+                }),
+            if (order.voucherApplied!)
+              Container(
+                width: double.infinity,
+                alignment: Alignment.centerRight,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    AutoSizeText(
+                      "Voucher Applied: ",
+                      maxLines: 1,
+                      style: TextStyle(
+                        fontSize: 14,
+                        // color: color.purple,
+                        // decoration: TextDecoration.underline,
+                      ),
+                      textAlign: TextAlign.left,
+                    ),
+                    AutoSizeText(
+                      "${order.voucher!.code}",
+                      maxLines: 1,
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: color.purple,
+                        decoration: TextDecoration.underline,
+                      ),
+                      textAlign: TextAlign.left,
+                    ),
+                  ],
                 ),
-                Container(
-                  width: width * 0.4,
-                  alignment: Alignment.centerRight,
-                  child: AutoSizeText(
-                    "PKR 500/=",
-                    maxLines: 1,
-                    style: TextStyle(
-                        fontSize: 18,
-                        color: Color(0xFF3a3a3b),
-                        fontWeight: FontWeight.w400),
-                    textAlign: TextAlign.left,
-                  ),
-                ),
-              ],
-            ),
+              ),
             Divider(
               color: Colors.black,
             ),
@@ -373,7 +468,7 @@ class OrderSummary extends StatelessWidget {
                   child: Text(
                     "Total",
                     style: TextStyle(
-                        fontSize: 18,
+                        fontSize: 16,
                         color: Color(0xFF3a3a3b),
                         fontWeight: FontWeight.w400),
                     textAlign: TextAlign.left,
@@ -383,10 +478,12 @@ class OrderSummary extends StatelessWidget {
                   width: width * 0.4,
                   alignment: Alignment.centerRight,
                   child: AutoSizeText(
-                    "PKR 6000/=",
+                    order.voucherApplied!
+                        ? "PKR ${order.discounted}/="
+                        : "PKR ${order.totalAmount}/=",
                     maxLines: 1,
                     style: TextStyle(
-                        fontSize: 18,
+                        fontSize: 16,
                         color: Color(0xFF3a3a3b),
                         fontWeight: FontWeight.w400),
                     textAlign: TextAlign.left,
@@ -399,26 +496,16 @@ class OrderSummary extends StatelessWidget {
       ),
     );
   }
-}
 
-class ReviewButton extends StatelessWidget {
-  double width;
-  BuildContext context;
-  ReviewButton({
-    Key? key,
-    required this.context,
-    required this.width,
-  }) : super(key: key);
-  @override
-  Widget build(BuildContext context) {
+  Widget reviewButton(width) {
     return Container(
       margin: EdgeInsets.only(bottom: 10),
-      width: width * 0.4,
+      width: width * 0.28,
       height: 60,
       child: InkWell(
         onTap: () {
           if (data.order != 'cancel' && data.order != 'current') {
-            Navigator.pushNamed(context, Review.routeName);
+            Navigator.push(context, MaterialPageRoute(builder: (context) => Review(id: widget.order!.id,)));
           }
         },
         child: Container(
@@ -433,7 +520,7 @@ class ReviewButton extends StatelessWidget {
             child: Text(
               'Review',
               style: TextStyle(
-                  fontSize: 18.0,
+                  fontSize: 16.0,
                   color: Colors.white,
                   fontWeight: FontWeight.bold),
             ),
@@ -442,26 +529,16 @@ class ReviewButton extends StatelessWidget {
       ),
     );
   }
-}
 
-class ComplaintButton extends StatelessWidget {
-  double width;
-  BuildContext context;
-  ComplaintButton({
-    Key? key,
-    required this.context,
-    required this.width,
-  }) : super(key: key);
-  @override
-  Widget build(BuildContext context) {
+  Widget complainButton(width) {
     return Container(
       margin: EdgeInsets.only(bottom: 10),
-      width: width * 0.4,
+      width: width * 0.28,
       height: 60,
       child: InkWell(
         onTap: () {
           if (data.order != 'cancel') {
-            Navigator.pushNamed(context, Complaint.routeName);
+            Navigator.push(context, MaterialPageRoute(builder: (context) => ComplainView(id: widget.order!.id,)));
           }
         },
         child: Container(
@@ -474,7 +551,102 @@ class ComplaintButton extends StatelessWidget {
             child: Text(
               'Complaint',
               style: TextStyle(
-                  fontSize: 18.0,
+                  fontSize: 16.0,
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget cancelButton(width) {
+    return Container(
+      margin: EdgeInsets.only(bottom: 10),
+      width: width * 0.28,
+      height: 60,
+      child: InkWell(
+        onTap: () async {
+          showDialog(
+            context: context,
+            barrierDismissible: false,
+            builder: (BuildContext context) {
+              return Dialog(
+                backgroundColor: Colors.transparent,
+                elevation: 0,
+                child: Container(
+                  width: MediaQuery.of(context).size.width * 0.6,
+                  height: 300,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      CircularProgressIndicator(
+                        color: color.purple,
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      Text("Loading"),
+                    ],
+                  ),
+                ),
+              );
+            },
+          );
+          Map<String, dynamic> map = {};
+          map = {
+            "customer_id": widget.order!.customerID,
+            "seller_id": widget.order!.sellerID,
+            "order_id": widget.order!.id
+          };
+          dynamic result = await db.cancelOrders(map);
+          Navigator.pop(context);
+          if (result != null) {
+            if (result['Timeout'] == 'true') {
+              Fluttertoast.showToast(
+                  msg: 'Your request has been timmed-out. Try again.',
+                  toastLength: Toast.LENGTH_SHORT,
+                  gravity: ToastGravity.CENTER,
+                  timeInSecForIosWeb: 1,
+                  backgroundColor: Colors.red,
+                  textColor: Colors.white,
+                  fontSize: 16.0);
+            } else if (result["status"]) {
+              Fluttertoast.showToast(
+                  msg: result["message"],
+                  toastLength: Toast.LENGTH_SHORT,
+                  gravity: ToastGravity.CENTER,
+                  timeInSecForIosWeb: 1,
+                  backgroundColor: Colors.green,
+                  textColor: Colors.white,
+                  fontSize: 16.0);
+              Navigator.pop(context);
+            } else if (result["status"] == false) {
+              Fluttertoast.showToast(
+                  msg: result["message"],
+                  toastLength: Toast.LENGTH_SHORT,
+                  gravity: ToastGravity.CENTER,
+                  timeInSecForIosWeb: 1,
+                  backgroundColor: Colors.red,
+                  textColor: Colors.white,
+                  fontSize: 16.0);
+            }
+          }
+        },
+        child: Container(
+          padding: EdgeInsets.all(15),
+          decoration: BoxDecoration(
+              color: data.order == 'current' && cancel == true
+                  ? color.purple
+                  : Colors.grey,
+              borderRadius: BorderRadius.circular(15),
+              border: Border.all(color: color.orange, width: 2)),
+          child: Center(
+            child: Text(
+              'Cancel',
+              style: TextStyle(
+                  fontSize: 16.0,
                   color: Colors.white,
                   fontWeight: FontWeight.bold),
             ),

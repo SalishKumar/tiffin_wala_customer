@@ -1,6 +1,7 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:provider/provider.dart';
 import 'package:tiffin_wala_customer/src/constants/custom_button.dart';
@@ -41,9 +42,9 @@ class _MenuState extends State<Menu> {
       onetimeAvailable = true;
     }
     total = 0;
-                  for (Item1 i in widget.chef!.menu.oneTime) {
-                    total += i.quantity;
-                  }
+    for (Item1 i in widget.chef!.menu.oneTime) {
+      total += i.quantity;
+    }
     setState(() {});
     super.initState();
   }
@@ -429,6 +430,15 @@ class _MenuState extends State<Menu> {
                   }
                   setState(() {});
                 });
+              }else{
+                Fluttertoast.showToast(
+                        msg: 'Select any item to your cart first.',
+                        toastLength: Toast.LENGTH_SHORT,
+                        gravity: ToastGravity.CENTER,
+                        timeInSecForIosWeb: 1,
+                        backgroundColor: Colors.red,
+                        textColor: Colors.white,
+                        fontSize: 16.0);
               }
             },
             child: CustomButton(

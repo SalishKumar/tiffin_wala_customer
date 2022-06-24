@@ -409,7 +409,16 @@ class _CartState extends State<Cart> {
     dynamic result = await db.validateVouchers(map);
     Navigator.pop(context);
     if (result != null) {
-      if (result["status"]) {
+      if (result['Timeout'] == 'true') {
+        Fluttertoast.showToast(
+            msg: 'Your request has been timmed-out. Try again.',
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.CENTER,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+            fontSize: 16.0);
+      } else if (result["status"]) {
         total1 = result["amount_after_discount"];
         promo.clear();
         voucherApplied = true;
@@ -435,9 +444,27 @@ class _CartState extends State<Cart> {
             textColor: Colors.white,
             fontSize: 16.0);
       }
+    }else{
+      Fluttertoast.showToast(
+          msg: 'Issue with connection. Try again later.',
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          fontSize: 16.0);
     }
     setState(() {});
     
+    }else{
+      Fluttertoast.showToast(
+          msg: 'Enter voucher code or click tag button and select voucher',
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          fontSize: 16.0);
     }
   }
 
@@ -559,12 +586,31 @@ class _CartState extends State<Cart> {
     };
     dynamic result = await db.getVouchers(map);
     if (result != null) {
-      if (result["status"]) {
+      if (result['Timeout'] == 'true') {
+        Fluttertoast.showToast(
+            msg: 'Your request has been timmed-out. Try again.',
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.CENTER,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+            fontSize: 16.0);
+      }
+      else if (result["status"]) {
         vouchers = [];
         for (var v in result["message"]) {
           vouchers.add(Voucher.fromJson(v));
         }
       }
+    } else {
+      Fluttertoast.showToast(
+          msg: 'Issue with connection. Try again later.',
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          fontSize: 16.0);
     }
     if (vouchers.isEmpty) {
       isData = false;
@@ -680,10 +726,12 @@ class _CartState extends State<Cart> {
                         if (widget.cart![index].quantity >= 2) {
                         widget.cart![index].quantity--;
                         total -= widget.cart![index].price;
+                        total1=total;
                       } else if (item.quantity <= 1) {
                         widget.cart![index].quantity = 0;
                         total -= widget.cart![index].price;
                         widget.cart!.removeAt(index);
+                        total1=total;
                         Navigator.pop(context);
                       }
                       }

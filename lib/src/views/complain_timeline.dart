@@ -1,10 +1,14 @@
 import 'package:another_carousel_pro/another_carousel_pro.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_stars/flutter_rating_stars.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:tiffin_wala_customer/src/constants/color.dart' as color;
+import 'package:tiffin_wala_customer/src/constants/custom_button.dart';
+import 'package:tiffin_wala_customer/src/models/complain.dart';
 
 class ComplainTimeline extends StatefulWidget {
-  const ComplainTimeline({ Key? key }) : super(key: key);
+  Complain? complain;
+  ComplainTimeline({ Key? key, this.complain }) : super(key: key);
 
   @override
   State<ComplainTimeline> createState() => _ComplainTimelineState();
@@ -15,7 +19,26 @@ class _ComplainTimelineState extends State<ComplainTimeline> {
   bool resolutionLess = true;
   String expandDiscription = 'See more';
   String expandResoutionl = 'See more';
-  double x = 3.5;
+  double rating = 0.0;
+
+  @override
+  void initState() {
+    if(widget.complain! == null){
+      print("null");
+    }else{
+      print(widget.complain!.customerName!);
+      print(widget.complain!.desc!);
+      print(widget.complain!.id!);
+      print(widget.complain!.isCustomerRating!);
+      print(widget.complain!.isResoved!);
+      print(widget.complain!.kitchenName!);
+      print(widget.complain!.rating!);
+      print(widget.complain!.resolution!);
+      print(widget.complain!.status!);
+      print(widget.complain!.voucherIssued!);
+    }
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -45,7 +68,7 @@ class _ComplainTimelineState extends State<ComplainTimeline> {
               SizedBox(height: 20,),
               const Text(
                   'Complain',
-                  style: const TextStyle(
+                  style: TextStyle(
                       color: Colors.black,
                       fontSize: 18,
                       fontWeight: FontWeight.bold),
@@ -53,24 +76,33 @@ class _ComplainTimelineState extends State<ComplainTimeline> {
                 SizedBox(height: 10,),
               complainTileM(16.0),
               SizedBox(height: 20,),
+              if(widget.complain!.isResoved!)
               const Text(
                   'Resolution',
-                  style: const TextStyle(
+                  style: TextStyle(
                       color: Colors.black,
                       fontSize: 18,
                       fontWeight: FontWeight.bold),
                 ),
+                if(widget.complain!.isResoved!)
                 SizedBox(height: 10,),
+                if(widget.complain!.isResoved!)
               resolutionTileM(16.0),
-              SizedBox(height: 20,),
+              widget.complain!.isResoved! && widget.complain!.isCustomerRating! ?
+              SizedBox(height: 20,):SizedBox(height: 20,),
+              widget.complain!.isResoved! && widget.complain!.isCustomerRating! ?
               const Text(
                   'Rating',
-                  style: const TextStyle(
+                  style: TextStyle(
                       color: Colors.black,
                       fontSize: 18,
                       fontWeight: FontWeight.bold),
-                ),
+                ):GestureDetector(onTap: () async{
+                  await rateAResolution();
+                }, child: CustomButton(width: width, title: "Rate Resolution")),
+                if(widget.complain!.isResoved! && widget.complain!.isCustomerRating!)
                 SizedBox(height: 10,),
+                if(widget.complain!.isResoved! && widget.complain!.isCustomerRating!)
               ratingTileM(16.0, 16.0),
                 SizedBox(height: 10,),
               
@@ -98,7 +130,7 @@ class _ComplainTimelineState extends State<ComplainTimeline> {
                       fontWeight: FontWeight.bold),
                 ),
                 Text(
-                  "123",
+                  widget.complain!.id!.toString(),
                   style: TextStyle(
                       color: color.purple,
                       fontSize: 18,
@@ -120,7 +152,7 @@ class _ComplainTimelineState extends State<ComplainTimeline> {
                       fontWeight: FontWeight.bold),
                 ),
                 Text(
-                  "Customer 1",
+                  widget.complain!.customerName!,
                   style: TextStyle(
                       color: color.purple,
                       fontSize: 18,
@@ -142,7 +174,7 @@ class _ComplainTimelineState extends State<ComplainTimeline> {
                       fontWeight: FontWeight.bold),
                 ),
                 Text(
-                  "ABC Kitchen",
+                  widget.complain!.kitchenName!,
                   style: TextStyle(
                       color: color.purple,
                       fontSize: 18,
@@ -164,7 +196,7 @@ class _ComplainTimelineState extends State<ComplainTimeline> {
                       fontWeight: FontWeight.bold),
                 ),
                 Text(
-                  "Resolved",
+                  widget.complain!.status!,
                   style: TextStyle(
                       color: color.purple,
                       fontSize: 18,
@@ -182,6 +214,7 @@ class _ComplainTimelineState extends State<ComplainTimeline> {
   }
 
   Widget complainTileM(fontsize) {
+    print("no problem");
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -202,7 +235,7 @@ class _ComplainTimelineState extends State<ComplainTimeline> {
         dicriptionLess
             ? Expanded(
                 child: Text(
-                  "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
+                  widget.complain!.desc!,
                   style: TextStyle(
                     color: color.purple,
                     fontSize: fontsize,
@@ -214,7 +247,7 @@ class _ComplainTimelineState extends State<ComplainTimeline> {
               )
             : Expanded(
                 child: Text(
-                  "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
+                  widget.complain!.desc!,
                   style: TextStyle(
                     color: color.purple,
                     fontSize: fontsize,
@@ -250,6 +283,7 @@ class _ComplainTimelineState extends State<ComplainTimeline> {
         SizedBox(
           height: 20,
         ),
+        if(widget.complain!.images!.isNotEmpty)
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -267,12 +301,7 @@ class _ComplainTimelineState extends State<ComplainTimeline> {
             height: 199.0,
             width: 300.0,
             child: Carousel(
-              images: [
-                NetworkImage(
-                    'https://cdn-images-1.medium.com/max/2000/1*GqdzzfB_BHorv7V2NV7Jgg.jpeg'),
-                NetworkImage(
-                    'https://cdn-images-1.medium.com/max/2000/1*wnIEgP1gNMrK5gZU7QS0-A.jpeg'),
-              ],
+              images: widget.complain!.images!,
               dotSize: 4.0,
               dotSpacing: 15.0,
               dotColor: Colors.lightGreenAccent,
@@ -296,31 +325,19 @@ class _ComplainTimelineState extends State<ComplainTimeline> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Column(
-              children: [
-                Text(
-                  'Resolution',
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontSize: fontsize,
-                    fontWeight: FontWeight.bold
-                  ),
-                ),
-                Text(
-                  'by Chef: ',
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontSize: fontsize,
-                    fontWeight: FontWeight.bold
-                  ),
-                ),
-              ],
+            Text(
+              'Resolution: ',
+              style: TextStyle(
+                color: Colors.black,
+                fontSize: fontsize,
+                fontWeight: FontWeight.bold
+              ),
             ),
           
         resolutionLess
             ? Expanded(
                 child: Text(
-                  "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
+                  widget.complain!.resolution!,
                   style: TextStyle(
                     color: color.purple,
                     fontSize: fontsize,
@@ -332,7 +349,7 @@ class _ComplainTimelineState extends State<ComplainTimeline> {
               )
             : Expanded(
                 child: Text(
-                  "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
+                  widget.complain!.resolution!,
                   style: TextStyle(
                     color: color.purple,
                     fontSize: fontsize,
@@ -365,6 +382,109 @@ class _ComplainTimelineState extends State<ComplainTimeline> {
             ),
           ),
         ),
+        SizedBox(height: 20,),
+        if(widget.complain!.voucherIssued!)
+        Center(
+          child: Text(
+                  'Issued Voucher',
+                  style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold),
+          ),
+        ),
+        if(widget.complain!.voucherIssued!)
+        Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text(
+                  'Voucher Code: ',
+                  style: const TextStyle(
+                      color: Colors.black,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold),
+                ),
+                Text(
+                  widget.complain!.voucher!.code!,
+                  style: TextStyle(
+                      color: color.purple,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold),
+                ),
+              ],
+            ),
+            if(widget.complain!.voucherIssued!)
+            const SizedBox(
+              height: 10,
+            ),
+            if(widget.complain!.voucherIssued!)
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text(
+                  'Discount Percentage: ',
+                  style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold),
+                ),
+                Text(
+                  "${widget.complain!.voucher!.percentage!}%",
+                  style: TextStyle(
+                      color: color.purple,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold),
+                ),
+              ],
+            ),
+            if(widget.complain!.voucherIssued!)
+            const SizedBox(
+              height: 10,
+            ),
+            if(widget.complain!.voucherIssued!)
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text(
+                  'Minimum Amount: ',
+                  style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold),
+                ),
+                Text(
+                  "RS ${widget.complain!.voucher!.min_amount}",
+                  style: TextStyle(
+                      color: color.purple,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold),
+                ),
+              ],
+            ),
+            if(widget.complain!.voucherIssued!)
+            const SizedBox(
+              height: 10,
+            ),
+            if(widget.complain!.voucherIssued!)
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text(
+                  'Valid Until: ',
+                  style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold),
+                ),
+                Text(
+                  "${widget.complain!.voucher!.expiry!.day}-${widget.complain!.voucher!.expiry!.month}-${widget.complain!.voucher!.expiry!.year}",
+                  style: TextStyle(
+                      color: color.purple,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold),
+                ),
+              ],
+            ),
       ],
     );
   }
@@ -384,14 +504,14 @@ class _ComplainTimelineState extends State<ComplainTimeline> {
         Container(
           alignment: Alignment.centerRight,
           child: RatingStars(
-            value: x,
-            onValueChanged: (v) {
-              print(v);
-              x=v;
-              setState(() {
+            value: widget.complain!.rating!,
+            // onValueChanged: (v) {
+            //   print(v);
+            //   x=v;
+            //   setState(() {
                 
-              });
-            },
+            //   });
+            // },
             starBuilder: (index, color) => Icon(
               Icons.star,
               color: color,
@@ -418,6 +538,114 @@ class _ComplainTimelineState extends State<ComplainTimeline> {
           ),
         ),
       ],
+    );
+  }
+
+  Future rateAResolution() {
+    return showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return SizedBox(
+              height: MediaQuery.of(context).size.height * 0.25,
+              child: AlertDialog(
+                elevation: 0,
+                title: Text(
+                  "Rate Your Experince",
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                ),
+                content: Container(
+                  // width: MediaQuery.of(context).size.width * 0.6,
+                  height: MediaQuery.of(context).size.height * 0.25,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Rate Your Experince Out of 5, 5 being best and 1 being worst",
+                        style: TextStyle(fontSize: 16),
+                      ),
+                      SizedBox(
+                        height: 20,
+                      ),
+                      Container(
+                  alignment: Alignment.center,
+                  width: double.infinity,
+                  child: RatingStars(
+                    value: rating,
+                    onValueChanged: (v) {
+                      rating = v;
+                      setState(() {});
+                    },
+                    starBuilder: (index, color) => Icon(
+                      Icons.star,
+                      color: color,
+                    ),
+                    starCount: 5,
+                    starSize: 30,
+                    valueLabelColor: const Color(0xff9b9b9b),
+                    valueLabelTextStyle: const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w400,
+                        fontStyle: FontStyle.normal,
+                        fontSize: 12.0),
+                    valueLabelRadius: 10,
+                    maxValue: 5,
+                    starSpacing: 2.5,
+                    maxValueVisibility: true,
+                    valueLabelVisibility: true,
+                    animationDuration: Duration(milliseconds: 1000),
+                    valueLabelPadding:
+                        const EdgeInsets.symmetric(vertical: 1, horizontal: 8),
+                    valueLabelMargin: const EdgeInsets.only(right: 8),
+                    starOffColor: const Color(0xffe7e8ea),
+                    starColor: Colors.yellow,
+                  ),
+                ),
+                    ],
+                  ),
+                ),
+                actions: [
+                  TextButton(
+                    child: Text(
+                      "Submit",
+                      style: TextStyle(color: color.purple),
+                    ),
+                    onPressed: () async {
+                      if (rating != 0.0) {
+                        
+                      } else {
+                        
+                          Fluttertoast.showToast(
+                              msg: 'Give Rating first.',
+                              toastLength: Toast.LENGTH_SHORT,
+                              gravity: ToastGravity.CENTER,
+                              timeInSecForIosWeb: 1,
+                              backgroundColor: Colors.red,
+                              textColor: Colors.white,
+                              fontSize: 16.0);
+                        }
+                      
+                    },
+                  ),
+                  TextButton(
+                    child: Text(
+                      "Cancel",
+                      style: TextStyle(color: color.purple),
+                    ),
+                    onPressed: () async {
+                      rating = 0.0;
+                      Navigator.pop(context);
+                      return;
+                    },
+                  )
+                ],
+              ),
+            );
+          }
+        );
+      },
     );
   }
 }

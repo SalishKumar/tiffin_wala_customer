@@ -30,7 +30,7 @@ class Chef {
       id: json["vendor_id"] ?? 0,
       name: json["kitchen_name"] ?? "",
       logo: json["logo"] ?? "",
-      rating: json["rank"] ?? 0.0,
+      rating: double.parse(json["rating"].toString()),
       menu: m,
     );
   }

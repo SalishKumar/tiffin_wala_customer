@@ -11,7 +11,6 @@ class Address {
     required this.long,
   });
   factory Address.fromJson(Map<String, dynamic> json) {
-    print(json["address_id"]);
     var l;
     if(json["label"]=="home"){
       l="Home";

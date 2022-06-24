@@ -99,92 +99,112 @@ class _PaymentAndAddressState extends State<PaymentAndAddress> {
       bottomNavigationBar: Padding(
         padding: EdgeInsets.symmetric(horizontal: width * 0.05),
         child: InkWell(
-            onTap: () async{
-              if(widget.cart != null && widget.user != null && widget.vendorID != null){
+            onTap: () async {
+              if (widget.cart != null &&
+                  widget.user != null &&
+                  widget.vendorID != null &&
+                  widget.user!.address != null) {
                 showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (BuildContext context) {
-        return Dialog(
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-          child: Container(
-            width: MediaQuery.of(context).size.width * 0.6,
-            height: 300,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                CircularProgressIndicator(
-                  color: color.purple,
-                ),
-                SizedBox(
-                  height: 10,
-                ),
-                Text("Loading"),
-              ],
-            ),
-          ),
-        );
-      },
-    );
+                  context: context,
+                  barrierDismissible: false,
+                  builder: (BuildContext context) {
+                    return Dialog(
+                      backgroundColor: Colors.transparent,
+                      elevation: 0,
+                      child: Container(
+                        width: MediaQuery.of(context).size.width * 0.6,
+                        height: 300,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            CircularProgressIndicator(
+                              color: color.purple,
+                            ),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            Text("Loading"),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                );
                 List<Map<String, dynamic>> mappedCart = [];
-                for(var item in widget.cart!){
-                  mappedCart.add(
-                    {
-                      "dish_id": item.id,
-                      "quantity": item.quantity,
-                      "price_per_unit": item.price,
-                      "total_amount": item.price*item.quantity
-                    }
-                  );
+                for (var item in widget.cart!) {
+                  mappedCart.add({
+                    "dish_id": item.id,
+                    "quantity": item.quantity,
+                    "price_per_unit": item.price,
+                    "total_amount": item.price * item.quantity
+                  });
                 }
-                Map<String,dynamic> map = {};
-                if(widget.voucherApplied!){
+                Map<String, dynamic> map = {};
+                if (widget.voucherApplied!) {
                   map = {
-                  "customer_id": widget.user!.id,
-                  "seller_id": widget.vendorID,
-                  "address_id": widget.user!.address[chosenAddress].id,
-                  "cart_size": widget.cart!.length,
-                  "amount": widget.total,
-                  "type" : widget.cart![0].type,
-                  "coupon_code": widget.code,
-                  "discounted_amount": widget.total1
-                };
-                }else{
+                    "customer_id": widget.user!.id,
+                    "seller_id": widget.vendorID,
+                    "address_id": widget.user!.address[chosenAddress].id,
+                    "cart_size": widget.cart!.length,
+                    "amount": widget.total,
+                    "type": widget.cart![0].type,
+                    "coupon_code": widget.code,
+                    "discounted_amount": widget.total1
+                  };
+                } else {
                   map = {
-                  "customer_id": widget.user!.id,
-                  "seller_id": widget.vendorID,
-                  "address_id": widget.user!.address[chosenAddress].id,
-                  "cart_size": widget.cart!.length,
-                  "amount": widget.total,
-                  "type" : widget.cart![0].type
-                };
+                    "customer_id": widget.user!.id,
+                    "seller_id": widget.vendorID,
+                    "address_id": widget.user!.address[chosenAddress].id,
+                    "cart_size": widget.cart!.length,
+                    "amount": widget.total,
+                    "type": widget.cart![0].type
+                  };
                 }
-                map["cart"]=mappedCart;
+                map["cart"] = mappedCart;
                 dynamic result = await db.postOrder(map);
                 Navigator.pop(context);
-                if(result!=null){
-                  if(result["status"]){
+                if (result != null) {
+                  if (result['Timeout'] == 'true') {
                     Fluttertoast.showToast(
-            msg: result["message"],
-            toastLength: Toast.LENGTH_SHORT,
-            gravity: ToastGravity.CENTER,
-            timeInSecForIosWeb: 1,
-            backgroundColor: Colors.green,
-            textColor: Colors.white,
-            fontSize: 16.0);
-            Navigator.pushNamedAndRemoveUntil(context, Home.routeName, (route) => false);
-                  } else if(result["status"] == false){
+                        msg: 'Your request has been timmed-out. Try again.',
+                        toastLength: Toast.LENGTH_SHORT,
+                        gravity: ToastGravity.CENTER,
+                        timeInSecForIosWeb: 1,
+                        backgroundColor: Colors.red,
+                        textColor: Colors.white,
+                        fontSize: 16.0);
+                  } else if (result["status"]) {
                     Fluttertoast.showToast(
-            msg: result["message"],
-            toastLength: Toast.LENGTH_SHORT,
-            gravity: ToastGravity.CENTER,
-            timeInSecForIosWeb: 1,
-            backgroundColor: Colors.red,
-            textColor: Colors.white,
-            fontSize: 16.0);
+                        msg: result["message"],
+                        toastLength: Toast.LENGTH_SHORT,
+                        gravity: ToastGravity.CENTER,
+                        timeInSecForIosWeb: 1,
+                        backgroundColor: Colors.green,
+                        textColor: Colors.white,
+                        fontSize: 16.0);
+                    Navigator.pushNamedAndRemoveUntil(
+                        context, Home.routeName, (route) => false);
+                  } else if (result["status"] == false) {
+                    Fluttertoast.showToast(
+                        msg: result["message"],
+                        toastLength: Toast.LENGTH_SHORT,
+                        gravity: ToastGravity.CENTER,
+                        timeInSecForIosWeb: 1,
+                        backgroundColor: Colors.red,
+                        textColor: Colors.white,
+                        fontSize: 16.0);
                   }
                 }
+              } else if (widget.user!.address == null) {
+                Fluttertoast.showToast(
+                    msg: "Enter Address first.",
+                    toastLength: Toast.LENGTH_SHORT,
+                    gravity: ToastGravity.CENTER,
+                    timeInSecForIosWeb: 1,
+                    backgroundColor: Colors.red,
+                    textColor: Colors.white,
+                    fontSize: 16.0);
               }
             },
             child: CustomButton(

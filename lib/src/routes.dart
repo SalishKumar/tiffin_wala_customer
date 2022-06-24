@@ -48,17 +48,15 @@ Route<dynamic> generateRoute(RouteSettings settings) {
     case ForgetPassword.routeName:
       return MaterialPageRoute(builder: (_) => const ForgetPassword());
     case ComplainList.routeName:
-      return MaterialPageRoute(builder: (_) => const ComplainList());
-    case OrderList.routeName:
-      return MaterialPageRoute(builder: (_) => const OrderList());
+      return MaterialPageRoute(builder: (_) => ComplainList());
     case OrderView.routeName:
-      return MaterialPageRoute(builder: (_) => const OrderView());
+      return MaterialPageRoute(builder: (_) => OrderView());
     case Review.routeName:
-      return MaterialPageRoute(builder: (_) => const Review());
-    case Complaint.routeName:
-      return MaterialPageRoute(builder: (_) => const Complaint());
+      return MaterialPageRoute(builder: (_) => Review());
+    case ComplainView.routeName:
+      return MaterialPageRoute(builder: (_) => ComplainView());
     case SubscriptionMenu.routeName:
-      return MaterialPageRoute(builder: (_) => const SubscriptionMenu());
+      return MaterialPageRoute(builder: (_) => SubscriptionMenu());
 
     default:
       return MaterialPageRoute(

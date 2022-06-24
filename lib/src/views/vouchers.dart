@@ -1,5 +1,6 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:tiffin_wala_customer/src/constants/custom_button.dart';
 import 'package:tiffin_wala_customer/src/models/address.dart';
@@ -33,11 +34,29 @@ class _VouchersState extends State<Vouchers> {
     };
     dynamic result = await db.getVouchers(map);
     if(result != null){
-      if(result["status"]){
+      if (result['Timeout'] == 'true') {
+        Fluttertoast.showToast(
+            msg: 'Your request has been timmed-out. Try again.',
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.CENTER,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+            fontSize: 16.0);
+      } else if(result["status"]){
         vouchers = [];
         for(var v in result["message"]){
           vouchers.add(Voucher.fromJson(v));
         }
+      }else if(result["status"]==false){
+        Fluttertoast.showToast(
+            msg: result["message"],
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.CENTER,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+            fontSize: 16.0);
       }
     }
     loading = false;
@@ -162,7 +181,7 @@ class _VouchersState extends State<Vouchers> {
                 style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
-                ),)
+                ),),
               ),
             ),
           ),

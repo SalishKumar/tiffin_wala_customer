@@ -55,8 +55,8 @@ class Menu1 {
     b = [];
     l = [];
     d = [];
-    if (json['wedneday'] != null) {
-      for (var time in json['wedneday']) {
+    if (json['wednesday'] != null) {
+      for (var time in json['wednesday']) {
         if (time["meal_type"] == "breakfast") {
           b.add(Item1.fromJson(time));
         } else if (time["meal_type"] == "lunch") {
