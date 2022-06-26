@@ -178,6 +178,7 @@ class _ReviewState extends State<Review> {
                   backgroundColor: Colors.green,
                   textColor: Colors.white,
                   fontSize: 16.0);
+                  data.rating = rating;
               Navigator.pop(context);
             } else if (result["status"] == false) {
               Fluttertoast.showToast(

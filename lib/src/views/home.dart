@@ -22,7 +22,7 @@ import 'package:tiffin_wala_customer/src/constants/data.dart' as data;
 import 'package:tiffin_wala_customer/src/views/menu.dart';
 import 'package:tiffin_wala_customer/src/views/my_profile.dart';
 import 'package:tiffin_wala_customer/src/views/order_list.dart';
-import 'package:tiffin_wala_customer/src/views/subscription_menu.dart';
+import 'package:tiffin_wala_customer/src/views/subscription_menu.dart'; 
 import 'package:tiffin_wala_customer/src/constants/api_url.dart' as endpoint;
 import 'package:tiffin_wala_customer/src/views/vouchers.dart';
 

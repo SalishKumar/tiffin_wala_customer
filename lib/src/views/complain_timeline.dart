@@ -20,22 +20,14 @@ class _ComplainTimelineState extends State<ComplainTimeline> {
   String expandDiscription = 'See more';
   String expandResoutionl = 'See more';
   double rating = 0.0;
-
+  List<NetworkImage> imgs = [];
+  
   @override
   void initState() {
-    if(widget.complain! == null){
-      print("null");
-    }else{
-      print(widget.complain!.customerName!);
-      print(widget.complain!.desc!);
-      print(widget.complain!.id!);
-      print(widget.complain!.isCustomerRating!);
-      print(widget.complain!.isResoved!);
-      print(widget.complain!.kitchenName!);
-      print(widget.complain!.rating!);
-      print(widget.complain!.resolution!);
-      print(widget.complain!.status!);
-      print(widget.complain!.voucherIssued!);
+    if(widget.complain!.images!.isNotEmpty){
+      for(var pics in widget.complain!.images!){
+        imgs.add(NetworkImage(pics));
+      }
     }
     super.initState();
   }
@@ -116,99 +108,97 @@ class _ComplainTimelineState extends State<ComplainTimeline> {
   Widget complainInfo(width) {
     return Container(
       width: width,
-      child: Expanded(
-        child: Column(
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Text(
-                  'Complain ID: ',
-                  style: const TextStyle(
-                      color: Colors.black,
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold),
-                ),
-                Text(
-                  widget.complain!.id!.toString(),
-                  style: TextStyle(
-                      color: color.purple,
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold),
-                ),
-              ],
-            ),
-            const SizedBox(
-              height: 10,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Text(
-                  'Customer Name: ',
-                  style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold),
-                ),
-                Text(
-                  widget.complain!.customerName!,
-                  style: TextStyle(
-                      color: color.purple,
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold),
-                ),
-              ],
-            ),
-            const SizedBox(
-              height: 10,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Text(
-                  'Kitchen Name: ',
-                  style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold),
-                ),
-                Text(
-                  widget.complain!.kitchenName!,
-                  style: TextStyle(
-                      color: color.purple,
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold),
-                ),
-              ],
-            ),
-            const SizedBox(
-              height: 10,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Text(
-                  'Status: ',
-                  style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold),
-                ),
-                Text(
-                  widget.complain!.status!,
-                  style: TextStyle(
-                      color: color.purple,
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold),
-                ),
-              ],
-            ),
-            const SizedBox(
-              height: 20,
-            ),
-          ],
-        ),
+      child: Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text(
+                'Complain ID: ',
+                style: const TextStyle(
+                    color: Colors.black,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold),
+              ),
+              Text(
+                widget.complain!.id!.toString(),
+                style: TextStyle(
+                    color: color.purple,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold),
+              ),
+            ],
+          ),
+          const SizedBox(
+            height: 10,
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text(
+                'Customer Name: ',
+                style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold),
+              ),
+              Text(
+                widget.complain!.customerName!,
+                style: TextStyle(
+                    color: color.purple,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold),
+              ),
+            ],
+          ),
+          const SizedBox(
+            height: 10,
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text(
+                'Kitchen Name: ',
+                style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold),
+              ),
+              Text(
+                widget.complain!.kitchenName!,
+                style: TextStyle(
+                    color: color.purple,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold),
+              ),
+            ],
+          ),
+          const SizedBox(
+            height: 10,
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text(
+                'Status: ',
+                style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold),
+              ),
+              Text(
+                widget.complain!.status!,
+                style: TextStyle(
+                    color: color.purple,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold),
+              ),
+            ],
+          ),
+          const SizedBox(
+            height: 20,
+          ),
+        ],
       ),
     );
   }
@@ -301,7 +291,7 @@ class _ComplainTimelineState extends State<ComplainTimeline> {
             height: 199.0,
             width: 300.0,
             child: Carousel(
-              images: widget.complain!.images!,
+              images: imgs,
               dotSize: 4.0,
               dotSpacing: 15.0,
               dotColor: Colors.lightGreenAccent,

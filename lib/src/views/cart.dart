@@ -1,4 +1,5 @@
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:date_time_picker/date_time_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
@@ -19,7 +20,8 @@ class Cart extends StatefulWidget {
   bool? subscription;
   User1? user;
   int? vendorID;
-  Cart({Key? key, this.cart, this.subscription, this.user, this.vendorID}) : super(key: key);
+  Cart({Key? key, this.cart, this.subscription, this.user, this.vendorID})
+      : super(key: key);
 
   @override
   State<Cart> createState() => _CartState();
@@ -34,6 +36,9 @@ class _CartState extends State<Cart> {
   List<Voucher> vouchers = [];
   bool isData = false;
   bool voucherApplied = false;
+  DateTime start = DateTime.now().add(Duration(days: 1)),
+      end = DateTime.now().add(Duration(days: 2));
+  bool datesApplied = false;
 
   @override
   void initState() {
@@ -87,8 +92,13 @@ class _CartState extends State<Cart> {
                   physics: NeverScrollableScrollPhysics(),
                   itemCount: widget.cart!.length,
                   itemBuilder: (context, index) {
-                    return cartItem(widget.cart![index], index);
+                    return cartItem(
+                        widget.cart![index], index, widget.subscription!);
                   }),
+              const SizedBox(
+                height: 10,
+              ),
+              if (widget.subscription!) startAndEndDate(width),
               const SizedBox(
                 height: 10,
               ),
@@ -108,7 +118,18 @@ class _CartState extends State<Cart> {
         padding: EdgeInsets.symmetric(horizontal: width * 0.05),
         child: InkWell(
             onTap: () {
-              Navigator.push(context, MaterialPageRoute(builder: (context)=> PaymentAndAddress(user: widget.user, cart: widget.cart, vendorID: widget.vendorID, code: code, total: total, total1: total1, voucherApplied: voucherApplied,)));
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => PaymentAndAddress(
+                            user: widget.user,
+                            cart: widget.cart,
+                            vendorID: widget.vendorID,
+                            code: code,
+                            total: total,
+                            total1: total1,
+                            voucherApplied: voucherApplied,
+                          )));
             },
             child: CustomButton(
               width: width,
@@ -118,7 +139,8 @@ class _CartState extends State<Cart> {
     );
   }
 
-  Widget cartItem(Item1 item, index) {
+  Widget cartItem(Item1 item, index, bool subs) {
+    print(subs);
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(boxShadow: [
@@ -150,48 +172,104 @@ class _CartState extends State<Cart> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: <Widget>[
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Container(
-                          child: Text(
-                            "${item.quantity} X ${item.name}",
-                            style: TextStyle(
-                                fontSize: 18,
-                                color: Color(0xFF3a3a3b),
-                                fontWeight: FontWeight.w400),
-                            textAlign: TextAlign.left,
+                    subs == false
+                        ? Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              Container(
+                                child: Text(
+                                  "${item.quantity} X ${item.name}",
+                                  style: TextStyle(
+                                      fontSize: 18,
+                                      color: Color(0xFF3a3a3b),
+                                      fontWeight: FontWeight.w400),
+                                  textAlign: TextAlign.left,
+                                ),
+                              ),
+                              SizedBox(
+                                height: 5,
+                              ),
+                              Container(
+                                padding: EdgeInsets.only(left: 5),
+                                child: Text(
+                                  item.desc,
+                                  style: TextStyle(
+                                      fontSize: 16,
+                                      color: Colors.grey[600],
+                                      fontWeight: FontWeight.w400),
+                                  textAlign: TextAlign.left,
+                                ),
+                              ),
+                              SizedBox(
+                                height: 5,
+                              ),
+                              Container(
+                                child: Text(
+                                  "RS ${item.price}/=",
+                                  style: TextStyle(
+                                      fontSize: 18,
+                                      color: Color(0xFF3a3a3b),
+                                      fontWeight: FontWeight.w400),
+                                  textAlign: TextAlign.left,
+                                ),
+                              ),
+                            ],
+                          )
+                        : Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              Container(
+                                child: Text(
+                                  "${item.day} - ${item.type}",
+                                  style: TextStyle(
+                                      fontSize: 18,
+                                      color: Color(0xFF3a3a3b),
+                                      fontWeight: FontWeight.w400),
+                                  textAlign: TextAlign.left,
+                                ),
+                              ),
+                              SizedBox(
+                                height: 10,
+                              ),
+                              Container(
+                                child: Text(
+                                  "${item.quantity} X ${item.name}",
+                                  style: TextStyle(
+                                      fontSize: 18,
+                                      color: Color(0xFF3a3a3b),
+                                      fontWeight: FontWeight.w400),
+                                  textAlign: TextAlign.left,
+                                ),
+                              ),
+                              SizedBox(
+                                height: 5,
+                              ),
+                              Container(
+                                padding: EdgeInsets.only(left: 5),
+                                child: Text(
+                                  item.desc,
+                                  style: TextStyle(
+                                      fontSize: 16,
+                                      color: Colors.grey[600],
+                                      fontWeight: FontWeight.w400),
+                                  textAlign: TextAlign.left,
+                                ),
+                              ),
+                              SizedBox(
+                                height: 5,
+                              ),
+                              Container(
+                                child: Text(
+                                  "RS ${item.price}/=",
+                                  style: TextStyle(
+                                      fontSize: 18,
+                                      color: Color(0xFF3a3a3b),
+                                      fontWeight: FontWeight.w400),
+                                  textAlign: TextAlign.left,
+                                ),
+                              ),
+                            ],
                           ),
-                        ),
-                        SizedBox(
-                          height: 5,
-                        ),
-                        Container(
-                          padding: EdgeInsets.only(left: 5),
-                          child: Text(
-                            item.desc,
-                            style: TextStyle(
-                                fontSize: 16,
-                                color: Colors.grey[600],
-                                fontWeight: FontWeight.w400),
-                            textAlign: TextAlign.left,
-                          ),
-                        ),
-                        SizedBox(
-                          height: 5,
-                        ),
-                        Container(
-                          child: Text(
-                            "RS ${item.price}/=",
-                            style: TextStyle(
-                                fontSize: 18,
-                                color: Color(0xFF3a3a3b),
-                                fontWeight: FontWeight.w400),
-                            textAlign: TextAlign.left,
-                          ),
-                        ),
-                      ],
-                    ),
                     SizedBox(
                       width: 40,
                     ),
@@ -225,38 +303,222 @@ class _CartState extends State<Cart> {
 
   Widget promoWidget(width) {
     return SafeArea(
-      child: voucherApplied? Container(
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Row(
-              //mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      child: voucherApplied
+          ? Container(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Row(
+                    //mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        "Voucher Applied: ",
+                        style: TextStyle(
+                          fontSize: 18,
+                        ),
+                      ),
+                      Text(
+                        code,
+                        style: TextStyle(fontSize: 18, color: color.purple),
+                      ),
+                    ],
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      voucherApplied = false;
+                      total1 = total;
+                      setState(() {});
+                    },
+                    child: Text(
+                      "Remove",
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: Colors.red,
+                        decoration: TextDecoration.underline,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            )
+          : Column(
               children: [
-                Text(
-                  "Voucher Applied: ",
-                  style: TextStyle(
-                    fontSize: 18,
+                Container(
+                  padding: const EdgeInsets.only(left: 3, right: 3),
+                  decoration: BoxDecoration(boxShadow: [
+                    BoxShadow(
+                      color: const Color(0xFFfae3e2).withOpacity(0.1),
+                      spreadRadius: 1,
+                      blurRadius: 1,
+                      offset: const Offset(0, 1),
+                    ),
+                  ]),
+                  child: TextFormField(
+                    autofocus: false,
+                    keyboardType: TextInputType.text,
+                    controller: promo,
+                    decoration: InputDecoration(
+                        enabledBorder: OutlineInputBorder(
+                          borderSide:
+                              BorderSide(color: color.orange, width: 1.0),
+                          borderRadius: BorderRadius.circular(15.0),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide:
+                              BorderSide(color: color.purple, width: 1.0),
+                          borderRadius: BorderRadius.circular(15.0),
+                        ),
+                        errorBorder: OutlineInputBorder(
+                          borderSide:
+                              BorderSide(color: color.orange, width: 1.0),
+                          borderRadius: BorderRadius.circular(15.0),
+                        ),
+                        focusedErrorBorder: OutlineInputBorder(
+                          borderSide:
+                              BorderSide(color: color.purple, width: 1.0),
+                          borderRadius: BorderRadius.circular(15.0),
+                        ),
+                        hintText: 'Add Your Promo Code',
+                        suffixIcon: IconButton(
+                            icon: Icon(
+                              Icons.local_offer,
+                              color: color.purple,
+                            ),
+                            onPressed: () async {
+                              await getVouchers();
+                              showMaterialModalBottomSheet(
+                                context: context,
+                                builder: (context) => SingleChildScrollView(
+                                  controller: ModalScrollController.of(context),
+                                  child: isData
+                                      ? Container(
+                                          child: ListView.builder(
+                                              shrinkWrap: true,
+                                              physics:
+                                                  NeverScrollableScrollPhysics(),
+                                              itemCount: vouchers.length,
+                                              itemBuilder: (context, index) {
+                                                return InkWell(
+                                                    onTap: () {
+                                                      promo.text =
+                                                          vouchers[index].code!;
+                                                      Navigator.pop(context);
+                                                    },
+                                                    child: voucherBox(
+                                                      vouchers[index],
+                                                      width,
+                                                      context,
+                                                    ));
+                                              }),
+                                        )
+                                      : Container(
+                                          height: MediaQuery.of(context)
+                                              .size
+                                              .height,
+                                          child: Center(
+                                              child: Text(
+                                            "No Vouchers Available",
+                                            style: TextStyle(
+                                              fontSize: 20,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          )),
+                                        ),
+                                ),
+                              );
+                            })),
                   ),
                 ),
-                Text(
-                  code,
-                  style: TextStyle(
-                    fontSize: 18,
-                    color: color.purple
+                //SizedBox(height: 10,),
+                GestureDetector(
+                  onTap: () async {
+                    print("Apply");
+                    await applyVoucher();
+                  },
+                  child: Container(
+                    padding: EdgeInsets.all(10),
+                    alignment: Alignment.centerRight,
+                    child: Text(
+                      "Apply",
+                      style: TextStyle(
+                        fontSize: 20,
+                        color: color.purple,
+                      ),
+                    ),
                   ),
-                ),
-                
+                )
               ],
             ),
-            GestureDetector(
-              onTap: () {
-                voucherApplied = false;
-                total1 = total;
-                setState(() {
-                  
-                });
-              },
-              child: Text(
+    );
+  }
+
+  Widget startAndEndDate(width) {
+    return Container(
+      padding: const EdgeInsets.only(left: 3, right: 3),
+      decoration: BoxDecoration(boxShadow: [
+        BoxShadow(
+          color: const Color(0xFFfae3e2).withOpacity(0.1),
+          spreadRadius: 1,
+          blurRadius: 1,
+          offset: const Offset(0, 1),
+        ),
+      ]),
+      child: datesApplied
+          ? Column(
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Column(
+                      children: [
+                        SizedBox(
+                          height: 10,
+                        ),
+                        Text(
+                          "Start Date",
+                          style: TextStyle(
+                            fontSize: 18,
+                          ),
+                        ),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        Text(
+                          "${start.day}-${start.month}-${start.year}",
+                          style: TextStyle(fontSize: 18, color: color.purple),
+                        ),
+                      ],
+                    ),
+                    Column(
+                      children: [
+                        SizedBox(
+                          height: 10,
+                        ),
+                        Text(
+                          "End Date",
+                          style: TextStyle(
+                            fontSize: 18,
+                          ),
+                        ),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        Text(
+                          "${end.day}-${end.month}-${end.year}",
+                          style: TextStyle(fontSize: 18, color: color.purple),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+                GestureDetector(
+                  onTap: () {
+                    start = DateTime.now().add(Duration(days: 1));
+                    end = DateTime.now().add(Duration(days: 2));
+                    datesApplied = false;
+                    setState(() {});
+                  },
+                  child: Text(
                     "Remove",
                     style: TextStyle(
                       fontSize: 16,
@@ -264,179 +526,239 @@ class _CartState extends State<Cart> {
                       decoration: TextDecoration.underline,
                     ),
                   ),
-            ),
-          ],
-        ),
-      ) : Column(
-        children: [
-          Container(
-            padding: const EdgeInsets.only(left: 3, right: 3),
-            decoration: BoxDecoration(boxShadow: [
-              BoxShadow(
-                color: const Color(0xFFfae3e2).withOpacity(0.1),
-                spreadRadius: 1,
-                blurRadius: 1,
-                offset: const Offset(0, 1),
-              ),
-            ]),
-            child: TextFormField(
-              autofocus: false,
-              keyboardType: TextInputType.text,
-              controller: promo,
-              decoration: InputDecoration(
-                  enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: color.orange, width: 1.0),
-                    borderRadius: BorderRadius.circular(15.0),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: color.purple, width: 1.0),
-                    borderRadius: BorderRadius.circular(15.0),
-                  ),
-                  errorBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: color.orange, width: 1.0),
-                    borderRadius: BorderRadius.circular(15.0),
-                  ),
-                  focusedErrorBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: color.purple, width: 1.0),
-                    borderRadius: BorderRadius.circular(15.0),
-                  ),
-                  hintText: 'Add Your Promo Code',
-                  suffixIcon: IconButton(
-                      icon: Icon(
-                        Icons.local_offer,
+                ),
+              ],
+            )
+          : Column(
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Column(
+                      children: [
+                        SizedBox(
+                          height: 10,
+                        ),
+                        Text(
+                          "Start Date",
+                          style: TextStyle(
+                            fontSize: 18,
+                          ),
+                        ),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        Container(
+                          width: width * 0.4,
+                          child: DateTimePicker(
+                            type: DateTimePickerType.date,
+                            dateMask: 'dd-MM-yyyy',
+                            initialValue: DateTime.now()
+                                .add(Duration(days: 1))
+                                .toString(),
+                            firstDate: DateTime.now().add(Duration(days: 1)),
+                            lastDate: DateTime(3000),
+                            icon: Icon(Icons.event),
+                            dateLabelText: 'Start Date',
+                            onChanged: (val) {
+                              start = DateTime.parse(val);
+                            },
+                            decoration: InputDecoration(
+                              enabledBorder: OutlineInputBorder(
+                                borderSide:
+                                    BorderSide(color: color.orange, width: 1.0),
+                                borderRadius: BorderRadius.circular(15.0),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderSide:
+                                    BorderSide(color: color.purple, width: 1.0),
+                                borderRadius: BorderRadius.circular(15.0),
+                              ),
+                              errorBorder: OutlineInputBorder(
+                                borderSide:
+                                    BorderSide(color: color.orange, width: 1.0),
+                                borderRadius: BorderRadius.circular(15.0),
+                              ),
+                              focusedErrorBorder: OutlineInputBorder(
+                                borderSide:
+                                    BorderSide(color: color.purple, width: 1.0),
+                                borderRadius: BorderRadius.circular(15.0),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    Column(
+                      children: [
+                        SizedBox(
+                          height: 10,
+                        ),
+                        Text(
+                          "End Date",
+                          style: TextStyle(
+                            fontSize: 18,
+                          ),
+                        ),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        Container(
+                          width: width * 0.4,
+                          child: DateTimePicker(
+                            type: DateTimePickerType.date,
+                            dateMask: 'dd-MM-yyyy',
+                            initialValue: DateTime.now()
+                                .add(Duration(days: 2))
+                                .toString(),
+                            firstDate: DateTime.now().add(Duration(days: 2)),
+                            lastDate: DateTime(3000),
+                            icon: Icon(Icons.event),
+                            dateLabelText: 'End Date',
+                            onChanged: (val) => end = DateTime.parse(val),
+                            decoration: InputDecoration(
+                              enabledBorder: OutlineInputBorder(
+                                borderSide:
+                                    BorderSide(color: color.orange, width: 1.0),
+                                borderRadius: BorderRadius.circular(15.0),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderSide:
+                                    BorderSide(color: color.purple, width: 1.0),
+                                borderRadius: BorderRadius.circular(15.0),
+                              ),
+                              errorBorder: OutlineInputBorder(
+                                borderSide:
+                                    BorderSide(color: color.orange, width: 1.0),
+                                borderRadius: BorderRadius.circular(15.0),
+                              ),
+                              focusedErrorBorder: OutlineInputBorder(
+                                borderSide:
+                                    BorderSide(color: color.purple, width: 1.0),
+                                borderRadius: BorderRadius.circular(15.0),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+                GestureDetector(
+                  onTap: () async {
+                    applyDates();
+                  },
+                  child: Container(
+                    padding: EdgeInsets.all(10),
+                    alignment: Alignment.centerRight,
+                    child: Text(
+                      "Apply",
+                      style: TextStyle(
+                        fontSize: 20,
                         color: color.purple,
                       ),
-                      onPressed: () async {
-                        await getVouchers();
-                        showMaterialModalBottomSheet(
-                          context: context,
-                          builder: (context) => SingleChildScrollView(
-                            controller: ModalScrollController.of(context),
-                            child: isData
-                                ? Container(
-                                    child: ListView.builder(
-                                        shrinkWrap: true,
-                                        physics: NeverScrollableScrollPhysics(),
-                                        itemCount: vouchers.length,
-                                        itemBuilder: (context, index) {
-                                          return InkWell(
-                                              onTap: () {
-                                                promo.text =
-                                                    vouchers[index].code!;
-                                                Navigator.pop(context);
-                                              },
-                                              child: voucherBox(
-                                                vouchers[index],
-                                                width,
-                                                context,
-                                              ));
-                                        }),
-                                  )
-                                : Container(
-                                    height: MediaQuery.of(context).size.height,
-                                    child: Center(
-                                        child: Text(
-                                      "No Vouchers Available",
-                                      style: TextStyle(
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    )),
-                                  ),
-                          ),
-                        );
-                      })),
+                    ),
+                  ),
+                )
+              ],
             ),
-          ),
-          //SizedBox(height: 10,),
-          GestureDetector(
-            onTap: () async{
-              print("Apply");
-              await applyVoucher();
-            },
-            child: Container(
-              padding: EdgeInsets.all(10),
-              alignment: Alignment.centerRight,
-              child: Text(
-                "Apply",
-                style: TextStyle(
-                  fontSize: 20,
-                  color: color.purple,
-                ),
-              ),
-            ),
-          )
-        ],
-      ),
     );
   }
 
-  applyVoucher()async{
-    if(promo.text.isNotEmpty){
+  applyDates() {
+    final difference = end.difference(start).inDays;
+    if (difference <= 0) {
+      Fluttertoast.showToast(
+          msg: 'End Date cannot be less than or equal to Start Date.',
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          fontSize: 16.0);
+      datesApplied = false;
+    } else {
+      datesApplied = true;
+      setState(() {});
+    }
+  }
+
+  applyVoucher() async {
+    if (promo.text.isNotEmpty) {
       showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (BuildContext context) {
-        return Dialog(
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-          child: Container(
-            width: MediaQuery.of(context).size.width * 0.6,
-            height: 300,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                CircularProgressIndicator(
-                  color: color.purple,
-                ),
-                SizedBox(
-                  height: 10,
-                ),
-                Text("Loading"),
-              ],
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return Dialog(
+            backgroundColor: Colors.transparent,
+            elevation: 0,
+            child: Container(
+              width: MediaQuery.of(context).size.width * 0.6,
+              height: 300,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  CircularProgressIndicator(
+                    color: color.purple,
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Text("Loading"),
+                ],
+              ),
             ),
-          ),
-        );
-      },
-    );
-    code = promo.text.trim();
-    Map<String, dynamic> map = {
-      "customer_id": widget.user?.id,
-      "order_amount": total,
-      "coupon_code": code,
-      "vendor_id": widget.vendorID
-    };
-    dynamic result = await db.validateVouchers(map);
-    Navigator.pop(context);
-    if (result != null) {
-      if (result['Timeout'] == 'true') {
+          );
+        },
+      );
+      code = promo.text.trim();
+      Map<String, dynamic> map = {
+        "customer_id": widget.user?.id,
+        "order_amount": total,
+        "coupon_code": code,
+        "vendor_id": widget.vendorID
+      };
+      dynamic result = await db.validateVouchers(map);
+      Navigator.pop(context);
+      if (result != null) {
+        if (result['Timeout'] == 'true') {
+          Fluttertoast.showToast(
+              msg: 'Your request has been timmed-out. Try again.',
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.CENTER,
+              timeInSecForIosWeb: 1,
+              backgroundColor: Colors.red,
+              textColor: Colors.white,
+              fontSize: 16.0);
+        } else if (result["status"]) {
+          total1 = result["amount_after_discount"];
+          promo.clear();
+          voucherApplied = true;
+          Fluttertoast.showToast(
+              msg: result["message"],
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.CENTER,
+              timeInSecForIosWeb: 1,
+              backgroundColor: Colors.green,
+              textColor: Colors.white,
+              fontSize: 16.0);
+        } else if (result["status"] == false) {
+          print("here");
+          promo.clear();
+          code = "";
+          voucherApplied = false;
+          Fluttertoast.showToast(
+              msg: result["message"],
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.CENTER,
+              timeInSecForIosWeb: 1,
+              backgroundColor: Colors.red,
+              textColor: Colors.white,
+              fontSize: 16.0);
+        }
+      } else {
         Fluttertoast.showToast(
-            msg: 'Your request has been timmed-out. Try again.',
-            toastLength: Toast.LENGTH_SHORT,
-            gravity: ToastGravity.CENTER,
-            timeInSecForIosWeb: 1,
-            backgroundColor: Colors.red,
-            textColor: Colors.white,
-            fontSize: 16.0);
-      } else if (result["status"]) {
-        total1 = result["amount_after_discount"];
-        promo.clear();
-        voucherApplied = true;
-        Fluttertoast.showToast(
-            msg: result["message"],
-            toastLength: Toast.LENGTH_SHORT,
-            gravity: ToastGravity.CENTER,
-            timeInSecForIosWeb: 1,
-            backgroundColor: Colors.green,
-            textColor: Colors.white,
-            fontSize: 16.0);
-      } else if (result["status"] == false) {
-        print("here");
-        promo.clear();
-        code = "";
-        voucherApplied = false;
-        Fluttertoast.showToast(
-            msg: result["message"],
+            msg: 'Issue with connection. Try again later.',
             toastLength: Toast.LENGTH_SHORT,
             gravity: ToastGravity.CENTER,
             timeInSecForIosWeb: 1,
@@ -444,19 +766,8 @@ class _CartState extends State<Cart> {
             textColor: Colors.white,
             fontSize: 16.0);
       }
-    }else{
-      Fluttertoast.showToast(
-          msg: 'Issue with connection. Try again later.',
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.CENTER,
-          timeInSecForIosWeb: 1,
-          backgroundColor: Colors.red,
-          textColor: Colors.white,
-          fontSize: 16.0);
-    }
-    setState(() {});
-    
-    }else{
+      setState(() {});
+    } else {
       Fluttertoast.showToast(
           msg: 'Enter voucher code or click tag button and select voucher',
           toastLength: Toast.LENGTH_SHORT,
@@ -595,8 +906,7 @@ class _CartState extends State<Cart> {
             backgroundColor: Colors.red,
             textColor: Colors.white,
             fontSize: 16.0);
-      }
-      else if (result["status"]) {
+      } else if (result["status"]) {
         vouchers = [];
         for (var v in result["message"]) {
           vouchers.add(Voucher.fromJson(v));
@@ -720,20 +1030,24 @@ class _CartState extends State<Cart> {
                 child: Center(
                   child: IconButton(
                     onPressed: () {
-                      if(voucherApplied){
-                        dilogueBox("Warning", "Change in cart would result in removal of Voucer. Proceed?", "sub", index);
-                      }else{
+                      if (voucherApplied) {
+                        dilogueBox(
+                            "Warning",
+                            "Change in cart would result in removal of Voucer. Proceed?",
+                            "sub",
+                            index);
+                      } else {
                         if (widget.cart![index].quantity >= 2) {
-                        widget.cart![index].quantity--;
-                        total -= widget.cart![index].price;
-                        total1=total;
-                      } else if (item.quantity <= 1) {
-                        widget.cart![index].quantity = 0;
-                        total -= widget.cart![index].price;
-                        widget.cart!.removeAt(index);
-                        total1=total;
-                        Navigator.pop(context);
-                      }
+                          widget.cart![index].quantity--;
+                          total -= widget.cart![index].price;
+                          total1 = total;
+                        } else if (item.quantity <= 1) {
+                          widget.cart![index].quantity = 0;
+                          total -= widget.cart![index].price;
+                          widget.cart!.removeAt(index);
+                          total1 = total;
+                          Navigator.pop(context);
+                        }
                       }
                       setState(() {});
                     },
@@ -775,13 +1089,17 @@ class _CartState extends State<Cart> {
                 child: Center(
                   child: IconButton(
                     onPressed: () {
-                      if(voucherApplied){
-                        dilogueBox("Warning", "Change in cart would result in removal of Voucer. Proceed?", "add", index);
-                      }else{
+                      if (voucherApplied) {
+                        dilogueBox(
+                            "Warning",
+                            "Change in cart would result in removal of Voucer. Proceed?",
+                            "add",
+                            index);
+                      } else {
                         widget.cart![index].quantity++;
-                      total += widget.cart![index].price;
+                        total += widget.cart![index].price;
                       }
-                      
+
                       setState(() {});
                     },
                     icon: Icon(Icons.add),
@@ -797,7 +1115,7 @@ class _CartState extends State<Cart> {
     );
   }
 
-Future dilogueBox(header, msg, op, index) {
+  Future dilogueBox(header, msg, op, index) {
     return showDialog(
       context: context,
       barrierDismissible: false,
@@ -816,7 +1134,8 @@ Future dilogueBox(header, msg, op, index) {
               child: Text(
                 msg,
                 style: TextStyle(fontSize: 16),
-              ),),
+              ),
+            ),
             actions: [
               TextButton(
                 child: Text(
@@ -825,25 +1144,23 @@ Future dilogueBox(header, msg, op, index) {
                 ),
                 onPressed: () async {
                   voucherApplied = false;
-                total1 = total;
-                if(op == "add"){
-                  widget.cart![index].quantity++;
-                      total += widget.cart![index].price;
-                }else if (op=="sub"){
-                  if (widget.cart![index].quantity >= 2) {
-                        widget.cart![index].quantity--;
-                        total -= widget.cart![index].price;
-                      } else if (widget.cart![index].quantity <= 1) {
-                        widget.cart![index].quantity = 0;
-                        total -= widget.cart![index].price;
-                        widget.cart!.removeAt(index);
-                        Navigator.pop(context);
-                      }
-                }
-                setState(() {
-                  
-                });
-                Navigator.pop(context);
+                  total1 = total;
+                  if (op == "add") {
+                    widget.cart![index].quantity++;
+                    total += widget.cart![index].price;
+                  } else if (op == "sub") {
+                    if (widget.cart![index].quantity >= 2) {
+                      widget.cart![index].quantity--;
+                      total -= widget.cart![index].price;
+                    } else if (widget.cart![index].quantity <= 1) {
+                      widget.cart![index].quantity = 0;
+                      total -= widget.cart![index].price;
+                      widget.cart!.removeAt(index);
+                      Navigator.pop(context);
+                    }
+                  }
+                  setState(() {});
+                  Navigator.pop(context);
                 },
               ),
               TextButton(

@@ -1,4 +1,5 @@
 import 'package:tiffin_wala_customer/src/models/voucher.dart';
+import 'package:tiffin_wala_customer/src/constants/api_url.dart' as endpoint;
 
 class Complain{
   String? customerName, kitchenName, status, desc, resolution;
@@ -11,17 +12,26 @@ class Complain{
   Complain({this.customerName, this.desc, this.id, this.images, this.isCustomerRating, this.isResoved, this.kitchenName, this.rating, this.resolution, this.status, this.voucher, this.voucherIssued});
 
   factory Complain.fromJson(Map<String, dynamic> json) {
+    print(json);
+    print("customer ${json["customer"]}");
+    print("seller ${json["seller"].toString()}");
+    
+    print(json["description"]);
+    print(json["complain_id"]);
     var customer = json["customer"];
     var name = customer["customer_name"];
     var seller = json["seller"];
     var kitchenName = seller["kitchen_name"];
     List<String> pics = [];
-    var images =json["image"];
+    var images = json["image"];
     if(images!= null){
       for(var image in images){
-        pics.add(image["image"]);
+        pics.add(endpoint.picBase + image["image"]);
       }
+    }else{
+      pics = [];
     }
+    print(pics);
     
     Complain complain = Complain(
       customerName: name,
@@ -36,6 +46,8 @@ class Complain{
       complain.voucherIssued = true;
       var v = json["voucher"];
       complain.voucher = Voucher.fromJson(v);
+    }else{
+      complain.voucherIssued = false;
     }
     if(complain.isResoved == true){
       complain.status = "Resolved";

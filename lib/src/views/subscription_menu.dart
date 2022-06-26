@@ -1,3 +1,4 @@
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:tiffin_wala_customer/src/constants/api_url.dart' as endpoint;
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -166,6 +167,138 @@ class _SubscriptionMenuState extends State<SubscriptionMenu> {
       total += d.quantity;
       // break;
     }
+  }
+
+  
+  cartItems() {
+    List<Item1> cart = [];
+    for (var b in widget.chef!.menu.monday.breakfast) {
+      if(b.quantity != 0){
+        cart.add(b);
+      }
+      // break;
+    }
+    for (var l in widget.chef!.menu.monday.lunch) {
+      if(l.quantity != 0){
+        cart.add(l);
+      }
+      // break;
+    }
+    for (var d in widget.chef!.menu.monday.dinner) {
+      if(d.quantity != 0){
+        cart.add(d);
+      }
+      // break;
+    }
+    for (var b in widget.chef!.menu.tuesday.breakfast) {
+      if(b.quantity != 0){
+        cart.add(b);
+      }
+      // break;
+    }
+    for (var l in widget.chef!.menu.tuesday.lunch) {
+      if(l.quantity != 0){
+        cart.add(l);
+      }
+      // break;
+    }
+    for (var d in widget.chef!.menu.tuesday.dinner) {
+      if(d.quantity != 0){
+        cart.add(d);
+      }
+      // break;
+    }
+    for (var b in widget.chef!.menu.wednesday.breakfast) {
+      if(b.quantity != 0){
+        cart.add(b);
+      }
+      // break;
+    }
+    for (var l in widget.chef!.menu.wednesday.lunch) {
+      if(l.quantity != 0){
+        cart.add(l);
+      }
+      // break;
+    }
+    for (var d in widget.chef!.menu.wednesday.dinner) {
+      if(d.quantity != 0){
+        cart.add(d);
+      }
+      // break;
+    }
+    for (var b in widget.chef!.menu.thursday.breakfast) {
+      if(b.quantity != 0){
+        cart.add(b);
+      }
+      // break;
+    }
+    for (var l in widget.chef!.menu.thursday.lunch) {
+      if(l.quantity != 0){
+        cart.add(l);
+      }
+      // break;
+    }
+    for (var d in widget.chef!.menu.thursday.dinner) {
+      if(d.quantity != 0){
+        cart.add(d);
+      }
+      // break;
+    }
+    for (var b in widget.chef!.menu.friday.breakfast) {
+      if(b.quantity != 0){
+        cart.add(b);
+      }
+      // break;
+    }
+    for (var l in widget.chef!.menu.friday.lunch) {
+      if(l.quantity != 0){
+        cart.add(l);
+      }
+      // break;
+    }
+    for (var d in widget.chef!.menu.friday.dinner) {
+      if(d.quantity != 0){
+        cart.add(d);
+      }
+      // break;
+    }
+    for (var b in widget.chef!.menu.saturday.breakfast) {
+      if(b.quantity != 0){
+        cart.add(b);
+      }
+      // break;
+    }
+    for (var l in widget.chef!.menu.saturday.lunch) {
+      if(l.quantity != 0){
+        cart.add(l);
+      }
+      // break;
+    }
+    for (var d in widget.chef!.menu.saturday.dinner) {
+      if(d.quantity != 0){
+        cart.add(d);
+      }
+      // break;
+    }
+    for (var b in widget.chef!.menu.sunday.breakfast) {
+      if(b.quantity != 0){
+        cart.add(b);
+      }
+      // break;
+    }
+    for (var l in widget.chef!.menu.sunday.lunch) {
+      if(l.quantity != 0){
+        cart.add(l);
+      }
+      // break;
+    }
+    for (var d in widget.chef!.menu.sunday.dinner) {
+      if(d.quantity != 0){
+        cart.add(d);
+      }
+      // break;
+    }
+    return cart;
   }
 
   @override
@@ -395,7 +528,31 @@ class _SubscriptionMenuState extends State<SubscriptionMenu> {
           padding: EdgeInsets.symmetric(horizontal: width * 0.05),
           child: InkWell(
               onTap: () {
-                // Navigator.pushNamed(context, Cart.routeName);
+                if (total >= 1) {
+              List<Item1> cart = [];
+              cart = cartItems();
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => Cart(
+                            cart: cart,
+                            subscription: true,
+                            user: widget.user,
+                            vendorID: widget.vendorID,
+                          ))).then((value) {
+                totalItems();
+                setState(() {});
+              });
+            }else{
+              Fluttertoast.showToast(
+                  msg: "First add items to cart",
+                  toastLength: Toast.LENGTH_SHORT,
+                  gravity: ToastGravity.CENTER,
+                  timeInSecForIosWeb: 1,
+                  backgroundColor: Colors.red,
+                  textColor: Colors.white,
+                  fontSize: 16.0);
+            }
               },
               child: CustomButton(
                 width: width,
@@ -415,29 +572,31 @@ class _SubscriptionMenuState extends State<SubscriptionMenu> {
             color: color.purple,
           ),
           onPressed: () {
-            // if (total >= 1) {
-            //   List<Item1> cart = [];
-            //   for (var o in widget.chef!.menu.oneTime) {
-            //     if (o.quantity >= 1) {
-            //       cart.add(o);
-            //     }
-            //   }
-            //   Navigator.push(
-            //       context,
-            //       MaterialPageRoute(
-            //           builder: (context) => Cart(
-            //                 cart: cart,
-            //                 subscription: false,
-            //                 user: widget.user,
-            //                 vendorID: widget.vendorID,
-            //               ))).then((value) {
-            //     total = 0;
-            //     for (Item1 i in widget.chef!.menu.oneTime) {
-            //       total += i.quantity;
-            //     }
-            //     setState(() {});
-            //   });
-            // }
+            if (total >= 1) {
+              List<Item1> cart = [];
+              cart= cartItems();
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => Cart(
+                            cart: cart,
+                            subscription: true,
+                            user: widget.user,
+                            vendorID: widget.vendorID,
+                          ))).then((value) {
+                totalItems();
+                setState(() {});
+              });
+            }else{
+              Fluttertoast.showToast(
+                  msg: "First add items to cart",
+                  toastLength: Toast.LENGTH_SHORT,
+                  gravity: ToastGravity.CENTER,
+                  timeInSecForIosWeb: 1,
+                  backgroundColor: Colors.red,
+                  textColor: Colors.white,
+                  fontSize: 16.0);
+            }
           },
         ),
         total != 0

@@ -14,6 +14,7 @@ import 'package:tiffin_wala_customer/src/constants/my_custom_textfield.dart';
 import 'package:flutter_signin_button/flutter_signin_button.dart';
 import 'package:tiffin_wala_customer/src/views/address_view.dart';
 import 'package:tiffin_wala_customer/src/views/cart.dart';
+import 'package:tiffin_wala_customer/src/views/complain_timeline.dart';
 import 'package:tiffin_wala_customer/src/views/complaint_view.dart';
 import 'package:tiffin_wala_customer/src/views/home.dart';
 import 'package:tiffin_wala_customer/src/views/item.dart';
@@ -286,49 +287,48 @@ class _OrderViewState extends State<OrderView> {
                   ),
                 ),
                 widget.order!.isRated! == false
-                          ? Container(
-                              padding: EdgeInsets.fromLTRB(0, 10, 10, 0),
-                              alignment: Alignment.centerRight,
-                              child: Text(
-                                "Not Rated",
-                                style: TextStyle(
-                                  color: color.purple,
-                                  fontSize: 16,
-                                ),
-                              ),
-                            )
-                          : Expanded(
-                            child: Container(
-                                alignment: Alignment.centerRight,
-                                child: RatingStars(
-                                  value: widget.order!.rating!,
-                                  starBuilder: (index, color) => Icon(
-                                    Icons.star,
-                                    color: color,
-                                  ),
-                                  starCount: 5,
-                                  starSize: 16,
-                                  valueLabelColor: const Color(0xff9b9b9b),
-                                  valueLabelTextStyle: const TextStyle(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.w400,
-                                      fontStyle: FontStyle.normal,
-                                      fontSize: 12.0),
-                                  valueLabelRadius: 10,
-                                  maxValue: 5,
-                                  starSpacing: 1.5,
-                                  maxValueVisibility: true,
-                                  valueLabelVisibility: true,
-                                  animationDuration: Duration(milliseconds: 1000),
-                                  valueLabelPadding: const EdgeInsets.symmetric(
-                                      vertical: 1, horizontal: 8),
-                                  valueLabelMargin:
-                                      const EdgeInsets.only(right: 8),
-                                  starOffColor: const Color(0xffe7e8ea),
-                                  starColor: Colors.yellow,
-                                ),
-                              ),
+                    ? Container(
+                        padding: EdgeInsets.fromLTRB(0, 10, 10, 0),
+                        alignment: Alignment.centerRight,
+                        child: Text(
+                          "Not Rated",
+                          style: TextStyle(
+                            color: color.purple,
+                            fontSize: 16,
                           ),
+                        ),
+                      )
+                    : Expanded(
+                        child: Container(
+                          alignment: Alignment.centerRight,
+                          child: RatingStars(
+                            value: widget.order!.rating!,
+                            starBuilder: (index, color) => Icon(
+                              Icons.star,
+                              color: color,
+                            ),
+                            starCount: 5,
+                            starSize: 16,
+                            valueLabelColor: const Color(0xff9b9b9b),
+                            valueLabelTextStyle: const TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w400,
+                                fontStyle: FontStyle.normal,
+                                fontSize: 12.0),
+                            valueLabelRadius: 10,
+                            maxValue: 5,
+                            starSpacing: 1.5,
+                            maxValueVisibility: true,
+                            valueLabelVisibility: true,
+                            animationDuration: Duration(milliseconds: 1000),
+                            valueLabelPadding: const EdgeInsets.symmetric(
+                                vertical: 1, horizontal: 8),
+                            valueLabelMargin: const EdgeInsets.only(right: 8),
+                            starOffColor: const Color(0xffe7e8ea),
+                            starColor: Colors.yellow,
+                          ),
+                        ),
+                      ),
               ],
             ),
           ],
@@ -504,14 +504,30 @@ class _OrderViewState extends State<OrderView> {
       height: 60,
       child: InkWell(
         onTap: () {
-          if (data.order != 'cancel' && data.order != 'current') {
-            Navigator.push(context, MaterialPageRoute(builder: (context) => Review(id: widget.order!.id,)));
+          if (data.order != 'cancel' &&
+              data.order != 'current' &&
+              widget.order!.isRated == false) {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => Review(
+                          id: widget.order!.id,
+                        ))).then((value) {
+              widget.order!.rating = data.rating;
+              data.rating = 0.0;
+              if(widget.order!.rating != 0.0){
+                widget.order!.isRated = true;
+              }
+              setState(() {});
+            });
           }
         },
         child: Container(
           padding: EdgeInsets.all(15),
           decoration: BoxDecoration(
-              color: data.order != 'cancel' && data.order != 'current'
+              color: data.order != 'cancel' &&
+                      data.order != 'current' &&
+                      widget.order!.isRated == false
                   ? color.purple
                   : Colors.grey,
               borderRadius: BorderRadius.circular(15),
@@ -538,7 +554,24 @@ class _OrderViewState extends State<OrderView> {
       child: InkWell(
         onTap: () {
           if (data.order != 'cancel') {
-            Navigator.push(context, MaterialPageRoute(builder: (context) => ComplainView(id: widget.order!.id,)));
+            if (widget.order!.complain != null) {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => ComplainTimeline(
+                            complain: widget.order!.complain!,
+                          )));
+            } else {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => ComplainView(
+                            id: widget.order!.id,
+                          ))).then((value) {
+                widget.order!.complain = data.complain;
+                data.complain = null;
+              });
+            }
           }
         },
         child: Container(

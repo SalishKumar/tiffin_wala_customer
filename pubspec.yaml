@@ -49,6 +49,7 @@ dependencies:
   shimmer: ^2.0.0
   animated_text_kit: ^4.0.0
   image_picker: ^0.8.5+3
+  date_time_picker: ^2.1.0
   another_carousel_pro:
      git:
        url: https://github.com/iamnabink/another_carousel_pro.git

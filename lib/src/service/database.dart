@@ -435,7 +435,7 @@ class Database {
 
   Future getOrders(Map<String, dynamic> map) async {
     try {
-      timeoutSettings(15);
+      timeoutSettings(30);
       dynamic response = await dio.get(
           endpoint.base + endpoint.signup + endpoint.order,
           queryParameters: map,

@@ -11,6 +11,7 @@ import 'package:tiffin_wala_customer/src/constants/custom_button.dart';
 import 'package:tiffin_wala_customer/src/constants/my_custom_textfield.dart';
 import 'package:tiffin_wala_customer/src/constants/data.dart' as data;
 import 'package:tiffin_wala_customer/src/constants/my_custom_textfield_without_suffix.dart';
+import 'package:tiffin_wala_customer/src/models/complain.dart';
 import 'package:tiffin_wala_customer/src/service/database.dart';
 import 'package:tiffin_wala_customer/src/view_model/address_view_model.dart';
 import 'package:tiffin_wala_customer/src/views/maps.dart';
@@ -227,11 +228,13 @@ class _ComplainViewState extends State<ComplainView> {
           map = {
             "order_id": widget.id!,
             "description": text.text.trim(),
-            "rating": 1.2,
-            "images": images
           };
           FormData formData = FormData.fromMap(map);
-          // print(formData.fields[3].value);
+          for(var image in images){
+            var path = image.path;
+           formData.files.add(MapEntry("images", await MultipartFile.fromFile(path, filename: path))); 
+          }
+          print(formData.files);
           dynamic result = await db.complainOrder(formData);
           Navigator.pop(context);
           if (result != null) {
@@ -245,6 +248,9 @@ class _ComplainViewState extends State<ComplainView> {
                   textColor: Colors.white,
                   fontSize: 16.0);
             } else if (result["status"]) {
+              data.complain = Complain.fromJson(result["complain"]);
+              
+              Navigator.pop(context);
               Fluttertoast.showToast(
                   msg: result["message"],
                   toastLength: Toast.LENGTH_SHORT,
@@ -253,7 +259,8 @@ class _ComplainViewState extends State<ComplainView> {
                   backgroundColor: Colors.green,
                   textColor: Colors.white,
                   fontSize: 16.0);
-              Navigator.pop(context);
+              
+              
             } else if (result["status"] == false) {
               Fluttertoast.showToast(
                   msg: result["message"],

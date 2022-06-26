@@ -1,4 +1,5 @@
 import 'package:tiffin_wala_customer/src/models/address.dart';
+import 'package:tiffin_wala_customer/src/models/complain.dart';
 import 'package:tiffin_wala_customer/src/models/item.dart';
 import 'package:tiffin_wala_customer/src/models/voucher.dart';
 
@@ -11,8 +12,9 @@ class Order {
   Voucher? voucher;
   DateTime? orderTime;
   bool? voucherApplied;
-  bool? isRated;
+  bool? isRated, isComplain;
   double? rating;
+  Complain? complain;
   Order(
       {this.address,
       this.discounted,
@@ -26,7 +28,8 @@ class Order {
       this.orderTime,
       this.customerID,
       this.sellerID,
-      this.voucherApplied});
+      this.voucherApplied,
+      this.complain});
   factory Order.fromJson(Map<String, dynamic> json) {
     List<Item1> item = [];
     var order = json["order"];
@@ -41,11 +44,13 @@ class Order {
     var sellerid = orderid["seller_id"];
     var customer = json["customer"];
     var customerid = customer["customer_id"];
-    
     var seller = json["seller_id"];
     var orderAddress = json["order_address"];
     String date_time = json["date_time"];
     Order o;
+    // print("print order id " + " " + json["order_id"].toString());
+    // print("print order id " + " " + json["review"].toString());
+    // print("print Complain " + " " + json["complain"].toString());
     o = Order(
       id: json["order_id"],
       customerID: customerid,
@@ -71,14 +76,25 @@ class Order {
     var review = json["review"];
     o.isRated=false;
     o.rating=0.0;
-    print(json["review"]);
-    print(json["complain"]);
-    Map map1 = {};
     if(json["review"] != null){
-      print("in");
+      for(var r in review){
+        print("in");
       o.isRated = true;
-      o.rating = review["rating"]??0.0;
-    }else{}
+      o.rating = r["rating"] ?? 0.0;
+      }
+    }else{
+      o.isRated=false;
+    }
+    if(json["complain"] != null){
+      for(var c in json["complain"]){
+        print("in");
+      o.isComplain = true;
+      o.complain = Complain.fromJson(c);
+      }
+    }else{
+      o.isComplain = false;
+      print(o.isComplain);
+    }
     
     return o; 
     
