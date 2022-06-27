@@ -39,13 +39,22 @@ class _CartState extends State<Cart> {
   DateTime start = DateTime.now().add(Duration(days: 1)),
       end = DateTime.now().add(Duration(days: 2));
   bool datesApplied = false;
+  bool enablePromo = true;
 
   @override
   void initState() {
-    for (var c in widget.cart!) {
-      total += c.price * c.quantity;
+    if (widget.subscription!) {
+    } else {
+      for (var c in widget.cart!) {
+        total += c.price * c.quantity;
+      }
     }
     total1 = total;
+    if(widget.subscription!){
+      enablePromo = false;
+    }else{
+      enablePromo = true;
+    }
     super.initState();
   }
 
@@ -118,7 +127,9 @@ class _CartState extends State<Cart> {
         padding: EdgeInsets.symmetric(horizontal: width * 0.05),
         child: InkWell(
             onTap: () {
-              Navigator.push(
+              if(widget.subscription!){
+                if(datesApplied){
+                  Navigator.push(
                   context,
                   MaterialPageRoute(
                       builder: (context) => PaymentAndAddress(
@@ -129,7 +140,35 @@ class _CartState extends State<Cart> {
                             total: total,
                             total1: total1,
                             voucherApplied: voucherApplied,
+                            start: start,
+                            end: end,
+                            subs: widget.subscription,
                           )));
+                }else{
+                  Fluttertoast.showToast(
+                  msg: "Apply Start and End Dates",
+                  toastLength: Toast.LENGTH_SHORT,
+                  gravity: ToastGravity.CENTER,
+                  timeInSecForIosWeb: 1,
+                  backgroundColor: Colors.red,
+                  textColor: Colors.white,
+                  fontSize: 16.0);
+                }
+              }else{
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => PaymentAndAddress(
+                            user: widget.user,
+                            cart: widget.cart,
+                            vendorID: widget.vendorID,
+                            code: code,
+                            total: total,
+                            total1: total1,
+                            voucherApplied: voucherApplied,
+                            subs: widget.subscription,
+                          )));
+              }
             },
             child: CustomButton(
               width: width,
@@ -355,6 +394,7 @@ class _CartState extends State<Cart> {
                   ]),
                   child: TextFormField(
                     autofocus: false,
+                    enabled: enablePromo,
                     keyboardType: TextInputType.text,
                     controller: promo,
                     decoration: InputDecoration(
@@ -442,7 +482,7 @@ class _CartState extends State<Cart> {
                       "Apply",
                       style: TextStyle(
                         fontSize: 20,
-                        color: color.purple,
+                        color: enablePromo ? color.purple : Colors.grey,
                       ),
                     ),
                   ),
@@ -512,11 +552,10 @@ class _CartState extends State<Cart> {
                   ],
                 ),
                 GestureDetector(
-                  onTap: () {
+                  onTap: () async{
                     start = DateTime.now().add(Duration(days: 1));
                     end = DateTime.now().add(Duration(days: 2));
-                    datesApplied = false;
-                    setState(() {});
+                    await dilogueBox1("Warning", "Removal of Start and End Dates woul cause removal of voucher too. Proceed?");
                   },
                   child: Text(
                     "Remove",
@@ -647,6 +686,11 @@ class _CartState extends State<Cart> {
                 GestureDetector(
                   onTap: () async {
                     applyDates();
+                    total = getTotal();
+                    total1 = total;
+                    enablePromo = true;
+                    setState(() {});
+                    
                   },
                   child: Container(
                     padding: EdgeInsets.all(10),
@@ -665,9 +709,64 @@ class _CartState extends State<Cart> {
     );
   }
 
+  Future dilogueBox1(header, msg) {
+    return showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return SizedBox(
+          height: MediaQuery.of(context).size.height * 0.5,
+          child: AlertDialog(
+            elevation: 0,
+            title: Text(
+              header,
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            ),
+            content: Container(
+              // width: MediaQuery.of(context).size.width * 0.6,
+              // height: MediaQuery.of(context).size.height * 0.15,
+              child: Text(
+                msg,
+                style: TextStyle(fontSize: 16),
+              ),
+            ),
+            actions: [
+              TextButton(
+                child: Text(
+                  "OK",
+                  style: TextStyle(color: color.purple),
+                ),
+                onPressed: () async {
+                  voucherApplied = false;
+                  datesApplied = false;
+                  enablePromo = false;
+                  total = 0.0;
+                  total1 = total;
+                  setState(() {});
+                  Navigator.pop(context);
+                },
+              ),
+              TextButton(
+                child: Text(
+                  "Cancel",
+                  style: TextStyle(color: color.purple),
+                ),
+                onPressed: () async {
+                  Navigator.pop(context);
+                  return;
+                },
+              )
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+
   applyDates() {
     final difference = end.difference(start).inDays;
-    if (difference <= 0) {
+    if (difference < 0) {
       Fluttertoast.showToast(
           msg: 'End Date cannot be less than or equal to Start Date.',
           toastLength: Toast.LENGTH_SHORT,
@@ -681,6 +780,57 @@ class _CartState extends State<Cart> {
       datesApplied = true;
       setState(() {});
     }
+  }
+
+  double getTotal() {
+    double price = 0.0;
+    var difference = end.difference(start).inDays;
+    difference = difference + 1;
+    DateTime temp = start;
+    int monday = 0,
+        tuesday = 0,
+        wednesday = 0,
+        thursday = 0,
+        friday = 0,
+        saturday = 0,
+        sunday = 0;
+    for (int i = 1; i <= difference; i++) {
+      if (temp.add(Duration(days: i)).weekday == DateTime.monday) {
+        monday++;
+      } else if (temp.add(Duration(days: i)).weekday == DateTime.tuesday) {
+        tuesday++;
+      } else if (temp.add(Duration(days: i)).weekday == DateTime.wednesday) {
+        wednesday++;
+      } else if (temp.add(Duration(days: i)).weekday == DateTime.thursday) {
+        thursday++;
+      } else if (temp.add(Duration(days: i)).weekday == DateTime.friday) {
+        friday++;
+      } else if (temp.add(Duration(days: i)).weekday == DateTime.saturday) {
+        saturday++;
+      } else if (temp.add(Duration(days: i)).weekday == DateTime.sunday) {
+        sunday++;
+      }
+    }
+    //print("$monday $tuesday $wednesday $thursday $friday $saturday $sunday $difference");
+    for (var item in widget.cart!) {
+      if (item.day == "Monday") {
+        price += (item.price * item.quantity) * monday;
+      } else if (item.day == "Tuesday") {
+        price += (item.price * item.quantity) * tuesday;
+      } else if (item.day == "Wednesday") {
+        price += (item.price * item.quantity) * wednesday;
+      } else if (item.day == "Thursday") {
+        price += (item.price * item.quantity) * thursday;
+      } else if (item.day == "Friday") {
+        price += (item.price * item.quantity) * friday;
+      } else if (item.day == "Saturday") {
+        price += (item.price * item.quantity) * saturday;
+      } else if (item.day == "Sunday") {
+        price += (item.price * item.quantity) * sunday;
+      }
+      //print(price);
+    }
+    return price;
   }
 
   applyVoucher() async {
@@ -1030,23 +1180,48 @@ class _CartState extends State<Cart> {
                 child: Center(
                   child: IconButton(
                     onPressed: () {
-                      if (voucherApplied) {
+                      if (voucherApplied || datesApplied) {
                         dilogueBox(
                             "Warning",
-                            "Change in cart would result in removal of Voucer. Proceed?",
+                            widget.subscription!
+                                ? "Change in cart would result in removal of Start and End Dates and Voucher. Proceed?"
+                                : "Change in cart would result in removal of and Voucher. Proceed?",
                             "sub",
-                            index);
+                            index,
+                            widget.subscription);
                       } else {
-                        if (widget.cart![index].quantity >= 2) {
-                          widget.cart![index].quantity--;
-                          total -= widget.cart![index].price;
-                          total1 = total;
-                        } else if (item.quantity <= 1) {
-                          widget.cart![index].quantity = 0;
-                          total -= widget.cart![index].price;
-                          widget.cart!.removeAt(index);
-                          total1 = total;
-                          Navigator.pop(context);
+                        if (widget.subscription!) {
+                          if (widget.cart![index].quantity >= 2) {
+                            
+                            widget.cart![index].quantity--;
+                            total = 0.0;
+                            
+                            total1 = total;
+                          } else if (item.quantity == 1) {
+                            
+                            widget.cart![index].quantity = 0;
+                            total = 0.0;
+                            total1 = total;
+                            widget.cart!.removeAt(index);
+                            if (widget.cart!.isEmpty) {
+                              Navigator.pop(context);
+                            }
+                          }
+                        } else {
+                          if (widget.cart![index].quantity >= 2) {
+                            widget.cart![index].quantity--;
+                            total -= widget.cart![index].price;
+                            total1 = total;
+                          } else if (item.quantity == 1) {
+                            widget.cart![index].quantity = 0;
+                            total -= widget.cart![index].price;
+                            widget.cart!.removeAt(index);
+                            total1 = total;
+
+                            if (widget.cart!.isEmpty) {
+                              Navigator.pop(context);
+                            }
+                          }
                         }
                       }
                       setState(() {});
@@ -1089,15 +1264,26 @@ class _CartState extends State<Cart> {
                 child: Center(
                   child: IconButton(
                     onPressed: () {
-                      if (voucherApplied) {
+                      if (voucherApplied || datesApplied) {
                         dilogueBox(
                             "Warning",
-                            "Change in cart would result in removal of Voucer. Proceed?",
+                            widget.subscription!
+                                ? "Change in cart would result in removal of Start and End Dates and Voucher. Proceed?"
+                                : "Change in cart would result in removal of and Voucher. Proceed?",
                             "add",
-                            index);
+                            index,
+                            widget.subscription);
                       } else {
-                        widget.cart![index].quantity++;
+                        if (widget.subscription!) {
+                          widget.cart![index].quantity++;
+                          total = 0.0;
+                          total1 = total;
+                        } else {
+                          widget.cart![index].quantity++;
                         total += widget.cart![index].price;
+                        total1 = total;
+                        }
+                        
                       }
 
                       setState(() {});
@@ -1115,7 +1301,7 @@ class _CartState extends State<Cart> {
     );
   }
 
-  Future dilogueBox(header, msg, op, index) {
+  Future dilogueBox(header, msg, op, index, subs) {
     return showDialog(
       context: context,
       barrierDismissible: false,
@@ -1143,21 +1329,50 @@ class _CartState extends State<Cart> {
                   style: TextStyle(color: color.purple),
                 ),
                 onPressed: () async {
-                  voucherApplied = false;
-                  total1 = total;
-                  if (op == "add") {
-                    widget.cart![index].quantity++;
-                    total += widget.cart![index].price;
-                  } else if (op == "sub") {
-                    if (widget.cart![index].quantity >= 2) {
-                      widget.cart![index].quantity--;
-                      total -= widget.cart![index].price;
-                    } else if (widget.cart![index].quantity <= 1) {
-                      widget.cart![index].quantity = 0;
-                      total -= widget.cart![index].price;
-                      widget.cart!.removeAt(index);
-                      Navigator.pop(context);
+                  if (subs) {
+                    datesApplied = false;
+                    voucherApplied = false;
+                    enablePromo = false;
+                    if (op == "add") {
+                      widget.cart![index].quantity++;
+                      total = 0.0;
+                      total1 = total;
+                    } else if (op == "sub") {
+                      if (widget.cart![index].quantity >= 2) {
+                        widget.cart![index].quantity--;
+                        total = 0.0;
+                        total1 = total;
+                      } else if (widget.cart![index].quantity <= 1) {
+                        widget.cart![index].quantity = 0;
+                        total = getTotal();
+                        total1 = total;
+
+                        if (widget.cart!.isEmpty) {
+                          Navigator.pop(context);
+                        }
+                      }
                     }
+                  } else {
+                    voucherApplied = false;
+
+                    if (op == "add") {
+                      widget.cart![index].quantity++;
+                      total += widget.cart![index].price;
+                    } else if (op == "sub") {
+                      if (widget.cart![index].quantity >= 2) {
+                        widget.cart![index].quantity--;
+                        total -= widget.cart![index].price;
+                      } else if (widget.cart![index].quantity <= 1) {
+                        widget.cart![index].quantity = 0;
+                        total -= widget.cart![index].price;
+                        widget.cart!.removeAt(index);
+
+                        if (widget.cart!.isEmpty) {
+                          Navigator.pop(context);
+                        }
+                      }
+                    }
+                    total1 = total;
                   }
                   setState(() {});
                   Navigator.pop(context);

@@ -28,9 +28,8 @@ class Item1 {
       day = "Tuesday";
     } else if (json["day"] == "wednesday") {
       day = "Wednesday";
-    }
-    if (json["day"] == "thursday") {
-      day = "Tursday";
+    } else if (json["day"] == "thursday") {
+      day = "Thursday";
     } else if (json["day"] == "friday") {
       day = "Friday";
     } else if (json["day"] == "saturday") {

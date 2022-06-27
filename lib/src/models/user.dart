@@ -6,7 +6,7 @@ class User1 {
   String? name, email, phone, password;
   late String msg, token;
   late bool status, google;
-  List<Address> address=[];
+  List<Address> address = [];
   late int id;
 
   User1({
@@ -33,23 +33,24 @@ class User1 {
       user.msg = json["message"] ?? "";
       user.token = customer["authentication_token"];
       var x=json["customer"]['addresses'];
-      print(x);
-      for(var a in x){
+      if (x != null){
+        for(var a in x){
         Address add = Address(address: a["address"], label: a["label"], lat: a["lat"], long: a["long"]);
         if(add.label == "home"){
           add.label = "Home";
         } else if (add.label == "work"){
           add.label = "Work";
         }
-        print(add.label);
         add.notes = a["notes"];
         add.id=a["address_id"];
-        print(10);
         user.address.add(add);
       }
-      print("if");
+      }else{
+        user.address = [];
+      }
+      
     } else {
-      print("else");
+      // print("else");
       user.status = json["status"] ?? "";
       user.msg = json["message"] ?? "";
     }

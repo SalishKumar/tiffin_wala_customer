@@ -30,6 +30,8 @@ class PaymentAndAddress extends StatefulWidget {
   double? total, total1;
   String? code;
   List<Item1>? cart;
+  DateTime? start, end;
+  bool? subs;
   bool? voucherApplied;
 
   PaymentAndAddress(
@@ -40,7 +42,10 @@ class PaymentAndAddress extends StatefulWidget {
       this.total1,
       this.user,
       this.vendorID,
-      this.voucherApplied})
+      this.voucherApplied,
+      this.end,
+      this.start,
+      this.subs})
       : super(key: key);
 
   @override
@@ -90,6 +95,11 @@ class _PaymentAndAddressState extends State<PaymentAndAddress> {
                 SizedBox(
                   height: 20,
                 ),
+                if (widget.subs!) datesBox(width),
+                if (widget.subs!)
+                  SizedBox(
+                    height: 20,
+                  ),
                 orderSummary(width, widget.cart, widget.total, widget.total1),
               ],
             ),
@@ -100,111 +110,115 @@ class _PaymentAndAddressState extends State<PaymentAndAddress> {
         padding: EdgeInsets.symmetric(horizontal: width * 0.05),
         child: InkWell(
             onTap: () async {
-              if (widget.cart != null &&
-                  widget.user != null &&
-                  widget.vendorID != null &&
-                  widget.user!.address != null) {
-                showDialog(
-                  context: context,
-                  barrierDismissible: false,
-                  builder: (BuildContext context) {
-                    return Dialog(
-                      backgroundColor: Colors.transparent,
-                      elevation: 0,
-                      child: Container(
-                        width: MediaQuery.of(context).size.width * 0.6,
-                        height: 300,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            CircularProgressIndicator(
-                              color: color.purple,
-                            ),
-                            SizedBox(
-                              height: 10,
-                            ),
-                            Text("Loading"),
-                          ],
+              
+              if (widget.subs!) {
+              } else if(widget.subs == false) {
+                if (widget.cart != null &&
+                    widget.user != null &&
+                    widget.vendorID != null &&
+                    widget.user!.address.isNotEmpty) {
+                  showDialog(
+                    context: context,
+                    barrierDismissible: false,
+                    builder: (BuildContext context) {
+                      return Dialog(
+                        backgroundColor: Colors.transparent,
+                        elevation: 0,
+                        child: Container(
+                          width: MediaQuery.of(context).size.width * 0.6,
+                          height: 300,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              CircularProgressIndicator(
+                                color: color.purple,
+                              ),
+                              SizedBox(
+                                height: 10,
+                              ),
+                              Text("Loading"),
+                            ],
+                          ),
                         ),
-                      ),
-                    );
-                  },
-                );
-                List<Map<String, dynamic>> mappedCart = [];
-                for (var item in widget.cart!) {
-                  mappedCart.add({
-                    "dish_id": item.id,
-                    "quantity": item.quantity,
-                    "price_per_unit": item.price,
-                    "total_amount": item.price * item.quantity
-                  });
-                }
-                Map<String, dynamic> map = {};
-                if (widget.voucherApplied!) {
-                  map = {
-                    "customer_id": widget.user!.id,
-                    "seller_id": widget.vendorID,
-                    "address_id": widget.user!.address[chosenAddress].id,
-                    "cart_size": widget.cart!.length,
-                    "amount": widget.total,
-                    "type": widget.cart![0].type,
-                    "coupon_code": widget.code,
-                    "discounted_amount": widget.total1
-                  };
-                } else {
-                  map = {
-                    "customer_id": widget.user!.id,
-                    "seller_id": widget.vendorID,
-                    "address_id": widget.user!.address[chosenAddress].id,
-                    "cart_size": widget.cart!.length,
-                    "amount": widget.total,
-                    "type": widget.cart![0].type
-                  };
-                }
-                map["cart"] = mappedCart;
-                dynamic result = await db.postOrder(map);
-                Navigator.pop(context);
-                if (result != null) {
-                  if (result['Timeout'] == 'true') {
-                    Fluttertoast.showToast(
-                        msg: 'Your request has been timmed-out. Try again.',
-                        toastLength: Toast.LENGTH_SHORT,
-                        gravity: ToastGravity.CENTER,
-                        timeInSecForIosWeb: 1,
-                        backgroundColor: Colors.red,
-                        textColor: Colors.white,
-                        fontSize: 16.0);
-                  } else if (result["status"]) {
-                    Fluttertoast.showToast(
-                        msg: result["message"],
-                        toastLength: Toast.LENGTH_SHORT,
-                        gravity: ToastGravity.CENTER,
-                        timeInSecForIosWeb: 1,
-                        backgroundColor: Colors.green,
-                        textColor: Colors.white,
-                        fontSize: 16.0);
-                    Navigator.pushNamedAndRemoveUntil(
-                        context, Home.routeName, (route) => false);
-                  } else if (result["status"] == false) {
-                    Fluttertoast.showToast(
-                        msg: result["message"],
-                        toastLength: Toast.LENGTH_SHORT,
-                        gravity: ToastGravity.CENTER,
-                        timeInSecForIosWeb: 1,
-                        backgroundColor: Colors.red,
-                        textColor: Colors.white,
-                        fontSize: 16.0);
+                      );
+                    },
+                  );
+                  List<Map<String, dynamic>> mappedCart = [];
+                  for (var item in widget.cart!) {
+                    mappedCart.add({
+                      "dish_id": item.id,
+                      "quantity": item.quantity,
+                      "price_per_unit": item.price,
+                      "total_amount": item.price * item.quantity
+                    });
                   }
+                  Map<String, dynamic> map = {};
+                  if (widget.voucherApplied!) {
+                    map = {
+                      "customer_id": widget.user!.id,
+                      "seller_id": widget.vendorID,
+                      "address_id": widget.user!.address[chosenAddress].id,
+                      "cart_size": widget.cart!.length,
+                      "amount": widget.total,
+                      "type": widget.cart![0].type,
+                      "coupon_code": widget.code,
+                      "discounted_amount": widget.total1
+                    };
+                  } else {
+                    map = {
+                      "customer_id": widget.user!.id,
+                      "seller_id": widget.vendorID,
+                      "address_id": widget.user!.address[chosenAddress].id,
+                      "cart_size": widget.cart!.length,
+                      "amount": widget.total,
+                      "type": widget.cart![0].type
+                    };
+                  }
+                  map["cart"] = mappedCart;
+                  dynamic result = await db.postOrder(map);
+                  Navigator.pop(context);
+                  if (result != null) {
+                    if (result['Timeout'] == 'true') {
+                      Fluttertoast.showToast(
+                          msg: 'Your request has been timmed-out. Try again.',
+                          toastLength: Toast.LENGTH_SHORT,
+                          gravity: ToastGravity.CENTER,
+                          timeInSecForIosWeb: 1,
+                          backgroundColor: Colors.red,
+                          textColor: Colors.white,
+                          fontSize: 16.0);
+                    } else if (result["status"]) {
+                      Fluttertoast.showToast(
+                          msg: result["message"],
+                          toastLength: Toast.LENGTH_SHORT,
+                          gravity: ToastGravity.CENTER,
+                          timeInSecForIosWeb: 1,
+                          backgroundColor: Colors.green,
+                          textColor: Colors.white,
+                          fontSize: 16.0);
+                      Navigator.pushNamedAndRemoveUntil(
+                          context, Home.routeName, (route) => false);
+                    } else if (result["status"] == false) {
+                      Fluttertoast.showToast(
+                          msg: result["message"],
+                          toastLength: Toast.LENGTH_SHORT,
+                          gravity: ToastGravity.CENTER,
+                          timeInSecForIosWeb: 1,
+                          backgroundColor: Colors.red,
+                          textColor: Colors.white,
+                          fontSize: 16.0);
+                    }
+                  }
+                } else if (widget.user!.address.isEmpty) {
+                  Fluttertoast.showToast(
+                      msg: "Enter Address first.",
+                      toastLength: Toast.LENGTH_SHORT,
+                      gravity: ToastGravity.CENTER,
+                      timeInSecForIosWeb: 1,
+                      backgroundColor: Colors.red,
+                      textColor: Colors.white,
+                      fontSize: 16.0);
                 }
-              } else if (widget.user!.address == null) {
-                Fluttertoast.showToast(
-                    msg: "Enter Address first.",
-                    toastLength: Toast.LENGTH_SHORT,
-                    gravity: ToastGravity.CENTER,
-                    timeInSecForIosWeb: 1,
-                    backgroundColor: Colors.red,
-                    textColor: Colors.white,
-                    fontSize: 16.0);
               }
             },
             child: CustomButton(
@@ -242,7 +256,7 @@ class _PaymentAndAddressState extends State<PaymentAndAddress> {
                         "Delivery Address",
                         maxLines: 1,
                         style: TextStyle(
-                          fontSize: 22,
+                          fontSize: 20,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -302,6 +316,96 @@ class _PaymentAndAddressState extends State<PaymentAndAddress> {
     );
   }
 
+  Widget datesBox(width) {
+    return Card(
+      elevation: 5,
+      child: Padding(
+        padding: const EdgeInsets.all(15.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Icon(
+                      Icons.location_city,
+                      color: color.purple,
+                    ),
+                    SizedBox(
+                      width: 10,
+                    ),
+                    Container(
+                      width: width * 0.45,
+                      child: AutoSizeText(
+                        "Dates of Subscription",
+                        maxLines: 1,
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+            SizedBox(
+              height: 20,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Column(
+                  children: [
+                    SizedBox(
+                      height: 10,
+                    ),
+                    Text(
+                      "Start Date",
+                      style: TextStyle(
+                        fontSize: 18,
+                      ),
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    Text(
+                      "${widget.start!.day}-${widget.start!.month}-${widget.start!.year}",
+                      style: TextStyle(fontSize: 18, color: color.purple),
+                    ),
+                  ],
+                ),
+                Column(
+                  children: [
+                    SizedBox(
+                      height: 10,
+                    ),
+                    Text(
+                      "End Date",
+                      style: TextStyle(
+                        fontSize: 18,
+                      ),
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    Text(
+                      "${widget.end!.day}-${widget.end!.month}-${widget.end!.year}",
+                      style: TextStyle(fontSize: 18, color: color.purple),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   Widget orderSummary(width, List<Item1>? cart, total, total1) {
     return Card(
       elevation: 5,
@@ -326,7 +430,7 @@ class _PaymentAndAddressState extends State<PaymentAndAddress> {
                     "Order Summary",
                     maxLines: 1,
                     style: TextStyle(
-                      fontSize: 22,
+                      fontSize: 20,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -341,57 +445,129 @@ class _PaymentAndAddressState extends State<PaymentAndAddress> {
                 physics: NeverScrollableScrollPhysics(),
                 itemCount: cart!.length,
                 itemBuilder: (context, index) {
-                  return Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Container(
-                        child: Text(
-                          "${cart[index].quantity} X ${cart[index].name}",
-                          style: TextStyle(
-                              fontSize: 18,
-                              color: Color(0xFF3a3a3b),
-                              fontWeight: FontWeight.w400),
-                          textAlign: TextAlign.left,
-                        ),
-                      ),
-                      Divider(
-                        color: Colors.black,
-                      ),
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Container(
-                            width: width * 0.4,
-                            padding: EdgeInsets.only(left: 5),
-                            child: AutoSizeText(
-                              "${cart[index].desc}",
-                              maxLines: 1,
-                              style: TextStyle(
-                                  fontSize: 16,
-                                  color: Colors.grey[600],
-                                  fontWeight: FontWeight.w400),
-                              textAlign: TextAlign.left,
+                  return widget.subs!
+                      ? Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Container(
+                              padding: EdgeInsets.only(left: 5),
+                              child: Text(
+                                "${cart[index].day} - ${cart[index].type}",
+                                style: TextStyle(
+                                    fontSize: 18,
+                                    color: Color(0xFF3a3a3b),
+                                    fontWeight: FontWeight.bold),
+                                textAlign: TextAlign.left,
+                              ),
                             ),
-                          ),
-                          Container(
-                            width: width * 0.4,
-                            alignment: Alignment.centerRight,
-                            child: AutoSizeText(
-                              "PKR $total/=",
-                              maxLines: 1,
-                              style: TextStyle(
-                                  fontSize: 18,
-                                  color: Color(0xFF3a3a3b),
-                                  fontWeight: FontWeight.w400),
-                              textAlign: TextAlign.left,
+                            Divider(
+                              color: Colors.black,
                             ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  );
+                            Container(
+                              child: Text(
+                                "${cart[index].quantity} X ${cart[index].name}",
+                                style: TextStyle(
+                                    fontSize: 18,
+                                    color: Color(0xFF3a3a3b),
+                                    fontWeight: FontWeight.w400),
+                                textAlign: TextAlign.left,
+                              ),
+                            ),
+                            Divider(
+                              color: Colors.black,
+                            ),
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Container(
+                                  width: width * 0.4,
+                                  padding: EdgeInsets.only(left: 5),
+                                  child: AutoSizeText(
+                                    "${cart[index].desc}",
+                                    maxLines: 1,
+                                    style: TextStyle(
+                                        fontSize: 16,
+                                        color: Colors.grey[600],
+                                        fontWeight: FontWeight.w400),
+                                    textAlign: TextAlign.left,
+                                  ),
+                                ),
+                                Container(
+                                  width: width * 0.4,
+                                  alignment: Alignment.centerRight,
+                                  child: AutoSizeText(
+                                    "PKR $total/=",
+                                    maxLines: 1,
+                                    style: TextStyle(
+                                        fontSize: 18,
+                                        color: Color(0xFF3a3a3b),
+                                        fontWeight: FontWeight.w400),
+                                    textAlign: TextAlign.left,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            SizedBox(
+                              height: 10,
+                            ),
+                          ],
+                        )
+                      : Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Container(
+                              child: Text(
+                                "${cart[index].quantity} X ${cart[index].name}",
+                                style: TextStyle(
+                                    fontSize: 18,
+                                    color: Color(0xFF3a3a3b),
+                                    fontWeight: FontWeight.bold),
+                                textAlign: TextAlign.left,
+                              ),
+                            ),
+                            Divider(
+                              color: Colors.black,
+                            ),
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Container(
+                                  width: width * 0.4,
+                                  padding: EdgeInsets.only(left: 5),
+                                  child: AutoSizeText(
+                                    "${cart[index].desc}",
+                                    maxLines: 1,
+                                    style: TextStyle(
+                                        fontSize: 16,
+                                        color: Colors.grey[600],
+                                        fontWeight: FontWeight.w400),
+                                    textAlign: TextAlign.left,
+                                  ),
+                                ),
+                                Container(
+                                  width: width * 0.4,
+                                  alignment: Alignment.centerRight,
+                                  child: AutoSizeText(
+                                    "PKR $total/=",
+                                    maxLines: 1,
+                                    style: TextStyle(
+                                        fontSize: 18,
+                                        color: Color(0xFF3a3a3b),
+                                        fontWeight: FontWeight.w400),
+                                    textAlign: TextAlign.left,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            SizedBox(
+                              height: 10,
+                            ),
+                          ],
+                        );
                 }),
             if (widget.voucherApplied!)
               Container(
@@ -495,7 +671,7 @@ class PaymentBox extends StatelessWidget {
                         "Payment Method",
                         maxLines: 1,
                         style: TextStyle(
-                          fontSize: 22,
+                          fontSize: 20,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
