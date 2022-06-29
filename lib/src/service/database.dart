@@ -586,4 +586,34 @@ class Database {
       return null;
     }
   }
+
+  Future satisfactionRating(Map<String, dynamic> map) async {
+    try {
+      timeoutSettings(15);
+      dynamic response = await dio.put(endpoint.base + endpoint.signup + endpoint.order + endpoint.complain,
+          data: map,
+          options: Options(
+            headers: {
+              'Authorization': "token ${data.user.token}",
+            },
+            validateStatus: (_) => true,
+            contentType: Headers.jsonContentType,
+            responseType: ResponseType.json,
+          ));
+      if (response.statusCode != 200) {
+        return null;
+      }
+      response.data['Timeout'] = 'false';
+      return response.data;
+    } on DioError catch (e) {
+      if (e.type == DioErrorType.connectTimeout ||
+          e.type == DioErrorType.receiveTimeout) {
+        print(e.type);
+        Map<String, dynamic> map = {'Timeout': 'true'};
+        return map;
+      }
+      print(e.toString());
+      return null;
+    }
+  }
 }

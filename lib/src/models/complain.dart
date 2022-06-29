@@ -4,12 +4,12 @@ import 'package:tiffin_wala_customer/src/constants/api_url.dart' as endpoint;
 class Complain{
   String? customerName, kitchenName, status, desc, resolution;
   List<String>? images = [];
-  int? id;
+  int? id, customerID;
   bool? isResoved = false, voucherIssued = false, isCustomerRating = false;
   double? rating = 0.0;
   Voucher? voucher;
 
-  Complain({this.customerName, this.desc, this.id, this.images, this.isCustomerRating, this.isResoved, this.kitchenName, this.rating, this.resolution, this.status, this.voucher, this.voucherIssued});
+  Complain({this.customerName, this.desc, this.id, this.images, this.customerID, this.isCustomerRating, this.isResoved, this.kitchenName, this.rating, this.resolution, this.status, this.voucher, this.voucherIssued});
 
   factory Complain.fromJson(Map<String, dynamic> json) {
     print(json);
@@ -20,6 +20,7 @@ class Complain{
     print(json["complain_id"]);
     var customer = json["customer"];
     var name = customer["customer_name"];
+    var id = customer["customer_id"];
     var seller = json["seller"];
     var kitchenName = seller["kitchen_name"];
     List<String> pics = [];
@@ -39,6 +40,7 @@ class Complain{
       id: json["complain_id"],
       images: pics,
       kitchenName: kitchenName,
+      customerID: id,
       isResoved: json["is_resolved"],
       resolution: json["resolution"]
     );
