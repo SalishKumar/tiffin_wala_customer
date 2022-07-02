@@ -24,6 +24,7 @@ import 'package:tiffin_wala_customer/src/views/my_profile.dart';
 import 'package:tiffin_wala_customer/src/views/order_list.dart';
 import 'package:tiffin_wala_customer/src/views/subscription_menu.dart'; 
 import 'package:tiffin_wala_customer/src/constants/api_url.dart' as endpoint;
+import 'package:tiffin_wala_customer/src/views/subscription_order_list.dart';
 import 'package:tiffin_wala_customer/src/views/vouchers.dart';
 
 class Home extends StatefulWidget {
@@ -49,6 +50,7 @@ class _HomeState extends State<Home> {
   List<Chef> filter2 = [];
   TextEditingController searchCon1 = TextEditingController(),
       searchCon2 = TextEditingController();
+  DateTime currentBackPressTime = DateTime.now();
 
   @override
   void initState() {
@@ -189,6 +191,17 @@ class _HomeState extends State<Home> {
     setState(() {});
   }
 
+  Future<bool> onWillPop() {
+    DateTime now = DateTime.now();
+    if (currentBackPressTime == null || 
+        now.difference(currentBackPressTime) > Duration(seconds: 2)) {
+      currentBackPressTime = now;
+      Fluttertoast.showToast(msg: "Double Tap to Exit");
+      return Future.value(false);
+    }
+    return Future.value(true);
+  }
+
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
@@ -219,6 +232,16 @@ class _HomeState extends State<Home> {
                   onTap: () {
                     Navigator.pop(context);
                     Navigator.push(context, MaterialPageRoute(builder: (context) => OrderList(user: data.user,)));
+                  },
+                ),
+                ListTile(
+                  title: const Text(
+                    'Subscription',
+                    style: TextStyle(color: Colors.black, fontSize: 18),
+                  ),
+                  onTap: () {
+                    Navigator.pop(context);
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => SubscriptionOrderList(user: data.user,)));
                   },
                 ),
                 ListTile(
@@ -326,90 +349,253 @@ class _HomeState extends State<Home> {
               ],
             ),
           ),
-          body: loading
-              ? Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 16.0, vertical: 16.0),
-                  child:
-                      Column(mainAxisSize: MainAxisSize.max, children: <Widget>[
-                    Expanded(
-                      child: Shimmer.fromColors(
-                        baseColor: Color(0xffAEAEAE),
-                        highlightColor: Colors.white,
-                        child: ListView.builder(
-                          itemBuilder: (_, __) => Padding(
-                            padding: const EdgeInsets.only(bottom: 8.0),
-                            child: Container(
-                              padding: EdgeInsets.all(10),
-                              child: Row(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: <Widget>[
-                                  Container(
-                                    width: 80.0,
-                                    height: 80.0,
-                                    color: Colors.white,
-                                  ),
-                                  const SizedBox(
-                                    width: 15,
-                                  ),
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: <Widget>[
-                                        Container(
-                                          width: double.infinity,
-                                          height: 10.0,
-                                          color: Colors.white,
-                                        ),
-                                        const Padding(
-                                          padding: EdgeInsets.symmetric(
-                                              vertical: 2.0),
-                                        ),
-                                        Container(
-                                          width: double.infinity,
-                                          height: 10.0,
-                                          color: Colors.white,
-                                        ),
-                                        const SizedBox(
-                                          height: 10,
-                                        ),
-                                        Container(
-                                          width: 40.0,
-                                          height: 10.0,
-                                          color: Colors.white,
-                                        ),
-                                      ],
+          body: WillPopScope(
+            onWillPop: onWillPop,
+            child: loading
+                ? Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 16.0, vertical: 16.0),
+                    child:
+                        Column(mainAxisSize: MainAxisSize.max, children: <Widget>[
+                      Expanded(
+                        child: Shimmer.fromColors(
+                          baseColor: Color(0xffAEAEAE),
+                          highlightColor: Colors.white,
+                          child: ListView.builder(
+                            itemBuilder: (_, __) => Padding(
+                              padding: const EdgeInsets.only(bottom: 8.0),
+                              child: Container(
+                                padding: EdgeInsets.all(10),
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: <Widget>[
+                                    Container(
+                                      width: 80.0,
+                                      height: 80.0,
+                                      color: Colors.white,
                                     ),
-                                  )
-                                ],
+                                    const SizedBox(
+                                      width: 15,
+                                    ),
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: <Widget>[
+                                          Container(
+                                            width: double.infinity,
+                                            height: 10.0,
+                                            color: Colors.white,
+                                          ),
+                                          const Padding(
+                                            padding: EdgeInsets.symmetric(
+                                                vertical: 2.0),
+                                          ),
+                                          Container(
+                                            width: double.infinity,
+                                            height: 10.0,
+                                            color: Colors.white,
+                                          ),
+                                          const SizedBox(
+                                            height: 10,
+                                          ),
+                                          Container(
+                                            width: 40.0,
+                                            height: 10.0,
+                                            color: Colors.white,
+                                          ),
+                                        ],
+                                      ),
+                                    )
+                                  ],
+                                ),
                               ),
                             ),
+                            itemCount: 6,
                           ),
-                          itemCount: 6,
                         ),
-                      ),
-                    )
-                  ]))
-              : vendors.length == 0
-                  ? Container(
-                      height: MediaQuery.of(context).size.height,
-                      child: const Center(
-                          child: Text(
-                        "No Vendor Available",
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      )),
-                    )
-                  : TabBarView(
-                      children: [
-                        SingleChildScrollView(
-                          child: Container(
-                              margin: EdgeInsets.symmetric(
-                                  horizontal: width * 0.05),
+                      )
+                    ]))
+                : vendors.length == 0
+                    ? Container(
+                        height: MediaQuery.of(context).size.height,
+                        child: const Center(
+                            child: Text(
+                          "No Vendor Available",
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        )),
+                      )
+                    : TabBarView(
+                        children: [
+                          SingleChildScrollView(
+                            child: Container(
+                                margin: EdgeInsets.symmetric(
+                                    horizontal: width * 0.05),
+                                child: Container(
+                                  margin: EdgeInsets.only(top: 20),
+                                  child: Column(
+                                    children: [
+                                      TextFormField(
+                                        keyboardType: TextInputType.text,
+                                        autofocus: false,
+                                        controller: searchCon1,
+                                        onChanged: (V) {
+                                          if (searchCon1.text.trim().isEmpty) {
+                                            search1 = false;
+                                          } else if (searchCon1.text
+                                              .trim()
+                                              .isNotEmpty) {
+                                            searchList1 = [];
+                                            for (var v in filter1) {
+                                              if (v.name!.toLowerCase().contains(
+                                                  searchCon1.text
+                                                      .trim()
+                                                      .toLowerCase())) {
+                                                searchList1.add(v);
+                                              }
+                                            }
+                                            search1 = true;
+                                          }
+          
+                                          setState(() {});
+                                        },
+                                        decoration: InputDecoration(
+                                            suffixIcon: GestureDetector(
+                                              onTap: () {
+                                                data.subs = false;
+                                                Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            Filter(
+                                                              cusines: once,
+                                                            ))).then((value) {
+                                                  if (data.filterApplied) {
+                                                    search1 = false;
+                                                    searchCon1.clear();
+                                                    filter1 = [];
+                                                    if (data.cusineSelected1) {
+                                                      // filter1 = [];
+                                                      for (var v in vendors) {
+                                                        for (var o
+                                                            in v.menu.oneTime) {
+                                                          for (var f in data
+                                                              .filteredList) {
+                                                            if (o.name ==
+                                                                f.name) {
+                                                              filter1.add(v);
+                                                              // break;
+                                                            }
+                                                          }
+                                                        }
+                                                      }
+                                                      filter1 = filter1
+                                                          .toSet()
+                                                          .toList();
+                                                    } else {
+                                                      for (var v in vendors) {
+                                                        filter1.add(v);
+                                                      }
+                                                    }
+                                                  }
+                                                  setState(() {});
+                                                });
+                                              },
+                                              child: Icon(
+                                                Icons.list,
+                                                color: color.orange,
+                                              ),
+                                            ),
+                                            contentPadding: EdgeInsets.fromLTRB(
+                                                40, 15, 12, 15),
+          
+                                            // filled: true,
+                                            // fillColor: color.textFieldFillColor,
+                                            enabledBorder: OutlineInputBorder(
+                                              borderSide: BorderSide(
+                                                  color: color.purple,
+                                                  width: 1.0),
+                                              borderRadius:
+                                                  BorderRadius.circular(15.0),
+                                            ),
+                                            focusedBorder: OutlineInputBorder(
+                                              borderSide: BorderSide(
+                                                  color: color.orange,
+                                                  width: 1.0),
+                                              borderRadius:
+                                                  BorderRadius.circular(15.0),
+                                            ),
+                                            errorBorder: OutlineInputBorder(
+                                              borderSide: BorderSide(
+                                                  color: color.purple,
+                                                  width: 1.0),
+                                              borderRadius:
+                                                  BorderRadius.circular(15.0),
+                                            ),
+                                            focusedErrorBorder:
+                                                OutlineInputBorder(
+                                              borderSide: BorderSide(
+                                                  color: color.orange,
+                                                  width: 1.0),
+                                              borderRadius:
+                                                  BorderRadius.circular(15.0),
+                                            ),
+                                            hintText: "Search",
+                                            errorText: "",
+                                            labelText: "Search",
+                                            labelStyle:
+                                                TextStyle(color: color.purple)),
+                                      ),
+                                      SizedBox(
+                                        height: 20,
+                                      ),
+                                      ListView.builder(
+                                          shrinkWrap: true,
+                                          physics: NeverScrollableScrollPhysics(),
+                                          itemCount: search1
+                                              ? searchList1.length
+                                              : filter1.length,
+                                          itemBuilder: (context, index) {
+                                            return InkWell(
+                                                onTap: () {
+                                                  Navigator.push(
+                                                      context,
+                                                      MaterialPageRoute(
+                                                          builder: (context) =>
+                                                              Menu(
+                                                                chef: search1
+                                                                    ? searchList1[
+                                                                        index]
+                                                                    : filter1[
+                                                                        index],
+                                                                user: data.user,
+                                                                vendorID: search1
+                                                                    ? searchList1[
+                                                                            index]
+                                                                        .id
+                                                                    : filter1[
+                                                                            index]
+                                                                        .id,
+                                                              )));
+                                                },
+                                                child: vendorDisplay(
+                                                    width,
+                                                    search1
+                                                        ? searchList1[index]
+                                                        : filter1[index]));
+                                          }),
+                                    ],
+                                  ),
+                                )),
+                          ),
+                          SingleChildScrollView(
+                            child: Container(
+                              margin:
+                                  EdgeInsets.symmetric(horizontal: width * 0.05),
                               child: Container(
                                 margin: EdgeInsets.only(top: 20),
                                 child: Column(
@@ -417,63 +603,262 @@ class _HomeState extends State<Home> {
                                     TextFormField(
                                       keyboardType: TextInputType.text,
                                       autofocus: false,
-                                      controller: searchCon1,
+                                      controller: searchCon2,
                                       onChanged: (V) {
-                                        if (searchCon1.text.trim().isEmpty) {
-                                          search1 = false;
-                                        } else if (searchCon1.text
+                                        if (searchCon2.text.trim().isEmpty) {
+                                          search2 = false;
+                                        } else if (searchCon2.text
                                             .trim()
                                             .isNotEmpty) {
-                                          searchList1 = [];
+                                          searchList2 = [];
                                           for (var v in filter1) {
                                             if (v.name!.toLowerCase().contains(
-                                                searchCon1.text
+                                                searchCon2.text
                                                     .trim()
                                                     .toLowerCase())) {
-                                              searchList1.add(v);
+                                              searchList2.add(v);
                                             }
                                           }
-                                          search1 = true;
+                                          search2 = true;
                                         }
-
+          
                                         setState(() {});
                                       },
                                       decoration: InputDecoration(
                                           suffixIcon: GestureDetector(
                                             onTap: () {
-                                              data.subs = false;
+                                              data.subs = true;
+                                              print(daily.length);
                                               Navigator.push(
                                                   context,
                                                   MaterialPageRoute(
                                                       builder: (context) =>
                                                           Filter(
-                                                            cusines: once,
+                                                            cusines: daily,
                                                           ))).then((value) {
                                                 if (data.filterApplied) {
-                                                  search1 = false;
-                                                  searchCon1.clear();
-                                                  filter1 = [];
-                                                  if (data.cusineSelected1) {
+                                                  search2 = false;
+                                                  searchCon2.clear();
+                                                  filter2 = [];
+                                                  if (data.cusineSelected2) {
                                                     // filter1 = [];
                                                     for (var v in vendors) {
-                                                      for (var o
-                                                          in v.menu.oneTime) {
+                                                      for (var b in v.menu.monday
+                                                          .breakfast) {
                                                         for (var f in data
                                                             .filteredList) {
-                                                          if (o.name ==
-                                                              f.name) {
-                                                            filter1.add(v);
+                                                          if (b.name == f.name) {
+                                                            filter2.add(v);
+                                                            // break;
+                                                          }
+                                                        }
+                                                      }
+                                                      for (var l in v
+                                                          .menu.monday.lunch) {
+                                                        for (var f in data
+                                                            .filteredList) {
+                                                          if (l.name == f.name) {
+                                                            filter2.add(v);
+                                                            // break;
+                                                          }
+                                                        }
+                                                      }
+                                                      for (var d in v
+                                                          .menu.monday.dinner) {
+                                                        for (var f in data
+                                                            .filteredList) {
+                                                          if (d.name == f.name) {
+                                                            filter2.add(v);
+                                                            // break;
+                                                          }
+                                                        }
+                                                      }
+                                                      for (var b in v.menu.tuesday
+                                                          .breakfast) {
+                                                        for (var f in data
+                                                            .filteredList) {
+                                                          if (b.name == f.name) {
+                                                            filter2.add(v);
+                                                            // break;
+                                                          }
+                                                        }
+                                                      }
+                                                      for (var l in v
+                                                          .menu.tuesday.lunch) {
+                                                        for (var f in data
+                                                            .filteredList) {
+                                                          if (l.name == f.name) {
+                                                            filter2.add(v);
+                                                            // break;
+                                                          }
+                                                        }
+                                                      }
+                                                      for (var d in v
+                                                          .menu.tuesday.dinner) {
+                                                        for (var f in data
+                                                            .filteredList) {
+                                                          if (d.name == f.name) {
+                                                            filter2.add(v);
+                                                            // break;
+                                                          }
+                                                        }
+                                                      }
+                                                      for (var b in v.menu
+                                                          .wednesday.breakfast) {
+                                                        for (var f in data
+                                                            .filteredList) {
+                                                          if (b.name == f.name) {
+                                                            filter2.add(v);
+                                                            // break;
+                                                          }
+                                                        }
+                                                      }
+                                                      for (var l in v
+                                                          .menu.wednesday.lunch) {
+                                                        for (var f in data
+                                                            .filteredList) {
+                                                          if (l.name == f.name) {
+                                                            filter2.add(v);
+                                                            // break;
+                                                          }
+                                                        }
+                                                      }
+                                                      for (var d in v.menu
+                                                          .wednesday.dinner) {
+                                                        for (var f in data
+                                                            .filteredList) {
+                                                          if (d.name == f.name) {
+                                                            filter2.add(v);
+                                                            // break;
+                                                          }
+                                                        }
+                                                      }
+                                                      for (var b in v.menu
+                                                          .thursday.breakfast) {
+                                                        for (var f in data
+                                                            .filteredList) {
+                                                          if (b.name == f.name) {
+                                                            filter2.add(v);
+                                                            // break;
+                                                          }
+                                                        }
+                                                      }
+                                                      for (var l in v
+                                                          .menu.thursday.lunch) {
+                                                        for (var f in data
+                                                            .filteredList) {
+                                                          if (l.name == f.name) {
+                                                            filter2.add(v);
+                                                            // break;
+                                                          }
+                                                        }
+                                                      }
+                                                      for (var d in v
+                                                          .menu.thursday.dinner) {
+                                                        for (var f in data
+                                                            .filteredList) {
+                                                          if (d.name == f.name) {
+                                                            filter2.add(v);
+                                                            // break;
+                                                          }
+                                                        }
+                                                      }
+                                                      for (var b in v.menu.friday
+                                                          .breakfast) {
+                                                        for (var f in data
+                                                            .filteredList) {
+                                                          if (b.name == f.name) {
+                                                            filter2.add(v);
+                                                            // break;
+                                                          }
+                                                        }
+                                                      }
+                                                      for (var l in v
+                                                          .menu.friday.lunch) {
+                                                        for (var f in data
+                                                            .filteredList) {
+                                                          if (l.name == f.name) {
+                                                            filter2.add(v);
+                                                            // break;
+                                                          }
+                                                        }
+                                                      }
+                                                      for (var d in v
+                                                          .menu.friday.dinner) {
+                                                        for (var f in data
+                                                            .filteredList) {
+                                                          if (d.name == f.name) {
+                                                            filter2.add(v);
+                                                            // break;
+                                                          }
+                                                        }
+                                                      }
+                                                      for (var b in v.menu
+                                                          .saturday.breakfast) {
+                                                        for (var f in data
+                                                            .filteredList) {
+                                                          if (b.name == f.name) {
+                                                            filter2.add(v);
+                                                            // break;
+                                                          }
+                                                        }
+                                                      }
+                                                      for (var l in v
+                                                          .menu.saturday.lunch) {
+                                                        for (var f in data
+                                                            .filteredList) {
+                                                          if (l.name == f.name) {
+                                                            filter2.add(v);
+                                                            // break;
+                                                          }
+                                                        }
+                                                      }
+                                                      for (var d in v
+                                                          .menu.saturday.dinner) {
+                                                        for (var f in data
+                                                            .filteredList) {
+                                                          if (d.name == f.name) {
+                                                            filter2.add(v);
+                                                            // break;
+                                                          }
+                                                        }
+                                                      }
+                                                      for (var b in v.menu.sunday
+                                                          .breakfast) {
+                                                        for (var f in data
+                                                            .filteredList) {
+                                                          if (b.name == f.name) {
+                                                            filter2.add(v);
+                                                            // break;
+                                                          }
+                                                        }
+                                                      }
+                                                      for (var l in v
+                                                          .menu.sunday.lunch) {
+                                                        for (var f in data
+                                                            .filteredList) {
+                                                          if (l.name == f.name) {
+                                                            filter2.add(v);
+                                                            // break;
+                                                          }
+                                                        }
+                                                      }
+                                                      for (var d in v
+                                                          .menu.sunday.dinner) {
+                                                        for (var f in data
+                                                            .filteredList) {
+                                                          if (d.name == f.name) {
+                                                            filter2.add(v);
                                                             // break;
                                                           }
                                                         }
                                                       }
                                                     }
-                                                    filter1 = filter1
-                                                        .toSet()
-                                                        .toList();
+                                                    filter2 =
+                                                        filter2.toSet().toList();
                                                   } else {
                                                     for (var v in vendors) {
-                                                      filter1.add(v);
+                                                      filter2.add(v);
                                                     }
                                                   }
                                                 }
@@ -485,37 +870,32 @@ class _HomeState extends State<Home> {
                                               color: color.orange,
                                             ),
                                           ),
-                                          contentPadding: EdgeInsets.fromLTRB(
-                                              40, 15, 12, 15),
-
+                                          contentPadding:
+                                              EdgeInsets.fromLTRB(40, 15, 12, 15),
+          
                                           // filled: true,
                                           // fillColor: color.textFieldFillColor,
                                           enabledBorder: OutlineInputBorder(
                                             borderSide: BorderSide(
-                                                color: color.purple,
-                                                width: 1.0),
+                                                color: color.purple, width: 1.0),
                                             borderRadius:
                                                 BorderRadius.circular(15.0),
                                           ),
                                           focusedBorder: OutlineInputBorder(
                                             borderSide: BorderSide(
-                                                color: color.orange,
-                                                width: 1.0),
+                                                color: color.orange, width: 1.0),
                                             borderRadius:
                                                 BorderRadius.circular(15.0),
                                           ),
                                           errorBorder: OutlineInputBorder(
                                             borderSide: BorderSide(
-                                                color: color.purple,
-                                                width: 1.0),
+                                                color: color.purple, width: 1.0),
                                             borderRadius:
                                                 BorderRadius.circular(15.0),
                                           ),
-                                          focusedErrorBorder:
-                                              OutlineInputBorder(
+                                          focusedErrorBorder: OutlineInputBorder(
                                             borderSide: BorderSide(
-                                                color: color.orange,
-                                                width: 1.0),
+                                                color: color.orange, width: 1.0),
                                             borderRadius:
                                                 BorderRadius.circular(15.0),
                                           ),
@@ -531,9 +911,9 @@ class _HomeState extends State<Home> {
                                     ListView.builder(
                                         shrinkWrap: true,
                                         physics: NeverScrollableScrollPhysics(),
-                                        itemCount: search1
-                                            ? searchList1.length
-                                            : filter1.length,
+                                        itemCount: search2
+                                            ? searchList2.length
+                                            : filter2.length,
                                         itemBuilder: (context, index) {
                                           return InkWell(
                                               onTap: () {
@@ -541,7 +921,7 @@ class _HomeState extends State<Home> {
                                                     context,
                                                     MaterialPageRoute(
                                                         builder: (context) =>
-                                                            Menu(
+                                                            SubscriptionMenu(
                                                               chef: search1
                                                                   ? searchList1[
                                                                       index]
@@ -552,388 +932,34 @@ class _HomeState extends State<Home> {
                                                                   ? searchList1[
                                                                           index]
                                                                       .id
-                                                                  : filter1[
-                                                                          index]
+                                                                  : filter1[index]
                                                                       .id,
                                                             )));
                                               },
                                               child: vendorDisplay(
                                                   width,
-                                                  search1
-                                                      ? searchList1[index]
-                                                      : filter1[index]));
+                                                  search2
+                                                      ? searchList2[index]
+                                                      : filter2[index]));
                                         }),
                                   ],
                                 ),
-                              )),
-                        ),
-                        SingleChildScrollView(
-                          child: Container(
-                            margin:
-                                EdgeInsets.symmetric(horizontal: width * 0.05),
-                            child: Container(
-                              margin: EdgeInsets.only(top: 20),
-                              child: Column(
-                                children: [
-                                  TextFormField(
-                                    keyboardType: TextInputType.text,
-                                    autofocus: false,
-                                    controller: searchCon2,
-                                    onChanged: (V) {
-                                      if (searchCon2.text.trim().isEmpty) {
-                                        search2 = false;
-                                      } else if (searchCon2.text
-                                          .trim()
-                                          .isNotEmpty) {
-                                        searchList2 = [];
-                                        for (var v in filter1) {
-                                          if (v.name!.toLowerCase().contains(
-                                              searchCon2.text
-                                                  .trim()
-                                                  .toLowerCase())) {
-                                            searchList2.add(v);
-                                          }
-                                        }
-                                        search2 = true;
-                                      }
-
-                                      setState(() {});
-                                    },
-                                    decoration: InputDecoration(
-                                        suffixIcon: GestureDetector(
-                                          onTap: () {
-                                            data.subs = true;
-                                            print(daily.length);
-                                            Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        Filter(
-                                                          cusines: daily,
-                                                        ))).then((value) {
-                                              if (data.filterApplied) {
-                                                search2 = false;
-                                                searchCon2.clear();
-                                                filter2 = [];
-                                                if (data.cusineSelected2) {
-                                                  // filter1 = [];
-                                                  for (var v in vendors) {
-                                                    for (var b in v.menu.monday
-                                                        .breakfast) {
-                                                      for (var f in data
-                                                          .filteredList) {
-                                                        if (b.name == f.name) {
-                                                          filter2.add(v);
-                                                          // break;
-                                                        }
-                                                      }
-                                                    }
-                                                    for (var l in v
-                                                        .menu.monday.lunch) {
-                                                      for (var f in data
-                                                          .filteredList) {
-                                                        if (l.name == f.name) {
-                                                          filter2.add(v);
-                                                          // break;
-                                                        }
-                                                      }
-                                                    }
-                                                    for (var d in v
-                                                        .menu.monday.dinner) {
-                                                      for (var f in data
-                                                          .filteredList) {
-                                                        if (d.name == f.name) {
-                                                          filter2.add(v);
-                                                          // break;
-                                                        }
-                                                      }
-                                                    }
-                                                    for (var b in v.menu.tuesday
-                                                        .breakfast) {
-                                                      for (var f in data
-                                                          .filteredList) {
-                                                        if (b.name == f.name) {
-                                                          filter2.add(v);
-                                                          // break;
-                                                        }
-                                                      }
-                                                    }
-                                                    for (var l in v
-                                                        .menu.tuesday.lunch) {
-                                                      for (var f in data
-                                                          .filteredList) {
-                                                        if (l.name == f.name) {
-                                                          filter2.add(v);
-                                                          // break;
-                                                        }
-                                                      }
-                                                    }
-                                                    for (var d in v
-                                                        .menu.tuesday.dinner) {
-                                                      for (var f in data
-                                                          .filteredList) {
-                                                        if (d.name == f.name) {
-                                                          filter2.add(v);
-                                                          // break;
-                                                        }
-                                                      }
-                                                    }
-                                                    for (var b in v.menu
-                                                        .wednesday.breakfast) {
-                                                      for (var f in data
-                                                          .filteredList) {
-                                                        if (b.name == f.name) {
-                                                          filter2.add(v);
-                                                          // break;
-                                                        }
-                                                      }
-                                                    }
-                                                    for (var l in v
-                                                        .menu.wednesday.lunch) {
-                                                      for (var f in data
-                                                          .filteredList) {
-                                                        if (l.name == f.name) {
-                                                          filter2.add(v);
-                                                          // break;
-                                                        }
-                                                      }
-                                                    }
-                                                    for (var d in v.menu
-                                                        .wednesday.dinner) {
-                                                      for (var f in data
-                                                          .filteredList) {
-                                                        if (d.name == f.name) {
-                                                          filter2.add(v);
-                                                          // break;
-                                                        }
-                                                      }
-                                                    }
-                                                    for (var b in v.menu
-                                                        .thursday.breakfast) {
-                                                      for (var f in data
-                                                          .filteredList) {
-                                                        if (b.name == f.name) {
-                                                          filter2.add(v);
-                                                          // break;
-                                                        }
-                                                      }
-                                                    }
-                                                    for (var l in v
-                                                        .menu.thursday.lunch) {
-                                                      for (var f in data
-                                                          .filteredList) {
-                                                        if (l.name == f.name) {
-                                                          filter2.add(v);
-                                                          // break;
-                                                        }
-                                                      }
-                                                    }
-                                                    for (var d in v
-                                                        .menu.thursday.dinner) {
-                                                      for (var f in data
-                                                          .filteredList) {
-                                                        if (d.name == f.name) {
-                                                          filter2.add(v);
-                                                          // break;
-                                                        }
-                                                      }
-                                                    }
-                                                    for (var b in v.menu.friday
-                                                        .breakfast) {
-                                                      for (var f in data
-                                                          .filteredList) {
-                                                        if (b.name == f.name) {
-                                                          filter2.add(v);
-                                                          // break;
-                                                        }
-                                                      }
-                                                    }
-                                                    for (var l in v
-                                                        .menu.friday.lunch) {
-                                                      for (var f in data
-                                                          .filteredList) {
-                                                        if (l.name == f.name) {
-                                                          filter2.add(v);
-                                                          // break;
-                                                        }
-                                                      }
-                                                    }
-                                                    for (var d in v
-                                                        .menu.friday.dinner) {
-                                                      for (var f in data
-                                                          .filteredList) {
-                                                        if (d.name == f.name) {
-                                                          filter2.add(v);
-                                                          // break;
-                                                        }
-                                                      }
-                                                    }
-                                                    for (var b in v.menu
-                                                        .saturday.breakfast) {
-                                                      for (var f in data
-                                                          .filteredList) {
-                                                        if (b.name == f.name) {
-                                                          filter2.add(v);
-                                                          // break;
-                                                        }
-                                                      }
-                                                    }
-                                                    for (var l in v
-                                                        .menu.saturday.lunch) {
-                                                      for (var f in data
-                                                          .filteredList) {
-                                                        if (l.name == f.name) {
-                                                          filter2.add(v);
-                                                          // break;
-                                                        }
-                                                      }
-                                                    }
-                                                    for (var d in v
-                                                        .menu.saturday.dinner) {
-                                                      for (var f in data
-                                                          .filteredList) {
-                                                        if (d.name == f.name) {
-                                                          filter2.add(v);
-                                                          // break;
-                                                        }
-                                                      }
-                                                    }
-                                                    for (var b in v.menu.sunday
-                                                        .breakfast) {
-                                                      for (var f in data
-                                                          .filteredList) {
-                                                        if (b.name == f.name) {
-                                                          filter2.add(v);
-                                                          // break;
-                                                        }
-                                                      }
-                                                    }
-                                                    for (var l in v
-                                                        .menu.sunday.lunch) {
-                                                      for (var f in data
-                                                          .filteredList) {
-                                                        if (l.name == f.name) {
-                                                          filter2.add(v);
-                                                          // break;
-                                                        }
-                                                      }
-                                                    }
-                                                    for (var d in v
-                                                        .menu.sunday.dinner) {
-                                                      for (var f in data
-                                                          .filteredList) {
-                                                        if (d.name == f.name) {
-                                                          filter2.add(v);
-                                                          // break;
-                                                        }
-                                                      }
-                                                    }
-                                                  }
-                                                  filter2 =
-                                                      filter2.toSet().toList();
-                                                } else {
-                                                  for (var v in vendors) {
-                                                    filter2.add(v);
-                                                  }
-                                                }
-                                              }
-                                              setState(() {});
-                                            });
-                                          },
-                                          child: Icon(
-                                            Icons.list,
-                                            color: color.orange,
-                                          ),
-                                        ),
-                                        contentPadding:
-                                            EdgeInsets.fromLTRB(40, 15, 12, 15),
-
-                                        // filled: true,
-                                        // fillColor: color.textFieldFillColor,
-                                        enabledBorder: OutlineInputBorder(
-                                          borderSide: BorderSide(
-                                              color: color.purple, width: 1.0),
-                                          borderRadius:
-                                              BorderRadius.circular(15.0),
-                                        ),
-                                        focusedBorder: OutlineInputBorder(
-                                          borderSide: BorderSide(
-                                              color: color.orange, width: 1.0),
-                                          borderRadius:
-                                              BorderRadius.circular(15.0),
-                                        ),
-                                        errorBorder: OutlineInputBorder(
-                                          borderSide: BorderSide(
-                                              color: color.purple, width: 1.0),
-                                          borderRadius:
-                                              BorderRadius.circular(15.0),
-                                        ),
-                                        focusedErrorBorder: OutlineInputBorder(
-                                          borderSide: BorderSide(
-                                              color: color.orange, width: 1.0),
-                                          borderRadius:
-                                              BorderRadius.circular(15.0),
-                                        ),
-                                        hintText: "Search",
-                                        errorText: "",
-                                        labelText: "Search",
-                                        labelStyle:
-                                            TextStyle(color: color.purple)),
-                                  ),
-                                  SizedBox(
-                                    height: 20,
-                                  ),
-                                  ListView.builder(
-                                      shrinkWrap: true,
-                                      physics: NeverScrollableScrollPhysics(),
-                                      itemCount: search2
-                                          ? searchList2.length
-                                          : filter2.length,
-                                      itemBuilder: (context, index) {
-                                        return InkWell(
-                                            onTap: () {
-                                              Navigator.push(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                      builder: (context) =>
-                                                          SubscriptionMenu(
-                                                            chef: search1
-                                                                ? searchList1[
-                                                                    index]
-                                                                : filter1[
-                                                                    index],
-                                                            user: data.user,
-                                                            vendorID: search1
-                                                                ? searchList1[
-                                                                        index]
-                                                                    .id
-                                                                : filter1[index]
-                                                                    .id,
-                                                          )));
-                                            },
-                                            child: vendorDisplay(
-                                                width,
-                                                search2
-                                                    ? searchList2[index]
-                                                    : filter2[index]));
-                                      }),
-                                ],
                               ),
                             ),
                           ),
-                        ),
-                        Container(
-                          width: double.infinity,
-                          child: Center(
-                            child: Text("Coming Soon",
-                              style: TextStyle(
-                                  fontSize: 50.0,),
-                              
-                            )
+                          Container(
+                            width: double.infinity,
+                            child: Center(
+                              child: Text("Coming Soon",
+                                style: TextStyle(
+                                    fontSize: 50.0,),
+                                
+                              )
+                            ),
                           ),
-                        ),
-                      ],
-                    )),
+                        ],
+                      ),
+          )),
     );
   }
 

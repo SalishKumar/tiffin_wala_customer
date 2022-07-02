@@ -376,13 +376,13 @@ class _SubscriptionMenuState extends State<SubscriptionMenu> {
                 child: AppBar(
                   backgroundColor: color.background,
                   bottom: TabBar(
-                    onTap: (value) {
-                      print(value);
-                      breakfast = false;
-                      lunch = false;
-                      dinner = false;
-                      setState(() {});
-                    },
+                    // onTap: (value) {
+                    //   print(value);
+                    //   breakfast = false;
+                    //   lunch = false;
+                    //   dinner = false;
+                    //   setState(() {});
+                    // },
                     indicatorColor: color.purple,
                     isScrollable: true,
                     labelColor: color.purple,

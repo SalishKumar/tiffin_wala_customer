@@ -30,7 +30,7 @@ class PaymentAndAddress extends StatefulWidget {
   double? total, total1;
   String? code;
   List<Item1>? cart;
-  DateTime? start, end;
+  // DateTime? start, end;
   bool? subs;
   bool? voucherApplied;
 
@@ -43,8 +43,8 @@ class PaymentAndAddress extends StatefulWidget {
       this.user,
       this.vendorID,
       this.voucherApplied,
-      this.end,
-      this.start,
+      // this.end,
+      // this.start,
       this.subs})
       : super(key: key);
 
@@ -92,10 +92,6 @@ class _PaymentAndAddressState extends State<PaymentAndAddress> {
                 PaymentBox(
                   width: width,
                 ),
-                SizedBox(
-                  height: 20,
-                ),
-                if (widget.subs!) datesBox(width),
                 if (widget.subs!)
                   SizedBox(
                     height: 20,
@@ -112,6 +108,99 @@ class _PaymentAndAddressState extends State<PaymentAndAddress> {
             onTap: () async {
               
               if (widget.subs!) {
+                if (widget.cart != null &&
+                    widget.user != null &&
+                    widget.vendorID != null &&
+                    widget.user!.address.isNotEmpty) {
+                  showDialog(
+                    context: context,
+                    barrierDismissible: false,
+                    builder: (BuildContext context) {
+                      return Dialog(
+                        backgroundColor: Colors.transparent,
+                        elevation: 0,
+                        child: Container(
+                          width: MediaQuery.of(context).size.width * 0.6,
+                          height: 300,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              CircularProgressIndicator(
+                                color: color.purple,
+                              ),
+                              SizedBox(
+                                height: 10,
+                              ),
+                              Text("Loading"),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                  );
+                  List<Map<String, dynamic>> mappedCart = [];
+                  for (var item in widget.cart!) {
+                    mappedCart.add({
+                      "dish_id": item.id,
+                      "dish_name": item.name,
+                      "quantity": item.quantity,
+                      "day": item.day.toLowerCase(),
+                      "type": item.type
+                    });
+                  }
+                  Map<String, dynamic> map = {};
+                  map = {
+                      "customer_id": widget.user!.id,
+                      "seller_id": widget.vendorID,
+                      "address_id": widget.user!.address[chosenAddress].id,
+                      
+                    };
+                  
+                  map["cart"] = mappedCart;
+                  dynamic result = await db.postSubscriptionOrder(map);
+                  Navigator.pop(context);
+                  if (result != null) {
+                    if (result['Timeout'] == 'true') {
+                      Fluttertoast.showToast(
+                          msg: 'Your request has been timmed-out. Try again.',
+                          toastLength: Toast.LENGTH_SHORT,
+                          gravity: ToastGravity.CENTER,
+                          timeInSecForIosWeb: 1,
+                          backgroundColor: Colors.red,
+                          textColor: Colors.white,
+                          fontSize: 16.0);
+                    } else if (result["status"]) {
+                      Fluttertoast.showToast(
+                          msg: result["message"],
+                          toastLength: Toast.LENGTH_SHORT,
+                          gravity: ToastGravity.CENTER,
+                          timeInSecForIosWeb: 1,
+                          backgroundColor: Colors.green,
+                          textColor: Colors.white,
+                          fontSize: 16.0);
+                      Navigator.pushNamedAndRemoveUntil(
+                          context, Home.routeName, (route) => false);
+                    } else if (result["status"] == false) {
+                      Fluttertoast.showToast(
+                          msg: result["message"],
+                          toastLength: Toast.LENGTH_SHORT,
+                          gravity: ToastGravity.CENTER,
+                          timeInSecForIosWeb: 1,
+                          backgroundColor: Colors.red,
+                          textColor: Colors.white,
+                          fontSize: 16.0);
+                    }
+                  }
+                } else if (widget.user!.address.isEmpty) {
+                  Fluttertoast.showToast(
+                      msg: "Enter Address first.",
+                      toastLength: Toast.LENGTH_SHORT,
+                      gravity: ToastGravity.CENTER,
+                      timeInSecForIosWeb: 1,
+                      backgroundColor: Colors.red,
+                      textColor: Colors.white,
+                      fontSize: 16.0);
+                }
               } else if(widget.subs == false) {
                 if (widget.cart != null &&
                     widget.user != null &&
@@ -148,6 +237,7 @@ class _PaymentAndAddressState extends State<PaymentAndAddress> {
                     mappedCart.add({
                       "dish_id": item.id,
                       "quantity": item.quantity,
+                      "dish_name": item.name,
                       "price_per_unit": item.price,
                       "total_amount": item.price * item.quantity
                     });
@@ -316,95 +406,95 @@ class _PaymentAndAddressState extends State<PaymentAndAddress> {
     );
   }
 
-  Widget datesBox(width) {
-    return Card(
-      elevation: 5,
-      child: Padding(
-        padding: const EdgeInsets.all(15.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Icon(
-                      Icons.location_city,
-                      color: color.purple,
-                    ),
-                    SizedBox(
-                      width: 10,
-                    ),
-                    Container(
-                      width: width * 0.45,
-                      child: AutoSizeText(
-                        "Dates of Subscription",
-                        maxLines: 1,
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-            SizedBox(
-              height: 20,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Column(
-                  children: [
-                    SizedBox(
-                      height: 10,
-                    ),
-                    Text(
-                      "Start Date",
-                      style: TextStyle(
-                        fontSize: 18,
-                      ),
-                    ),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    Text(
-                      "${widget.start!.day}-${widget.start!.month}-${widget.start!.year}",
-                      style: TextStyle(fontSize: 18, color: color.purple),
-                    ),
-                  ],
-                ),
-                Column(
-                  children: [
-                    SizedBox(
-                      height: 10,
-                    ),
-                    Text(
-                      "End Date",
-                      style: TextStyle(
-                        fontSize: 18,
-                      ),
-                    ),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    Text(
-                      "${widget.end!.day}-${widget.end!.month}-${widget.end!.year}",
-                      style: TextStyle(fontSize: 18, color: color.purple),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
-  }
+  // Widget datesBox(width) {
+  //   return Card(
+  //     elevation: 5,
+  //     child: Padding(
+  //       padding: const EdgeInsets.all(15.0),
+  //       child: Column(
+  //         crossAxisAlignment: CrossAxisAlignment.start,
+  //         children: [
+  //           Row(
+  //             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  //             children: [
+  //               Row(
+  //                 crossAxisAlignment: CrossAxisAlignment.start,
+  //                 children: [
+  //                   Icon(
+  //                     Icons.location_city,
+  //                     color: color.purple,
+  //                   ),
+  //                   SizedBox(
+  //                     width: 10,
+  //                   ),
+  //                   Container(
+  //                     width: width * 0.45,
+  //                     child: AutoSizeText(
+  //                       "Dates of Subscription",
+  //                       maxLines: 1,
+  //                       style: TextStyle(
+  //                         fontSize: 20,
+  //                         fontWeight: FontWeight.bold,
+  //                       ),
+  //                     ),
+  //                   ),
+  //                 ],
+  //               ),
+  //             ],
+  //           ),
+  //           SizedBox(
+  //             height: 20,
+  //           ),
+  //           Row(
+  //             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  //             children: [
+  //               Column(
+  //                 children: [
+  //                   SizedBox(
+  //                     height: 10,
+  //                   ),
+  //                   Text(
+  //                     "Start Date",
+  //                     style: TextStyle(
+  //                       fontSize: 18,
+  //                     ),
+  //                   ),
+  //                   SizedBox(
+  //                     height: 10,
+  //                   ),
+  //                   Text(
+  //                     "${widget.start!.day}-${widget.start!.month}-${widget.start!.year}",
+  //                     style: TextStyle(fontSize: 18, color: color.purple),
+  //                   ),
+  //                 ],
+  //               ),
+  //               Column(
+  //                 children: [
+  //                   SizedBox(
+  //                     height: 10,
+  //                   ),
+  //                   Text(
+  //                     "End Date",
+  //                     style: TextStyle(
+  //                       fontSize: 18,
+  //                     ),
+  //                   ),
+  //                   SizedBox(
+  //                     height: 10,
+  //                   ),
+  //                   Text(
+  //                     "${widget.end!.day}-${widget.end!.month}-${widget.end!.year}",
+  //                     style: TextStyle(fontSize: 18, color: color.purple),
+  //                   ),
+  //                 ],
+  //               ),
+  //             ],
+  //           ),
+  //         ],
+  //       ),
+  //     ),
+  //   );
+  // }
 
   Widget orderSummary(width, List<Item1>? cart, total, total1) {
     return Card(
@@ -498,7 +588,7 @@ class _PaymentAndAddressState extends State<PaymentAndAddress> {
                                   width: width * 0.4,
                                   alignment: Alignment.centerRight,
                                   child: AutoSizeText(
-                                    "PKR $total/=",
+                                    "PKR ${cart[index].price*cart[index].quantity}/=",
                                     maxLines: 1,
                                     style: TextStyle(
                                         fontSize: 18,
@@ -552,7 +642,7 @@ class _PaymentAndAddressState extends State<PaymentAndAddress> {
                                   width: width * 0.4,
                                   alignment: Alignment.centerRight,
                                   child: AutoSizeText(
-                                    "PKR $total/=",
+                                    "PKR ${cart[index].price*cart[index].quantity}/=",
                                     maxLines: 1,
                                     style: TextStyle(
                                         fontSize: 18,
@@ -569,7 +659,7 @@ class _PaymentAndAddressState extends State<PaymentAndAddress> {
                           ],
                         );
                 }),
-            if (widget.voucherApplied!)
+            if (widget.voucherApplied! && widget.subs == false)
               Container(
                 width: double.infinity,
                 alignment: Alignment.centerRight,
@@ -599,9 +689,11 @@ class _PaymentAndAddressState extends State<PaymentAndAddress> {
                   ],
                 ),
               ),
+              if (widget.subs! == false)
             Divider(
               color: Colors.black,
             ),
+            if (widget.subs! == false)
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -653,34 +745,25 @@ class PaymentBox extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Icon(
-                      Icons.account_balance_wallet,
-                      color: color.purple,
-                    ),
-                    SizedBox(
-                      width: 10,
-                    ),
-                    Container(
-                      width: width * 0.45,
-                      child: AutoSizeText(
-                        "Payment Method",
-                        maxLines: 1,
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
                 Icon(
-                  Icons.edit,
+                  Icons.account_balance_wallet,
                   color: color.purple,
+                ),
+                SizedBox(
+                  width: 10,
+                ),
+                Container(
+                  width: width * 0.45,
+                  child: AutoSizeText(
+                    "Payment Method",
+                    maxLines: 1,
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                 ),
               ],
             ),

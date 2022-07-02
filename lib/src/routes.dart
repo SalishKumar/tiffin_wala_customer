@@ -24,7 +24,7 @@ Route<dynamic> generateRoute(RouteSettings settings) {
     case SplashScreen.routeName:
       return MaterialPageRoute(builder: (_) => const SplashScreen());
     case Login.routeName:
-      return MaterialPageRoute(builder: (_) => const Login());
+      return MaterialPageRoute(builder: (_) => Login());
     case Register.routeName:
       return MaterialPageRoute(builder: (_) => const Register());
     case Home.routeName:

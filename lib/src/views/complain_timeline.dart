@@ -529,7 +529,7 @@ class _ComplainTimelineState extends State<ComplainTimeline> {
               color: color,
             ),
             starCount: 5,
-            starSize: 25,
+            starSize: 20,
             valueLabelColor: const Color(0xff9b9b9b),
             valueLabelTextStyle: const TextStyle(
                 color: Colors.white,

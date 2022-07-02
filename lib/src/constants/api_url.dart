@@ -9,6 +9,7 @@ String vendor = 'vendor';
 String voucher = 'coupon';
 String validate = "/validate";
 String order = "order";
+String subscription = "subscription";
 String review = "/review";
 String complain = "/complain";
 String picBase = 'https://salish.pythonanywhere.com';

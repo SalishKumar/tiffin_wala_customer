@@ -36,9 +36,9 @@ class _CartState extends State<Cart> {
   List<Voucher> vouchers = [];
   bool isData = false;
   bool voucherApplied = false;
-  DateTime start = DateTime.now().add(Duration(days: 1)),
-      end = DateTime.now().add(Duration(days: 2));
-  bool datesApplied = false;
+  // DateTime start = DateTime.now().add(Duration(days: 1)),
+  //     end = DateTime.now().add(Duration(days: 2));
+  // bool datesApplied = false;
   bool enablePromo = true;
 
   @override
@@ -50,9 +50,9 @@ class _CartState extends State<Cart> {
       }
     }
     total1 = total;
-    if(widget.subscription!){
+    if (widget.subscription!) {
       enablePromo = false;
-    }else{
+    } else {
       enablePromo = true;
     }
     super.initState();
@@ -104,18 +104,16 @@ class _CartState extends State<Cart> {
                     return cartItem(
                         widget.cart![index], index, widget.subscription!);
                   }),
-              const SizedBox(
-                height: 10,
-              ),
-              if (widget.subscription!) startAndEndDate(width),
-              const SizedBox(
-                height: 10,
-              ),
-              promoWidget(width),
-              const SizedBox(
-                height: 10,
-              ),
-              totalCalculationWidget(),
+              if (widget.subscription! == false)
+                const SizedBox(
+                  height: 10,
+                ),
+              if (widget.subscription! == false) promoWidget(width),
+              if (widget.subscription! == false)
+                const SizedBox(
+                  height: 10,
+                ),
+              if (widget.subscription! == false) totalCalculationWidget(),
               const SizedBox(
                 height: 10,
               ),
@@ -127,47 +125,34 @@ class _CartState extends State<Cart> {
         padding: EdgeInsets.symmetric(horizontal: width * 0.05),
         child: InkWell(
             onTap: () {
-              if(widget.subscription!){
-                if(datesApplied){
-                  Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => PaymentAndAddress(
-                            user: widget.user,
-                            cart: widget.cart,
-                            vendorID: widget.vendorID,
-                            code: code,
-                            total: total,
-                            total1: total1,
-                            voucherApplied: voucherApplied,
-                            start: start,
-                            end: end,
-                            subs: widget.subscription,
-                          )));
-                }else{
-                  Fluttertoast.showToast(
-                  msg: "Apply Start and End Dates",
-                  toastLength: Toast.LENGTH_SHORT,
-                  gravity: ToastGravity.CENTER,
-                  timeInSecForIosWeb: 1,
-                  backgroundColor: Colors.red,
-                  textColor: Colors.white,
-                  fontSize: 16.0);
-                }
-              }else{
+              if (widget.subscription!) {
                 Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => PaymentAndAddress(
-                            user: widget.user,
-                            cart: widget.cart,
-                            vendorID: widget.vendorID,
-                            code: code,
-                            total: total,
-                            total1: total1,
-                            voucherApplied: voucherApplied,
-                            subs: widget.subscription,
-                          )));
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => PaymentAndAddress(
+                              user: widget.user,
+                              cart: widget.cart,
+                              vendorID: widget.vendorID,
+                              code: code,
+                              total: total,
+                              total1: total1,
+                              voucherApplied: voucherApplied,
+                              subs: widget.subscription,
+                            )));
+              } else {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => PaymentAndAddress(
+                              user: widget.user,
+                              cart: widget.cart,
+                              vendorID: widget.vendorID,
+                              code: code,
+                              total: total,
+                              total1: total1,
+                              voucherApplied: voucherApplied,
+                              subs: widget.subscription,
+                            )));
               }
             },
             child: CustomButton(
@@ -179,7 +164,7 @@ class _CartState extends State<Cart> {
   }
 
   Widget cartItem(Item1 item, index, bool subs) {
-    print(subs);
+    // print(subs);
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(boxShadow: [
@@ -492,222 +477,222 @@ class _CartState extends State<Cart> {
     );
   }
 
-  Widget startAndEndDate(width) {
-    return Container(
-      padding: const EdgeInsets.only(left: 3, right: 3),
-      decoration: BoxDecoration(boxShadow: [
-        BoxShadow(
-          color: const Color(0xFFfae3e2).withOpacity(0.1),
-          spreadRadius: 1,
-          blurRadius: 1,
-          offset: const Offset(0, 1),
-        ),
-      ]),
-      child: datesApplied
-          ? Column(
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Column(
-                      children: [
-                        SizedBox(
-                          height: 10,
-                        ),
-                        Text(
-                          "Start Date",
-                          style: TextStyle(
-                            fontSize: 18,
-                          ),
-                        ),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        Text(
-                          "${start.day}-${start.month}-${start.year}",
-                          style: TextStyle(fontSize: 18, color: color.purple),
-                        ),
-                      ],
-                    ),
-                    Column(
-                      children: [
-                        SizedBox(
-                          height: 10,
-                        ),
-                        Text(
-                          "End Date",
-                          style: TextStyle(
-                            fontSize: 18,
-                          ),
-                        ),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        Text(
-                          "${end.day}-${end.month}-${end.year}",
-                          style: TextStyle(fontSize: 18, color: color.purple),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-                GestureDetector(
-                  onTap: () async{
-                    start = DateTime.now().add(Duration(days: 1));
-                    end = DateTime.now().add(Duration(days: 2));
-                    await dilogueBox1("Warning", "Removal of Start and End Dates woul cause removal of voucher too. Proceed?");
-                  },
-                  child: Text(
-                    "Remove",
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: Colors.red,
-                      decoration: TextDecoration.underline,
-                    ),
-                  ),
-                ),
-              ],
-            )
-          : Column(
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Column(
-                      children: [
-                        SizedBox(
-                          height: 10,
-                        ),
-                        Text(
-                          "Start Date",
-                          style: TextStyle(
-                            fontSize: 18,
-                          ),
-                        ),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        Container(
-                          width: width * 0.4,
-                          child: DateTimePicker(
-                            type: DateTimePickerType.date,
-                            dateMask: 'dd-MM-yyyy',
-                            initialValue: DateTime.now()
-                                .add(Duration(days: 1))
-                                .toString(),
-                            firstDate: DateTime.now().add(Duration(days: 1)),
-                            lastDate: DateTime(3000),
-                            icon: Icon(Icons.event),
-                            dateLabelText: 'Start Date',
-                            onChanged: (val) {
-                              start = DateTime.parse(val);
-                            },
-                            decoration: InputDecoration(
-                              enabledBorder: OutlineInputBorder(
-                                borderSide:
-                                    BorderSide(color: color.orange, width: 1.0),
-                                borderRadius: BorderRadius.circular(15.0),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderSide:
-                                    BorderSide(color: color.purple, width: 1.0),
-                                borderRadius: BorderRadius.circular(15.0),
-                              ),
-                              errorBorder: OutlineInputBorder(
-                                borderSide:
-                                    BorderSide(color: color.orange, width: 1.0),
-                                borderRadius: BorderRadius.circular(15.0),
-                              ),
-                              focusedErrorBorder: OutlineInputBorder(
-                                borderSide:
-                                    BorderSide(color: color.purple, width: 1.0),
-                                borderRadius: BorderRadius.circular(15.0),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    Column(
-                      children: [
-                        SizedBox(
-                          height: 10,
-                        ),
-                        Text(
-                          "End Date",
-                          style: TextStyle(
-                            fontSize: 18,
-                          ),
-                        ),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        Container(
-                          width: width * 0.4,
-                          child: DateTimePicker(
-                            type: DateTimePickerType.date,
-                            dateMask: 'dd-MM-yyyy',
-                            initialValue: DateTime.now()
-                                .add(Duration(days: 2))
-                                .toString(),
-                            firstDate: DateTime.now().add(Duration(days: 2)),
-                            lastDate: DateTime(3000),
-                            icon: Icon(Icons.event),
-                            dateLabelText: 'End Date',
-                            onChanged: (val) => end = DateTime.parse(val),
-                            decoration: InputDecoration(
-                              enabledBorder: OutlineInputBorder(
-                                borderSide:
-                                    BorderSide(color: color.orange, width: 1.0),
-                                borderRadius: BorderRadius.circular(15.0),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderSide:
-                                    BorderSide(color: color.purple, width: 1.0),
-                                borderRadius: BorderRadius.circular(15.0),
-                              ),
-                              errorBorder: OutlineInputBorder(
-                                borderSide:
-                                    BorderSide(color: color.orange, width: 1.0),
-                                borderRadius: BorderRadius.circular(15.0),
-                              ),
-                              focusedErrorBorder: OutlineInputBorder(
-                                borderSide:
-                                    BorderSide(color: color.purple, width: 1.0),
-                                borderRadius: BorderRadius.circular(15.0),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-                GestureDetector(
-                  onTap: () async {
-                    applyDates();
-                    total = getTotal();
-                    total1 = total;
-                    enablePromo = true;
-                    setState(() {});
-                    
-                  },
-                  child: Container(
-                    padding: EdgeInsets.all(10),
-                    alignment: Alignment.centerRight,
-                    child: Text(
-                      "Apply",
-                      style: TextStyle(
-                        fontSize: 20,
-                        color: color.purple,
-                      ),
-                    ),
-                  ),
-                )
-              ],
-            ),
-    );
-  }
+  // Widget startAndEndDate(width) {
+  //   return Container(
+  //     padding: const EdgeInsets.only(left: 3, right: 3),
+  //     decoration: BoxDecoration(boxShadow: [
+  //       BoxShadow(
+  //         color: const Color(0xFFfae3e2).withOpacity(0.1),
+  //         spreadRadius: 1,
+  //         blurRadius: 1,
+  //         offset: const Offset(0, 1),
+  //       ),
+  //     ]),
+  //     child: datesApplied
+  //         ? Column(
+  //             children: [
+  //               Row(
+  //                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  //                 children: [
+  //                   Column(
+  //                     children: [
+  //                       SizedBox(
+  //                         height: 10,
+  //                       ),
+  //                       Text(
+  //                         "Start Date",
+  //                         style: TextStyle(
+  //                           fontSize: 18,
+  //                         ),
+  //                       ),
+  //                       SizedBox(
+  //                         height: 10,
+  //                       ),
+  //                       Text(
+  //                         "${start.day}-${start.month}-${start.year}",
+  //                         style: TextStyle(fontSize: 18, color: color.purple),
+  //                       ),
+  //                     ],
+  //                   ),
+  //                   Column(
+  //                     children: [
+  //                       SizedBox(
+  //                         height: 10,
+  //                       ),
+  //                       Text(
+  //                         "End Date",
+  //                         style: TextStyle(
+  //                           fontSize: 18,
+  //                         ),
+  //                       ),
+  //                       SizedBox(
+  //                         height: 10,
+  //                       ),
+  //                       Text(
+  //                         "${end.day}-${end.month}-${end.year}",
+  //                         style: TextStyle(fontSize: 18, color: color.purple),
+  //                       ),
+  //                     ],
+  //                   ),
+  //                 ],
+  //               ),
+  //               GestureDetector(
+  //                 onTap: () async{
+  //                   start = DateTime.now().add(Duration(days: 1));
+  //                   end = DateTime.now().add(Duration(days: 2));
+  //                   await dilogueBox1("Warning", "Removal of Start and End Dates woul cause removal of voucher too. Proceed?");
+  //                 },
+  //                 child: Text(
+  //                   "Remove",
+  //                   style: TextStyle(
+  //                     fontSize: 16,
+  //                     color: Colors.red,
+  //                     decoration: TextDecoration.underline,
+  //                   ),
+  //                 ),
+  //               ),
+  //             ],
+  //           )
+  //         : Column(
+  //             children: [
+  //               Row(
+  //                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  //                 children: [
+  //                   Column(
+  //                     children: [
+  //                       SizedBox(
+  //                         height: 10,
+  //                       ),
+  //                       Text(
+  //                         "Start Date",
+  //                         style: TextStyle(
+  //                           fontSize: 18,
+  //                         ),
+  //                       ),
+  //                       SizedBox(
+  //                         height: 10,
+  //                       ),
+  //                       Container(
+  //                         width: width * 0.4,
+  //                         child: DateTimePicker(
+  //                           type: DateTimePickerType.date,
+  //                           dateMask: 'dd-MM-yyyy',
+  //                           initialValue: DateTime.now()
+  //                               .add(Duration(days: 1))
+  //                               .toString(),
+  //                           firstDate: DateTime.now().add(Duration(days: 1)),
+  //                           lastDate: DateTime(3000),
+  //                           icon: Icon(Icons.event),
+  //                           dateLabelText: 'Start Date',
+  //                           onChanged: (val) {
+  //                             start = DateTime.parse(val);
+  //                           },
+  //                           decoration: InputDecoration(
+  //                             enabledBorder: OutlineInputBorder(
+  //                               borderSide:
+  //                                   BorderSide(color: color.orange, width: 1.0),
+  //                               borderRadius: BorderRadius.circular(15.0),
+  //                             ),
+  //                             focusedBorder: OutlineInputBorder(
+  //                               borderSide:
+  //                                   BorderSide(color: color.purple, width: 1.0),
+  //                               borderRadius: BorderRadius.circular(15.0),
+  //                             ),
+  //                             errorBorder: OutlineInputBorder(
+  //                               borderSide:
+  //                                   BorderSide(color: color.orange, width: 1.0),
+  //                               borderRadius: BorderRadius.circular(15.0),
+  //                             ),
+  //                             focusedErrorBorder: OutlineInputBorder(
+  //                               borderSide:
+  //                                   BorderSide(color: color.purple, width: 1.0),
+  //                               borderRadius: BorderRadius.circular(15.0),
+  //                             ),
+  //                           ),
+  //                         ),
+  //                       ),
+  //                     ],
+  //                   ),
+  //                   Column(
+  //                     children: [
+  //                       SizedBox(
+  //                         height: 10,
+  //                       ),
+  //                       Text(
+  //                         "End Date",
+  //                         style: TextStyle(
+  //                           fontSize: 18,
+  //                         ),
+  //                       ),
+  //                       SizedBox(
+  //                         height: 10,
+  //                       ),
+  //                       Container(
+  //                         width: width * 0.4,
+  //                         child: DateTimePicker(
+  //                           type: DateTimePickerType.date,
+  //                           dateMask: 'dd-MM-yyyy',
+  //                           initialValue: DateTime.now()
+  //                               .add(Duration(days: 2))
+  //                               .toString(),
+  //                           firstDate: DateTime.now().add(Duration(days: 2)),
+  //                           lastDate: DateTime(3000),
+  //                           icon: Icon(Icons.event),
+  //                           dateLabelText: 'End Date',
+  //                           onChanged: (val) => end = DateTime.parse(val),
+  //                           decoration: InputDecoration(
+  //                             enabledBorder: OutlineInputBorder(
+  //                               borderSide:
+  //                                   BorderSide(color: color.orange, width: 1.0),
+  //                               borderRadius: BorderRadius.circular(15.0),
+  //                             ),
+  //                             focusedBorder: OutlineInputBorder(
+  //                               borderSide:
+  //                                   BorderSide(color: color.purple, width: 1.0),
+  //                               borderRadius: BorderRadius.circular(15.0),
+  //                             ),
+  //                             errorBorder: OutlineInputBorder(
+  //                               borderSide:
+  //                                   BorderSide(color: color.orange, width: 1.0),
+  //                               borderRadius: BorderRadius.circular(15.0),
+  //                             ),
+  //                             focusedErrorBorder: OutlineInputBorder(
+  //                               borderSide:
+  //                                   BorderSide(color: color.purple, width: 1.0),
+  //                               borderRadius: BorderRadius.circular(15.0),
+  //                             ),
+  //                           ),
+  //                         ),
+  //                       ),
+  //                     ],
+  //                   ),
+  //                 ],
+  //               ),
+  //               GestureDetector(
+  //                 onTap: () async {
+  //                   applyDates();
+  //                   total = getTotal();
+  //                   total1 = total;
+  //                   enablePromo = true;
+  //                   setState(() {});
+
+  //                 },
+  //                 child: Container(
+  //                   padding: EdgeInsets.all(10),
+  //                   alignment: Alignment.centerRight,
+  //                   child: Text(
+  //                     "Apply",
+  //                     style: TextStyle(
+  //                       fontSize: 20,
+  //                       color: color.purple,
+  //                     ),
+  //                   ),
+  //                 ),
+  //               )
+  //             ],
+  //           ),
+  //   );
+  // }
 
   Future dilogueBox1(header, msg) {
     return showDialog(
@@ -738,7 +723,7 @@ class _CartState extends State<Cart> {
                 ),
                 onPressed: () async {
                   voucherApplied = false;
-                  datesApplied = false;
+                  // datesApplied = false;
                   enablePromo = false;
                   total = 0.0;
                   total1 = total;
@@ -763,75 +748,74 @@ class _CartState extends State<Cart> {
     );
   }
 
+  // applyDates() {
+  //   final difference = end.difference(start).inDays;
+  //   if (difference < 0) {
+  //     Fluttertoast.showToast(
+  //         msg: 'End Date cannot be less than or equal to Start Date.',
+  //         toastLength: Toast.LENGTH_SHORT,
+  //         gravity: ToastGravity.CENTER,
+  //         timeInSecForIosWeb: 1,
+  //         backgroundColor: Colors.red,
+  //         textColor: Colors.white,
+  //         fontSize: 16.0);
+  //     datesApplied = false;
+  //   } else {
+  //     datesApplied = true;
+  //     setState(() {});
+  //   }
+  // }
 
-  applyDates() {
-    final difference = end.difference(start).inDays;
-    if (difference < 0) {
-      Fluttertoast.showToast(
-          msg: 'End Date cannot be less than or equal to Start Date.',
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.CENTER,
-          timeInSecForIosWeb: 1,
-          backgroundColor: Colors.red,
-          textColor: Colors.white,
-          fontSize: 16.0);
-      datesApplied = false;
-    } else {
-      datesApplied = true;
-      setState(() {});
-    }
-  }
-
-  double getTotal() {
-    double price = 0.0;
-    var difference = end.difference(start).inDays;
-    difference = difference + 1;
-    DateTime temp = start;
-    int monday = 0,
-        tuesday = 0,
-        wednesday = 0,
-        thursday = 0,
-        friday = 0,
-        saturday = 0,
-        sunday = 0;
-    for (int i = 1; i <= difference; i++) {
-      if (temp.add(Duration(days: i)).weekday == DateTime.monday) {
-        monday++;
-      } else if (temp.add(Duration(days: i)).weekday == DateTime.tuesday) {
-        tuesday++;
-      } else if (temp.add(Duration(days: i)).weekday == DateTime.wednesday) {
-        wednesday++;
-      } else if (temp.add(Duration(days: i)).weekday == DateTime.thursday) {
-        thursday++;
-      } else if (temp.add(Duration(days: i)).weekday == DateTime.friday) {
-        friday++;
-      } else if (temp.add(Duration(days: i)).weekday == DateTime.saturday) {
-        saturday++;
-      } else if (temp.add(Duration(days: i)).weekday == DateTime.sunday) {
-        sunday++;
-      }
-    }
-    //print("$monday $tuesday $wednesday $thursday $friday $saturday $sunday $difference");
-    for (var item in widget.cart!) {
-      if (item.day == "Monday") {
-        price += (item.price * item.quantity) * monday;
-      } else if (item.day == "Tuesday") {
-        price += (item.price * item.quantity) * tuesday;
-      } else if (item.day == "Wednesday") {
-        price += (item.price * item.quantity) * wednesday;
-      } else if (item.day == "Thursday") {
-        price += (item.price * item.quantity) * thursday;
-      } else if (item.day == "Friday") {
-        price += (item.price * item.quantity) * friday;
-      } else if (item.day == "Saturday") {
-        price += (item.price * item.quantity) * saturday;
-      } else if (item.day == "Sunday") {
-        price += (item.price * item.quantity) * sunday;
-      }
-      //print(price);
-    }
-    return price;
-  }
+  // double getTotal() {
+  //   double price = 0.0;
+  //   var difference = end.difference(start).inDays;
+  //   difference = difference + 1;
+  //   DateTime temp = start;
+  //   int monday = 0,
+  //       tuesday = 0,
+  //       wednesday = 0,
+  //       thursday = 0,
+  //       friday = 0,
+  //       saturday = 0,
+  //       sunday = 0;
+  //   for (int i = 1; i <= difference; i++) {
+  //     if (temp.add(Duration(days: i)).weekday == DateTime.monday) {
+  //       monday++;
+  //     } else if (temp.add(Duration(days: i)).weekday == DateTime.tuesday) {
+  //       tuesday++;
+  //     } else if (temp.add(Duration(days: i)).weekday == DateTime.wednesday) {
+  //       wednesday++;
+  //     } else if (temp.add(Duration(days: i)).weekday == DateTime.thursday) {
+  //       thursday++;
+  //     } else if (temp.add(Duration(days: i)).weekday == DateTime.friday) {
+  //       friday++;
+  //     } else if (temp.add(Duration(days: i)).weekday == DateTime.saturday) {
+  //       saturday++;
+  //     } else if (temp.add(Duration(days: i)).weekday == DateTime.sunday) {
+  //       sunday++;
+  //     }
+  //   }
+  //   //print("$monday $tuesday $wednesday $thursday $friday $saturday $sunday $difference");
+  //   for (var item in widget.cart!) {
+  //     if (item.day == "Monday") {
+  //       price += (item.price * item.quantity) * monday;
+  //     } else if (item.day == "Tuesday") {
+  //       price += (item.price * item.quantity) * tuesday;
+  //     } else if (item.day == "Wednesday") {
+  //       price += (item.price * item.quantity) * wednesday;
+  //     } else if (item.day == "Thursday") {
+  //       price += (item.price * item.quantity) * thursday;
+  //     } else if (item.day == "Friday") {
+  //       price += (item.price * item.quantity) * friday;
+  //     } else if (item.day == "Saturday") {
+  //       price += (item.price * item.quantity) * saturday;
+  //     } else if (item.day == "Sunday") {
+  //       price += (item.price * item.quantity) * sunday;
+  //     }
+  //     //print(price);
+  //   }
+  //   return price;
+  // }
 
   applyVoucher() async {
     if (promo.text.isNotEmpty) {
@@ -1180,25 +1164,20 @@ class _CartState extends State<Cart> {
                 child: Center(
                   child: IconButton(
                     onPressed: () {
-                      if (voucherApplied || datesApplied) {
+                      if (voucherApplied && widget.subscription == false) {
                         dilogueBox(
                             "Warning",
-                            widget.subscription!
-                                ? "Change in cart would result in removal of Start and End Dates and Voucher. Proceed?"
-                                : "Change in cart would result in removal of and Voucher. Proceed?",
+                            "Change in cart would result in removal of and Voucher. Proceed?",
                             "sub",
                             index,
                             widget.subscription);
                       } else {
                         if (widget.subscription!) {
                           if (widget.cart![index].quantity >= 2) {
-                            
                             widget.cart![index].quantity--;
                             total = 0.0;
-                            
                             total1 = total;
                           } else if (item.quantity == 1) {
-                            
                             widget.cart![index].quantity = 0;
                             total = 0.0;
                             total1 = total;
@@ -1217,7 +1196,6 @@ class _CartState extends State<Cart> {
                             total -= widget.cart![index].price;
                             widget.cart!.removeAt(index);
                             total1 = total;
-
                             if (widget.cart!.isEmpty) {
                               Navigator.pop(context);
                             }
@@ -1264,12 +1242,10 @@ class _CartState extends State<Cart> {
                 child: Center(
                   child: IconButton(
                     onPressed: () {
-                      if (voucherApplied || datesApplied) {
+                      if (voucherApplied && widget.subscription == false) {
                         dilogueBox(
                             "Warning",
-                            widget.subscription!
-                                ? "Change in cart would result in removal of Start and End Dates and Voucher. Proceed?"
-                                : "Change in cart would result in removal of and Voucher. Proceed?",
+                            "Change in cart would result in removal of and Voucher. Proceed?",
                             "add",
                             index,
                             widget.subscription);
@@ -1280,10 +1256,9 @@ class _CartState extends State<Cart> {
                           total1 = total;
                         } else {
                           widget.cart![index].quantity++;
-                        total += widget.cart![index].price;
-                        total1 = total;
+                          total += widget.cart![index].price;
+                          total1 = total;
                         }
-                        
                       }
 
                       setState(() {});
@@ -1330,28 +1305,28 @@ class _CartState extends State<Cart> {
                 ),
                 onPressed: () async {
                   if (subs) {
-                    datesApplied = false;
-                    voucherApplied = false;
-                    enablePromo = false;
-                    if (op == "add") {
-                      widget.cart![index].quantity++;
-                      total = 0.0;
-                      total1 = total;
-                    } else if (op == "sub") {
-                      if (widget.cart![index].quantity >= 2) {
-                        widget.cart![index].quantity--;
-                        total = 0.0;
-                        total1 = total;
-                      } else if (widget.cart![index].quantity <= 1) {
-                        widget.cart![index].quantity = 0;
-                        total = getTotal();
-                        total1 = total;
+                    // // datesApplied = false;
+                    // // voucherApplied = false;
+                    // // enablePromo = false;
+                    // if (op == "add") {
+                    //   widget.cart![index].quantity++;
+                    //   total = 0.0;
+                    //   total1 = total;
+                    // } else if (op == "sub") {
+                    //   if (widget.cart![index].quantity >= 2) {
+                    //     widget.cart![index].quantity--;
+                    //     total = 0.0;
+                    //     total1 = total;
+                    //   } else if (widget.cart![index].quantity <= 1) {
+                    //     widget.cart![index].quantity = 0;
+                    //     // total = getTotal();
+                    //     total1 = total;
 
-                        if (widget.cart!.isEmpty) {
-                          Navigator.pop(context);
-                        }
-                      }
-                    }
+                    //     if (widget.cart!.isEmpty) {
+                    //       Navigator.pop(context);
+                    //     }
+                    //   }
+                    // }
                   } else {
                     voucherApplied = false;
 

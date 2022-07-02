@@ -165,7 +165,7 @@ class _SplashScreenState extends State<SplashScreen> {
     print(route);
     return Center(
       child: SplashScreenView(
-        navigateRoute: route ? const Home() : const Login(),
+        navigateRoute: route ? const Home() : Login(),
         duration: 6000,
         imageSize: 350,
         imageSrc: "assets/logo.png",

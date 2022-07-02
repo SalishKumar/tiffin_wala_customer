@@ -99,4 +99,44 @@ class Order {
     return o; 
     
   }
+
+  factory Order.fromJsonSubscription(Map<String, dynamic> json) {
+    var s = json["is_subscription_active"];
+    String status = "";
+    if(s){
+      status = "Active";
+    }else if (s == false){
+      status = "Not Active";
+    }
+    // print("ok1");
+    List<Item1> item = [];
+    var order = json["subscription"];
+    var orderid;
+    for(var o in order){
+      var quantity = o["quantity"];
+      orderid=o["subscription_id"];
+      Item1 i = Item1.fromJson(o["dish_id"]);
+      i.quantity = quantity;
+      item.add(i);
+    }
+    // print("ok2");
+    var sellerid = orderid["seller_id"];
+    var orderAddress = json["order_address"];
+    var seller = json["seller_id"];
+    Order o;
+    // print("print order id " + " " + json["order_id"].toString());
+    // print("print order id " + " " + json["review"].toString());
+    // print("print Complain " + " " + json["complain"].toString());
+    o = Order(
+      id: json["subscription_id"],
+      customerID: json["customer"],
+      sellerID: sellerid,
+      logo: seller["logo"],
+      kitchenName: seller["kitchen_name"],
+      orderStatus: status,
+      address: Address.fromJson(orderAddress),
+      orders: item,
+    );
+    return o;
+  }
 }
