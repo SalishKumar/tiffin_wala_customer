@@ -1,5 +1,6 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:date_time_picker/date_time_picker.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
@@ -43,6 +44,7 @@ class _CartState extends State<Cart> {
 
   @override
   void initState() {
+    FirebaseAnalytics.instance.setCurrentScreen(screenName: 'Cart Screen');
     if (widget.subscription!) {
     } else {
       for (var c in widget.cart!) {

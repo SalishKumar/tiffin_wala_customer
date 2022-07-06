@@ -27,6 +27,7 @@ class LoginViewModel extends ChangeNotifier {
   TextEditingController phoneCon = TextEditingController();
   String phoneError = '';
   final storage = FlutterSecureStorage();
+  String deviceID='';
 
   inputEmail() {
     notifyListeners();
@@ -59,6 +60,7 @@ class LoginViewModel extends ChangeNotifier {
     await storage.write(key: 'password', value: user.password);
     await storage.write(key: 'google', value: user.google.toString());
     await storage.write(key: 'token', value: user.token);
+    await storage.write(key: 'device_id', value: deviceID);
   }
 
   disposeControllers() {
@@ -96,7 +98,7 @@ class LoginViewModel extends ChangeNotifier {
         },
       );
       dynamic result =
-          await db.login(emailCon.text.trim(), passCon.text.trim());
+          await db.login(emailCon.text.trim(), passCon.text.trim(), deviceID);
       Navigator.pop(context);
       if (result == null) {
         Fluttertoast.showToast(
@@ -214,7 +216,7 @@ class LoginViewModel extends ChangeNotifier {
       phoneCon.text = '';
       phoneError = '';
 
-      dynamic result = await db.loginGoogle(_currentUser?.id);
+      dynamic result = await db.loginGoogle(_currentUser?.id, deviceID);
       Navigator.pop(context);
       
       if (result == null) {
@@ -463,7 +465,7 @@ class LoginViewModel extends ChangeNotifier {
                                                 },
                                               );
                                               dynamic res = await db
-                                                  .register(user.toJSON());
+                                                  .register(user.toJSON(), deviceID);
                                               Navigator.pop(context);
                                               //Navigator.pop(context);
                                               if (result != null) {

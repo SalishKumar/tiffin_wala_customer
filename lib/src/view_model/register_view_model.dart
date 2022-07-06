@@ -34,6 +34,7 @@ class RegisterViewModel extends ChangeNotifier {
   final GoogleSignIn _googleSignIn = GoogleSignIn();
   GoogleSignInAccount? _currentUser;
   final storage = FlutterSecureStorage();
+  String deviceID = "";
 
   inputName() {
     //print(val + '*');
@@ -85,6 +86,7 @@ class RegisterViewModel extends ChangeNotifier {
     await storage.write(key: 'password', value: user.password);
     await storage.write(key: 'google', value: user.google.toString());
     await storage.write(key: 'token', value: user.token);
+    await storage.write(key: 'device_id', value: deviceID);
   }
 
   disposeTestControllers() {
@@ -357,7 +359,7 @@ class RegisterViewModel extends ChangeNotifier {
                                   );
                                 },
                               );
-                              dynamic res = await db.register(user.toJSON());
+                              dynamic res = await db.register(user.toJSON(), deviceID);
                               Navigator.pop(context);
                               //Navigator.pop(context);
                               if (result != null) {
@@ -549,7 +551,7 @@ class RegisterViewModel extends ChangeNotifier {
       phoneCon.text = '';
       phoneError = '';
 
-      dynamic result = await db.loginGoogle(_currentUser?.id);
+      dynamic result = await db.loginGoogle(_currentUser?.id, deviceID);
       Navigator.pop(context);
 
       if (result == null) {
@@ -651,9 +653,6 @@ class RegisterViewModel extends ChangeNotifier {
                           },
                         );
 
-                        // dynamic result1 =
-                        //     await db.registerGoogle(user.toJSON());
-                        print('*');
                         dynamic result1 = await db.verify({
                           'customer_phone': user.phone,
                           'signup_method': 'google'
@@ -795,7 +794,7 @@ class RegisterViewModel extends ChangeNotifier {
                                                 },
                                               );
                                               dynamic res = await db
-                                                  .register(user.toJSON());
+                                                  .register(user.toJSON(), deviceID);
                                               Navigator.pop(context);
                                               //Navigator.pop(context);
                                               if (result != null) {

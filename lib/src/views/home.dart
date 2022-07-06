@@ -1,6 +1,7 @@
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_stars/flutter_rating_stars.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -22,10 +23,11 @@ import 'package:tiffin_wala_customer/src/constants/data.dart' as data;
 import 'package:tiffin_wala_customer/src/views/menu.dart';
 import 'package:tiffin_wala_customer/src/views/my_profile.dart';
 import 'package:tiffin_wala_customer/src/views/order_list.dart';
-import 'package:tiffin_wala_customer/src/views/subscription_menu.dart'; 
+import 'package:tiffin_wala_customer/src/views/subscription_menu.dart';
 import 'package:tiffin_wala_customer/src/constants/api_url.dart' as endpoint;
 import 'package:tiffin_wala_customer/src/views/subscription_order_list.dart';
 import 'package:tiffin_wala_customer/src/views/vouchers.dart';
+import 'package:onesignal_flutter/onesignal_flutter.dart';
 
 class Home extends StatefulWidget {
   static const routeName = '/home';
@@ -52,13 +54,31 @@ class _HomeState extends State<Home> {
       searchCon2 = TextEditingController();
   DateTime currentBackPressTime = DateTime.now();
 
+  Future<void> initPlatformState() async {
+    await FirebaseAnalytics.instance
+        .setCurrentScreen(screenName: 'Home Screen');
+    OneSignal.shared.setLogLevel(OSLogLevel.verbose, OSLogLevel.none);
+
+    OneSignal.shared
+        .setNotificationOpenedHandler((OSNotificationOpenedResult result) {});
+
+    // OneSignal.shared.setNotificationWillShowInForegroundHandler(
+    //     (OSNotificationReceivedEvent event) {});
+
+    OneSignal.shared
+        .setInAppMessageClickedHandler((OSInAppMessageAction action) {});
+    await OneSignal.shared.setAppId("b378425f-aafd-4985-9c0a-e8967d3a273b");
+  }
+
   @override
   void initState() {
     loadData();
+    initPlatformState();
     super.initState();
   }
 
   loadData() async {
+    // throw Exception("Test Crash");
     loading = true;
     var result = await db.home();
     if (result != null) {
@@ -193,7 +213,7 @@ class _HomeState extends State<Home> {
 
   Future<bool> onWillPop() {
     DateTime now = DateTime.now();
-    if (currentBackPressTime == null || 
+    if (currentBackPressTime == null ||
         now.difference(currentBackPressTime) > Duration(seconds: 2)) {
       currentBackPressTime = now;
       Fluttertoast.showToast(msg: "Double Tap to Exit");
@@ -229,9 +249,16 @@ class _HomeState extends State<Home> {
                     'My Orders',
                     style: TextStyle(color: Colors.black, fontSize: 18),
                   ),
-                  onTap: () {
+                  onTap: () async {
+                    await FirebaseAnalytics.instance
+                        .setCurrentScreen(screenName: 'My Orders Screen');
                     Navigator.pop(context);
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => OrderList(user: data.user,)));
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => OrderList(
+                                  user: data.user,
+                                )));
                   },
                 ),
                 ListTile(
@@ -239,9 +266,16 @@ class _HomeState extends State<Home> {
                     'Subscription',
                     style: TextStyle(color: Colors.black, fontSize: 18),
                   ),
-                  onTap: () {
+                  onTap: () async {
+                    await FirebaseAnalytics.instance
+                        .setCurrentScreen(screenName: 'Subscription Screen');
                     Navigator.pop(context);
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => SubscriptionOrderList(user: data.user,)));
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => SubscriptionOrderList(
+                                  user: data.user,
+                                )));
                   },
                 ),
                 ListTile(
@@ -249,7 +283,9 @@ class _HomeState extends State<Home> {
                     'My Vouchers',
                     style: TextStyle(color: Colors.black, fontSize: 18),
                   ),
-                  onTap: () {
+                  onTap: () async {
+                    await FirebaseAnalytics.instance
+                        .setCurrentScreen(screenName: 'Vouchers Screen');
                     Navigator.pop(context);
                     Navigator.push(
                         context,
@@ -264,7 +300,9 @@ class _HomeState extends State<Home> {
                     'My Profile',
                     style: TextStyle(color: Colors.black, fontSize: 18),
                   ),
-                  onTap: () {
+                  onTap: () async {
+                    await FirebaseAnalytics.instance
+                        .setCurrentScreen(screenName: 'My Profile Screen');
                     Navigator.pop(context);
                     Navigator.push(context,
                         MaterialPageRoute(builder: (context) => MyProfile()));
@@ -275,7 +313,9 @@ class _HomeState extends State<Home> {
                     'My Addresses',
                     style: TextStyle(color: Colors.black, fontSize: 18),
                   ),
-                  onTap: () {
+                  onTap: () async {
+                    await FirebaseAnalytics.instance
+                        .setCurrentScreen(screenName: 'My Address Screen');
                     Navigator.pop(context);
                     data.addressDirect = true;
                     Navigator.pushNamed(context, Addresses.routeName);
@@ -283,13 +323,19 @@ class _HomeState extends State<Home> {
                 ),
                 ListTile(
                   title: const Text(
-                    'My Complaints',
+                    'My Complains',
                     style: TextStyle(color: Colors.black, fontSize: 18),
                   ),
-                  onTap: () {
+                  onTap: () async {
+                    await FirebaseAnalytics.instance
+                        .setCurrentScreen(screenName: 'My Complains Screen');
                     Navigator.pop(context);
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => ComplainList(user: data.user,)
-                    ));
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => ComplainList(
+                                  user: data.user,
+                                )));
                   },
                 ),
                 ListTile(
@@ -298,6 +344,8 @@ class _HomeState extends State<Home> {
                     style: TextStyle(color: Colors.black, fontSize: 18),
                   ),
                   onTap: () async {
+                    await FirebaseAnalytics.instance
+                        .setCurrentScreen(screenName: 'Login Screen');
                     await storage.deleteAll();
                     Navigator.pop(context);
                     Navigator.pushReplacementNamed(context, Login.routeName);
@@ -356,67 +404,69 @@ class _HomeState extends State<Home> {
                     width: double.infinity,
                     padding: const EdgeInsets.symmetric(
                         horizontal: 16.0, vertical: 16.0),
-                    child:
-                        Column(mainAxisSize: MainAxisSize.max, children: <Widget>[
-                      Expanded(
-                        child: Shimmer.fromColors(
-                          baseColor: Color(0xffAEAEAE),
-                          highlightColor: Colors.white,
-                          child: ListView.builder(
-                            itemBuilder: (_, __) => Padding(
-                              padding: const EdgeInsets.only(bottom: 8.0),
-                              child: Container(
-                                padding: EdgeInsets.all(10),
-                                child: Row(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: <Widget>[
-                                    Container(
-                                      width: 80.0,
-                                      height: 80.0,
-                                      color: Colors.white,
+                    child: Column(
+                        mainAxisSize: MainAxisSize.max,
+                        children: <Widget>[
+                          Expanded(
+                            child: Shimmer.fromColors(
+                              baseColor: Color(0xffAEAEAE),
+                              highlightColor: Colors.white,
+                              child: ListView.builder(
+                                itemBuilder: (_, __) => Padding(
+                                  padding: const EdgeInsets.only(bottom: 8.0),
+                                  child: Container(
+                                    padding: EdgeInsets.all(10),
+                                    child: Row(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: <Widget>[
+                                        Container(
+                                          width: 80.0,
+                                          height: 80.0,
+                                          color: Colors.white,
+                                        ),
+                                        const SizedBox(
+                                          width: 15,
+                                        ),
+                                        Expanded(
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: <Widget>[
+                                              Container(
+                                                width: double.infinity,
+                                                height: 10.0,
+                                                color: Colors.white,
+                                              ),
+                                              const Padding(
+                                                padding: EdgeInsets.symmetric(
+                                                    vertical: 2.0),
+                                              ),
+                                              Container(
+                                                width: double.infinity,
+                                                height: 10.0,
+                                                color: Colors.white,
+                                              ),
+                                              const SizedBox(
+                                                height: 10,
+                                              ),
+                                              Container(
+                                                width: 40.0,
+                                                height: 10.0,
+                                                color: Colors.white,
+                                              ),
+                                            ],
+                                          ),
+                                        )
+                                      ],
                                     ),
-                                    const SizedBox(
-                                      width: 15,
-                                    ),
-                                    Expanded(
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: <Widget>[
-                                          Container(
-                                            width: double.infinity,
-                                            height: 10.0,
-                                            color: Colors.white,
-                                          ),
-                                          const Padding(
-                                            padding: EdgeInsets.symmetric(
-                                                vertical: 2.0),
-                                          ),
-                                          Container(
-                                            width: double.infinity,
-                                            height: 10.0,
-                                            color: Colors.white,
-                                          ),
-                                          const SizedBox(
-                                            height: 10,
-                                          ),
-                                          Container(
-                                            width: 40.0,
-                                            height: 10.0,
-                                            color: Colors.white,
-                                          ),
-                                        ],
-                                      ),
-                                    )
-                                  ],
+                                  ),
                                 ),
+                                itemCount: 6,
                               ),
                             ),
-                            itemCount: 6,
-                          ),
-                        ),
-                      )
-                    ]))
+                          )
+                        ]))
                 : vendors.length == 0
                     ? Container(
                         height: MediaQuery.of(context).size.height,
@@ -451,8 +501,9 @@ class _HomeState extends State<Home> {
                                               .isNotEmpty) {
                                             searchList1 = [];
                                             for (var v in filter1) {
-                                              if (v.name!.toLowerCase().contains(
-                                                  searchCon1.text
+                                              if (v.name!
+                                                  .toLowerCase()
+                                                  .contains(searchCon1.text
                                                       .trim()
                                                       .toLowerCase())) {
                                                 searchList1.add(v);
@@ -460,12 +511,16 @@ class _HomeState extends State<Home> {
                                             }
                                             search1 = true;
                                           }
-          
+
                                           setState(() {});
                                         },
                                         decoration: InputDecoration(
                                             suffixIcon: GestureDetector(
-                                              onTap: () {
+                                              onTap: () async {
+                                                await FirebaseAnalytics.instance
+                                                    .setCurrentScreen(
+                                                        screenName:
+                                                            'Filter Screen');
                                                 data.subs = false;
                                                 Navigator.push(
                                                     context,
@@ -512,7 +567,7 @@ class _HomeState extends State<Home> {
                                             ),
                                             contentPadding: EdgeInsets.fromLTRB(
                                                 40, 15, 12, 15),
-          
+
                                             // filled: true,
                                             // fillColor: color.textFieldFillColor,
                                             enabledBorder: OutlineInputBorder(
@@ -555,32 +610,37 @@ class _HomeState extends State<Home> {
                                       ),
                                       ListView.builder(
                                           shrinkWrap: true,
-                                          physics: NeverScrollableScrollPhysics(),
+                                          physics:
+                                              NeverScrollableScrollPhysics(),
                                           itemCount: search1
                                               ? searchList1.length
                                               : filter1.length,
                                           itemBuilder: (context, index) {
                                             return InkWell(
-                                                onTap: () {
+                                                onTap: () async {
+                                                  await FirebaseAnalytics
+                                                      .instance
+                                                      .setCurrentScreen(
+                                                          screenName:
+                                                              'One-Time Menu Screen');
                                                   Navigator.push(
                                                       context,
                                                       MaterialPageRoute(
-                                                          builder: (context) =>
-                                                              Menu(
-                                                                chef: search1
-                                                                    ? searchList1[
-                                                                        index]
-                                                                    : filter1[
-                                                                        index],
-                                                                user: data.user,
-                                                                vendorID: search1
-                                                                    ? searchList1[
+                                                          builder:
+                                                              (context) => Menu(
+                                                                    chef: search1
+                                                                        ? searchList1[
                                                                             index]
-                                                                        .id
-                                                                    : filter1[
-                                                                            index]
-                                                                        .id,
-                                                              )));
+                                                                        : filter1[
+                                                                            index],
+                                                                    user: data
+                                                                        .user,
+                                                                    vendorID: search1
+                                                                        ? searchList1[index]
+                                                                            .id
+                                                                        : filter1[index]
+                                                                            .id,
+                                                                  )));
                                                 },
                                                 child: vendorDisplay(
                                                     width,
@@ -594,8 +654,8 @@ class _HomeState extends State<Home> {
                           ),
                           SingleChildScrollView(
                             child: Container(
-                              margin:
-                                  EdgeInsets.symmetric(horizontal: width * 0.05),
+                              margin: EdgeInsets.symmetric(
+                                  horizontal: width * 0.05),
                               child: Container(
                                 margin: EdgeInsets.only(top: 20),
                                 child: Column(
@@ -621,12 +681,16 @@ class _HomeState extends State<Home> {
                                           }
                                           search2 = true;
                                         }
-          
+
                                         setState(() {});
                                       },
                                       decoration: InputDecoration(
                                           suffixIcon: GestureDetector(
-                                            onTap: () {
+                                            onTap: () async {
+                                              await FirebaseAnalytics.instance
+                                                  .setCurrentScreen(
+                                                      screenName:
+                                                          'Filter Screen');
                                               data.subs = true;
                                               print(daily.length);
                                               Navigator.push(
@@ -643,11 +707,12 @@ class _HomeState extends State<Home> {
                                                   if (data.cusineSelected2) {
                                                     // filter1 = [];
                                                     for (var v in vendors) {
-                                                      for (var b in v.menu.monday
-                                                          .breakfast) {
+                                                      for (var b in v.menu
+                                                          .monday.breakfast) {
                                                         for (var f in data
                                                             .filteredList) {
-                                                          if (b.name == f.name) {
+                                                          if (b.name ==
+                                                              f.name) {
                                                             filter2.add(v);
                                                             // break;
                                                           }
@@ -657,7 +722,8 @@ class _HomeState extends State<Home> {
                                                           .menu.monday.lunch) {
                                                         for (var f in data
                                                             .filteredList) {
-                                                          if (l.name == f.name) {
+                                                          if (l.name ==
+                                                              f.name) {
                                                             filter2.add(v);
                                                             // break;
                                                           }
@@ -667,17 +733,19 @@ class _HomeState extends State<Home> {
                                                           .menu.monday.dinner) {
                                                         for (var f in data
                                                             .filteredList) {
-                                                          if (d.name == f.name) {
+                                                          if (d.name ==
+                                                              f.name) {
                                                             filter2.add(v);
                                                             // break;
                                                           }
                                                         }
                                                       }
-                                                      for (var b in v.menu.tuesday
-                                                          .breakfast) {
+                                                      for (var b in v.menu
+                                                          .tuesday.breakfast) {
                                                         for (var f in data
                                                             .filteredList) {
-                                                          if (b.name == f.name) {
+                                                          if (b.name ==
+                                                              f.name) {
                                                             filter2.add(v);
                                                             // break;
                                                           }
@@ -687,37 +755,43 @@ class _HomeState extends State<Home> {
                                                           .menu.tuesday.lunch) {
                                                         for (var f in data
                                                             .filteredList) {
-                                                          if (l.name == f.name) {
+                                                          if (l.name ==
+                                                              f.name) {
                                                             filter2.add(v);
                                                             // break;
                                                           }
                                                         }
                                                       }
-                                                      for (var d in v
-                                                          .menu.tuesday.dinner) {
+                                                      for (var d in v.menu
+                                                          .tuesday.dinner) {
                                                         for (var f in data
                                                             .filteredList) {
-                                                          if (d.name == f.name) {
+                                                          if (d.name ==
+                                                              f.name) {
                                                             filter2.add(v);
                                                             // break;
                                                           }
                                                         }
                                                       }
-                                                      for (var b in v.menu
-                                                          .wednesday.breakfast) {
+                                                      for (var b in v
+                                                          .menu
+                                                          .wednesday
+                                                          .breakfast) {
                                                         for (var f in data
                                                             .filteredList) {
-                                                          if (b.name == f.name) {
+                                                          if (b.name ==
+                                                              f.name) {
                                                             filter2.add(v);
                                                             // break;
                                                           }
                                                         }
                                                       }
-                                                      for (var l in v
-                                                          .menu.wednesday.lunch) {
+                                                      for (var l in v.menu
+                                                          .wednesday.lunch) {
                                                         for (var f in data
                                                             .filteredList) {
-                                                          if (l.name == f.name) {
+                                                          if (l.name ==
+                                                              f.name) {
                                                             filter2.add(v);
                                                             // break;
                                                           }
@@ -727,7 +801,8 @@ class _HomeState extends State<Home> {
                                                           .wednesday.dinner) {
                                                         for (var f in data
                                                             .filteredList) {
-                                                          if (d.name == f.name) {
+                                                          if (d.name ==
+                                                              f.name) {
                                                             filter2.add(v);
                                                             // break;
                                                           }
@@ -737,37 +812,41 @@ class _HomeState extends State<Home> {
                                                           .thursday.breakfast) {
                                                         for (var f in data
                                                             .filteredList) {
-                                                          if (b.name == f.name) {
+                                                          if (b.name ==
+                                                              f.name) {
                                                             filter2.add(v);
                                                             // break;
                                                           }
                                                         }
                                                       }
-                                                      for (var l in v
-                                                          .menu.thursday.lunch) {
+                                                      for (var l in v.menu
+                                                          .thursday.lunch) {
                                                         for (var f in data
                                                             .filteredList) {
-                                                          if (l.name == f.name) {
+                                                          if (l.name ==
+                                                              f.name) {
                                                             filter2.add(v);
                                                             // break;
                                                           }
                                                         }
                                                       }
-                                                      for (var d in v
-                                                          .menu.thursday.dinner) {
+                                                      for (var d in v.menu
+                                                          .thursday.dinner) {
                                                         for (var f in data
                                                             .filteredList) {
-                                                          if (d.name == f.name) {
+                                                          if (d.name ==
+                                                              f.name) {
                                                             filter2.add(v);
                                                             // break;
                                                           }
                                                         }
                                                       }
-                                                      for (var b in v.menu.friday
-                                                          .breakfast) {
+                                                      for (var b in v.menu
+                                                          .friday.breakfast) {
                                                         for (var f in data
                                                             .filteredList) {
-                                                          if (b.name == f.name) {
+                                                          if (b.name ==
+                                                              f.name) {
                                                             filter2.add(v);
                                                             // break;
                                                           }
@@ -777,7 +856,8 @@ class _HomeState extends State<Home> {
                                                           .menu.friday.lunch) {
                                                         for (var f in data
                                                             .filteredList) {
-                                                          if (l.name == f.name) {
+                                                          if (l.name ==
+                                                              f.name) {
                                                             filter2.add(v);
                                                             // break;
                                                           }
@@ -787,7 +867,8 @@ class _HomeState extends State<Home> {
                                                           .menu.friday.dinner) {
                                                         for (var f in data
                                                             .filteredList) {
-                                                          if (d.name == f.name) {
+                                                          if (d.name ==
+                                                              f.name) {
                                                             filter2.add(v);
                                                             // break;
                                                           }
@@ -797,37 +878,41 @@ class _HomeState extends State<Home> {
                                                           .saturday.breakfast) {
                                                         for (var f in data
                                                             .filteredList) {
-                                                          if (b.name == f.name) {
+                                                          if (b.name ==
+                                                              f.name) {
                                                             filter2.add(v);
                                                             // break;
                                                           }
                                                         }
                                                       }
-                                                      for (var l in v
-                                                          .menu.saturday.lunch) {
+                                                      for (var l in v.menu
+                                                          .saturday.lunch) {
                                                         for (var f in data
                                                             .filteredList) {
-                                                          if (l.name == f.name) {
+                                                          if (l.name ==
+                                                              f.name) {
                                                             filter2.add(v);
                                                             // break;
                                                           }
                                                         }
                                                       }
-                                                      for (var d in v
-                                                          .menu.saturday.dinner) {
+                                                      for (var d in v.menu
+                                                          .saturday.dinner) {
                                                         for (var f in data
                                                             .filteredList) {
-                                                          if (d.name == f.name) {
+                                                          if (d.name ==
+                                                              f.name) {
                                                             filter2.add(v);
                                                             // break;
                                                           }
                                                         }
                                                       }
-                                                      for (var b in v.menu.sunday
-                                                          .breakfast) {
+                                                      for (var b in v.menu
+                                                          .sunday.breakfast) {
                                                         for (var f in data
                                                             .filteredList) {
-                                                          if (b.name == f.name) {
+                                                          if (b.name ==
+                                                              f.name) {
                                                             filter2.add(v);
                                                             // break;
                                                           }
@@ -837,7 +922,8 @@ class _HomeState extends State<Home> {
                                                           .menu.sunday.lunch) {
                                                         for (var f in data
                                                             .filteredList) {
-                                                          if (l.name == f.name) {
+                                                          if (l.name ==
+                                                              f.name) {
                                                             filter2.add(v);
                                                             // break;
                                                           }
@@ -847,15 +933,17 @@ class _HomeState extends State<Home> {
                                                           .menu.sunday.dinner) {
                                                         for (var f in data
                                                             .filteredList) {
-                                                          if (d.name == f.name) {
+                                                          if (d.name ==
+                                                              f.name) {
                                                             filter2.add(v);
                                                             // break;
                                                           }
                                                         }
                                                       }
                                                     }
-                                                    filter2 =
-                                                        filter2.toSet().toList();
+                                                    filter2 = filter2
+                                                        .toSet()
+                                                        .toList();
                                                   } else {
                                                     for (var v in vendors) {
                                                       filter2.add(v);
@@ -870,32 +958,37 @@ class _HomeState extends State<Home> {
                                               color: color.orange,
                                             ),
                                           ),
-                                          contentPadding:
-                                              EdgeInsets.fromLTRB(40, 15, 12, 15),
-          
+                                          contentPadding: EdgeInsets.fromLTRB(
+                                              40, 15, 12, 15),
+
                                           // filled: true,
                                           // fillColor: color.textFieldFillColor,
                                           enabledBorder: OutlineInputBorder(
                                             borderSide: BorderSide(
-                                                color: color.purple, width: 1.0),
+                                                color: color.purple,
+                                                width: 1.0),
                                             borderRadius:
                                                 BorderRadius.circular(15.0),
                                           ),
                                           focusedBorder: OutlineInputBorder(
                                             borderSide: BorderSide(
-                                                color: color.orange, width: 1.0),
+                                                color: color.orange,
+                                                width: 1.0),
                                             borderRadius:
                                                 BorderRadius.circular(15.0),
                                           ),
                                           errorBorder: OutlineInputBorder(
                                             borderSide: BorderSide(
-                                                color: color.purple, width: 1.0),
+                                                color: color.purple,
+                                                width: 1.0),
                                             borderRadius:
                                                 BorderRadius.circular(15.0),
                                           ),
-                                          focusedErrorBorder: OutlineInputBorder(
+                                          focusedErrorBorder:
+                                              OutlineInputBorder(
                                             borderSide: BorderSide(
-                                                color: color.orange, width: 1.0),
+                                                color: color.orange,
+                                                width: 1.0),
                                             borderRadius:
                                                 BorderRadius.circular(15.0),
                                           ),
@@ -916,7 +1009,11 @@ class _HomeState extends State<Home> {
                                             : filter2.length,
                                         itemBuilder: (context, index) {
                                           return InkWell(
-                                              onTap: () {
+                                              onTap: () async {
+                                                await FirebaseAnalytics.instance
+                                                    .setCurrentScreen(
+                                                        screenName:
+                                                            'Subscription Menu Screen');
                                                 Navigator.push(
                                                     context,
                                                     MaterialPageRoute(
@@ -932,7 +1029,8 @@ class _HomeState extends State<Home> {
                                                                   ? searchList1[
                                                                           index]
                                                                       .id
-                                                                  : filter1[index]
+                                                                  : filter1[
+                                                                          index]
                                                                       .id,
                                                             )));
                                               },
@@ -950,12 +1048,12 @@ class _HomeState extends State<Home> {
                           Container(
                             width: double.infinity,
                             child: Center(
-                              child: Text("Coming Soon",
-                                style: TextStyle(
-                                    fontSize: 50.0,),
-                                
-                              )
-                            ),
+                                child: Text(
+                              "Coming Soon",
+                              style: TextStyle(
+                                fontSize: 50.0,
+                              ),
+                            )),
                           ),
                         ],
                       ),

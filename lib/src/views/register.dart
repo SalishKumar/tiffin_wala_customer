@@ -1,3 +1,5 @@
+import 'package:device_info_plus/device_info_plus.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
@@ -13,6 +15,12 @@ class Register extends StatelessWidget {
   static const routeName = '/register';
 
   const Register({Key? key}) : super(key: key);
+
+  Future<String?> _getId() async {
+  var deviceInfo = DeviceInfoPlugin();
+  var androidDeviceInfo = await deviceInfo.androidInfo;
+    return androidDeviceInfo.androidId; // unique ID on Android
+}
 
   @override
   Widget build(BuildContext context) {
@@ -137,6 +145,8 @@ class Register extends StatelessWidget {
                   ),
                   InkWell(
                     onTap: () async {
+                      var id = await _getId();
+                      registerViewModel.deviceID = id!;
                       await registerViewModel.register(context);
                     },
                     child: Center(
@@ -173,20 +183,23 @@ class Register extends StatelessWidget {
                     height: 20,
                   ),
                   ElevatedButton.icon(
-                      onPressed: () {
-                        registerViewModel.googleLogin(context);
-                      },
-                      style: ElevatedButton.styleFrom(
-                          primary: Colors.white,
-                          onPrimary: Colors.black,
-                          minimumSize: Size(width * 0.9, 60),
-                          elevation: 5,),
-                      icon: FaIcon(
-                        FontAwesomeIcons.google,
-                        color: Colors.red,
-                      ),
-                      label: Text('Sign Up with Google'),
-                      ),
+                    onPressed: () async{
+                      var id = await _getId();
+                      registerViewModel.deviceID = id!;
+                      registerViewModel.googleLogin(context);
+                    },
+                    style: ElevatedButton.styleFrom(
+                      primary: Colors.white,
+                      onPrimary: Colors.black,
+                      minimumSize: Size(width * 0.9, 60),
+                      elevation: 5,
+                    ),
+                    icon: FaIcon(
+                      FontAwesomeIcons.google,
+                      color: Colors.red,
+                    ),
+                    label: Text('Sign Up with Google'),
+                  ),
                 ],
               ),
             );
@@ -203,7 +216,9 @@ class Register extends StatelessWidget {
               style: TextStyle(fontSize: 18),
             ),
             InkWell(
-              onTap: () {
+              onTap: () async {
+                await FirebaseAnalytics.instance
+                    .setCurrentScreen(screenName: 'Login Screen');
                 Navigator.of(context).pushReplacementNamed(Login.routeName);
               },
               child: Text(

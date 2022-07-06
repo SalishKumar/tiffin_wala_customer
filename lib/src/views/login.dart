@@ -1,5 +1,7 @@
 // ignore_for_file: prefer_const_constructors
 
+import 'package:device_info_plus/device_info_plus.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -18,12 +20,11 @@ class Login extends StatelessWidget {
 
   Login({Key? key}) : super(key: key);
 
-  
   DateTime currentBackPressTime = DateTime.now();
 
   Future<bool> onWillPop() {
     DateTime now = DateTime.now();
-    if (currentBackPressTime == null || 
+    if (currentBackPressTime == null ||
         now.difference(currentBackPressTime) > Duration(seconds: 2)) {
       currentBackPressTime = now;
       Fluttertoast.showToast(msg: "Double Tap to Exit");
@@ -31,6 +32,12 @@ class Login extends StatelessWidget {
     }
     return Future.value(true);
   }
+
+  Future<String?> _getId() async {
+  var deviceInfo = DeviceInfoPlugin();
+  var androidDeviceInfo = await deviceInfo.androidInfo;
+    return androidDeviceInfo.androidId; // unique ID on Android
+}
 
   @override
   Widget build(BuildContext context) {
@@ -53,7 +60,8 @@ class Login extends StatelessWidget {
         onWillPop: onWillPop,
         child: SingleChildScrollView(
           child: Container(
-            margin: EdgeInsets.symmetric(horizontal: width * 0.05, vertical: 10),
+            margin:
+                EdgeInsets.symmetric(horizontal: width * 0.05, vertical: 10),
             child: Consumer<LoginViewModel>(
                 builder: (context, loginViewModel, child) {
               return Container(
@@ -64,7 +72,7 @@ class Login extends StatelessWidget {
                       child: Center(child: MyLogo()),
                     ),
                     MyCustomTextfield(
-                      size: 50  ,
+                      size: 50,
                       disable: true,
                       controller: loginViewModel.emailCon,
                       textInputType: TextInputType.emailAddress,
@@ -99,7 +107,9 @@ class Login extends StatelessWidget {
                       suffix: loginViewModel.suffix,
                     ),
                     InkWell(
-                      onTap: (){
+                      onTap: () async {
+                        await FirebaseAnalytics.instance.setCurrentScreen(
+                            screenName: 'Forget Password Screen');
                         Navigator.pushNamed(context, ForgetPassword.routeName);
                       },
                       child: Container(
@@ -115,6 +125,8 @@ class Login extends StatelessWidget {
                     ),
                     InkWell(
                       onTap: () async {
+                        var id = await _getId();
+                        loginViewModel.deviceID = id!;
                         await loginViewModel.login(context);
                       },
                       child: Center(
@@ -152,20 +164,23 @@ class Login extends StatelessWidget {
                       height: 20,
                     ),
                     ElevatedButton.icon(
-                        onPressed: () {
-                          loginViewModel.googleLogin(context);
-                        },
-                        style: ElevatedButton.styleFrom(
-                            primary: Colors.white,
-                            onPrimary: Colors.black,
-                            minimumSize: Size(width * 0.9, 60),
-                            elevation: 5,),
-                        icon: FaIcon(
-                          FontAwesomeIcons.google,
-                          color: Colors.red,
-                        ),
-                        label: Text('Login with Google'),
-                        ),
+                      onPressed: () async{
+                        var id = await _getId();
+                        loginViewModel.deviceID = id!;
+                        loginViewModel.googleLogin(context);
+                      },
+                      style: ElevatedButton.styleFrom(
+                        primary: Colors.white,
+                        onPrimary: Colors.black,
+                        minimumSize: Size(width * 0.9, 60),
+                        elevation: 5,
+                      ),
+                      icon: FaIcon(
+                        FontAwesomeIcons.google,
+                        color: Colors.red,
+                      ),
+                      label: Text('Login with Google'),
+                    ),
                     SizedBox(
                       height: 10,
                     )
@@ -186,7 +201,9 @@ class Login extends StatelessWidget {
               style: TextStyle(fontSize: 18),
             ),
             InkWell(
-              onTap: () {
+              onTap: () async {
+                await FirebaseAnalytics.instance
+                    .setCurrentScreen(screenName: 'Regsteration Screen');
                 Navigator.of(context).pushReplacementNamed(Register.routeName);
               },
               child: Text(

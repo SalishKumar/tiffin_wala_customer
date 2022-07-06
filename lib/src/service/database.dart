@@ -27,8 +27,10 @@ class Database {
     dio = Dio(options);
   }
 
-  Future register(Map<String, dynamic> map) async {
+  Future register(Map<String, dynamic> map, String id) async {
     try {
+      map["device_id"] = id;
+      print(map);
       timeoutSettings(15);
       dynamic response =
           await dio.post(endpoint.base + endpoint.signup, data: map);
@@ -49,10 +51,14 @@ class Database {
     }
   }
 
-  Future login(String email, String pass) async {
+  Future login(String email, String pass, String id) async {
     try {
+      Map<String, dynamic> map = {
+        "device_id": id
+      };
+      print(map);
       timeoutSettings(15);
-      print(endpoint.base + endpoint.signup + email + '/' + pass);
+      // print(endpoint.base + endpoint.signup + email + '/' + pass);
       dynamic response = await dio.get(endpoint.base +
           endpoint.signup +
           '?email=' +
@@ -76,11 +82,38 @@ class Database {
     }
   }
 
-  Future registerGoogle(Map<String, dynamic> map) async {
+  // Future registerGoogle(Map<String, dynamic> map) async {
+  //   try {
+  //     timeoutSettings(15);
+  //     dynamic response =
+  //         await dio.post(endpoint.base + endpoint.signup, data: map);
+  //     print(response.data);
+  //     if (response.statusCode != 200) {
+  //       return null;
+  //     }
+  //     return response.data;
+  //   } on DioError catch (e) {
+  //     if (e.type == DioErrorType.connectTimeout ||
+  //         e.type == DioErrorType.receiveTimeout) {
+  //       print(e.type);
+  //       Map<String, dynamic> map = {'Timeout': 'true'};
+  //       return map;
+  //     }
+  //     print(e.toString());
+  //     return null;
+  //   }
+  // }
+
+  Future loginGoogle(String? token, String id) async {
     try {
+      Map<String, dynamic> map = {
+        "device_id": id
+      };
+      print(map);
       timeoutSettings(15);
-      dynamic response =
-          await dio.post(endpoint.base + endpoint.signup, data: map);
+      dynamic response = await dio.get(
+          endpoint.base + endpoint.signup + '?google_auth_token=' + token!,
+          queryParameters: map);
       print(response.data);
       if (response.statusCode != 200) {
         return null;
@@ -98,34 +131,16 @@ class Database {
     }
   }
 
-  Future loginGoogle(String? token) async {
+  Future loginToken(String? token, String id) async {
     try {
-      print("***");
+      Map<String, dynamic> map = {
+        "device_id": id
+      };
+      print(map);
       timeoutSettings(15);
       dynamic response = await dio.get(
-          endpoint.base + endpoint.signup + '?google_auth_token=' + token!);
-      print(response.data);
-      if (response.statusCode != 200) {
-        return null;
-      }
-      return response.data;
-    } on DioError catch (e) {
-      if (e.type == DioErrorType.connectTimeout ||
-          e.type == DioErrorType.receiveTimeout) {
-        print(e.type);
-        Map<String, dynamic> map = {'Timeout': 'true'};
-        return map;
-      }
-      print(e.toString());
-      return null;
-    }
-  }
-
-  Future loginToken(String? token) async {
-    try {
-      timeoutSettings(15);
-      dynamic response = await dio.get(
-          endpoint.base + endpoint.signup + '?auth_token=' + token!);
+          endpoint.base + endpoint.signup + '?auth_token=' + token!,
+          queryParameters: map);
       print(response.data);
       if (response.statusCode != 200) {
         return null;

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:tiffin_wala_customer/src/constants/color.dart' as color;
@@ -23,6 +24,7 @@ class _SplashScreenState extends State<SplashScreen> {
   final storage = FlutterSecureStorage();
   Database db = Database();
   late User1 user1;
+  String deviceID = '';
 
   autoLogin(User1 user) async {
     if (user.google) {
@@ -39,7 +41,7 @@ class _SplashScreenState extends State<SplashScreen> {
     await storage.write(key: 'token', value: user.token);
   }
 
-  Future loginToken(String? token, bool google) async{
+  Future loginToken(String? token, bool google, String id) async {
     // showDialog(
     //     context: context,
     //     barrierDismissible: false,
@@ -66,9 +68,9 @@ class _SplashScreenState extends State<SplashScreen> {
     //       );
     //     },
     //   );
-    dynamic result = await db.loginToken(token);
+    dynamic result = await db.loginToken(token, id);
     //Navigator.pop(context);
-    if(result["status"]){
+    if (result["status"]) {
       if (result == null) {
         Fluttertoast.showToast(
             msg: 'Issue with connection. Try again later.',
@@ -96,9 +98,9 @@ class _SplashScreenState extends State<SplashScreen> {
               await autoLogin(userResult);
               data.user = userResult;
               route = true;
-              setState(() {
-                
-              });
+              await FirebaseAnalytics.instance
+            .setCurrentScreen(screenName: 'Home Screen');
+              setState(() {});
             } else if (userResult.status == false) {
               Fluttertoast.showToast(
                   msg: userResult.msg,
@@ -108,6 +110,8 @@ class _SplashScreenState extends State<SplashScreen> {
                   backgroundColor: Colors.red,
                   textColor: Colors.white,
                   fontSize: 16.0);
+                  await FirebaseAnalytics.instance
+            .setCurrentScreen(screenName: 'Login Screen');
             }
           }
         }
@@ -122,19 +126,24 @@ class _SplashScreenState extends State<SplashScreen> {
     try {
       Timer(Duration(seconds: 3), () async {
         // Future.delayed(Duration(seconds: 0), () async {
+        await FirebaseAnalytics.instance
+            .setCurrentScreen(screenName: 'Splash Screen');
         try {
           Map<String, String> allValues = await storage.readAll();
           print(allValues);
           if (allValues == null) {
+            await FirebaseAnalytics.instance
+            .setCurrentScreen(screenName: 'Login Screen');
             route = false;
             setState(() {});
           } else {
+            deviceID = allValues["device_id"]!;
             User1 user = User1(
                 name: allValues['name'],
                 email: allValues['email'],
                 phone: allValues['phone'],
                 password: allValues['password']);
-                user.id=int.tryParse(allValues["id"]!)!;
+            user.id = int.tryParse(allValues["id"]!)!;
             if (allValues['google'] == 'true') {
               user.google = true;
             } else {
@@ -143,9 +152,9 @@ class _SplashScreenState extends State<SplashScreen> {
             user.token = allValues['token']!;
             // route = false;
             // setState(() {
-              
+
             // });
-            await loginToken(user.token, user.google);
+            await loginToken(user.token, user.google, deviceID);
 
             // data.user=user;
             // route = true;

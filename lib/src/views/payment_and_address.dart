@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
@@ -55,6 +56,12 @@ class PaymentAndAddress extends StatefulWidget {
 class _PaymentAndAddressState extends State<PaymentAndAddress> {
   int chosenAddress = 0;
   Database db = Database();
+
+  @override
+  void initState() {
+    FirebaseAnalytics.instance.setCurrentScreen(screenName: 'Checkout Screen');
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
