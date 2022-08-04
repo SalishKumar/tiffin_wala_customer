@@ -227,7 +227,7 @@ class _HomeState extends State<Home> {
     double width = MediaQuery.of(context).size.width;
     final storage = new FlutterSecureStorage();
     return DefaultTabController(
-      length: 3,
+      length: 2,
       child: Scaffold(
           drawer: Drawer(
             child: ListView(
@@ -379,15 +379,6 @@ class _HomeState extends State<Home> {
                 Tab(
                   child: AutoSizeText(
                     "Subscription",
-                    maxLines: 1,
-                    style: TextStyle(
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
-                Tab(
-                  child: AutoSizeText(
-                    "Custom Orders",
                     maxLines: 1,
                     style: TextStyle(
                       color: Colors.white,
@@ -1045,16 +1036,16 @@ class _HomeState extends State<Home> {
                               ),
                             ),
                           ),
-                          Container(
-                            width: double.infinity,
-                            child: Center(
-                                child: Text(
-                              "Coming Soon",
-                              style: TextStyle(
-                                fontSize: 50.0,
-                              ),
-                            )),
-                          ),
+                          // Container(
+                          //   width: double.infinity,
+                          //   child: Center(
+                          //       child: Text(
+                          //     "Coming Soon",
+                          //     style: TextStyle(
+                          //       fontSize: 50.0,
+                          //     ),
+                          //   )),
+                          // ),
                         ],
                       ),
           )),
