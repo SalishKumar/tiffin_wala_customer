@@ -294,7 +294,7 @@ class _MenuState extends State<Menu> {
                                                                     color: Colors
                                                                         .white,
                                                                     iconSize:
-                                                                        18,
+                                                                        16,
                                                                   ),
                                                                 ),
                                                               ),
@@ -367,7 +367,7 @@ class _MenuState extends State<Menu> {
                                                                     color: Colors
                                                                         .white,
                                                                     iconSize:
-                                                                        18,
+                                                                        16,
                                                                   ),
                                                                 ),
                                                               ),
